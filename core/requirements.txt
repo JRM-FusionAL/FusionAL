@@ -1,8 +1,8 @@
-fastapi==0.129.0
-uvicorn[standard]==0.40.0
+fastapi==0.135.1
+uvicorn[standard]==0.41.0
 pydantic==2.12.5
 openai==2.20.0
-python-dotenv==1.2.1
+python-dotenv==1.2.2
 requests==2.32.5
-anthropic==0.79.0
-redis
+anthropic==0.84.0
+redis==7.2.1

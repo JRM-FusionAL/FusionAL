@@ -24,16 +24,24 @@ from pydantic import BaseModel
 PORT = int(os.getenv("PORT", "8009"))
 
 # --- Security module: cross-platform path resolution ---
+_this_file = Path(__file__).resolve()
 _SECURITY_CANDIDATES = [
-    # Relative to this file — works on any OS, any username
-    Path(__file__).resolve().parents[2] / "mcp-consulting-kit" / "showcase-servers" / "common",
-    Path(__file__).resolve().parents[3] / "mcp-consulting-kit" / "showcase-servers" / "common",
-    Path(__file__).resolve().parent / "common",
-    # Home directory layouts — Linux / Mac / Windows
+    _this_file.parent / "common",
     Path.home() / "Projects" / "mcp-consulting-kit" / "showcase-servers" / "common",
     Path.home() / "projects" / "mcp-consulting-kit" / "showcase-servers" / "common",
     Path.home() / "mcp-consulting-kit" / "showcase-servers" / "common",
 ]
+
+if len(_this_file.parents) > 2:
+    _SECURITY_CANDIDATES.append(
+        _this_file.parents[2] / "mcp-consulting-kit" / "showcase-servers" / "common"
+    )
+
+if len(_this_file.parents) > 3:
+    _SECURITY_CANDIDATES.append(
+        _this_file.parents[3] / "mcp-consulting-kit" / "showcase-servers" / "common"
+    )
+
 for _candidate in _SECURITY_CANDIDATES:
     if _candidate.exists() and str(_candidate) not in sys.path:
         sys.path.insert(0, str(_candidate))

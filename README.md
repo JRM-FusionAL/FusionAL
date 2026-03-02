@@ -56,6 +56,16 @@ cd core
 python -m uvicorn main:app --reload --port 8089
 ```
 
+### Step 2b: Attach FusionAL to VS Code Debugger
+
+This repo includes ready-to-use VS Code configs in `.vscode/`.
+
+1. Open the **Run and Debug** panel in VS Code.
+2. Select **FusionAL: Attach (debugpy :5678)**.
+3. Press **F5**.
+
+VS Code will start FusionAL under `debugpy` and attach automatically.
+
 ### Step 3: Build Example (Dice Roller)
 
 ```bash
