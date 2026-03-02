@@ -1,5 +1,11 @@
 # 🚀 **FusionAL** - AI-Powered MCP Server Platform
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
+![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)
+![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-orange)
+![Stars](https://img.shields.io/github/stars/TangMan69/FusionAL?style=social)
+
 A unified platform for building, deploying, and managing **Model Context Protocol (MCP)** servers with **AI-driven code generation** and **Docker sandboxing**.
 
 Combines the best of:
