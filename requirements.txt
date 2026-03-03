@@ -9,3 +9,8 @@ pydantic==2.12.5
 redis==7.2.1
 requests==2.32.5
 httpx==0.28.1
+
+# Tracing (OpenTelemetry)
+opentelemetry-sdk>=1.24.0
+opentelemetry-instrumentation-fastapi>=0.45b0
+opentelemetry-exporter-otlp-proto-http>=1.24.0

@@ -19,14 +19,19 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8089")
 
+# Model selection — override via env vars to swap models without code changes
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")
+
 if OPENAI_API_KEY:
     openai.api_key = OPENAI_API_KEY
 
 
-def generate_python_from_claude(prompt: str, model: str = "claude-3-5-sonnet-20241022") -> str:
+def generate_python_from_claude(prompt: str, model: str = None) -> str:
     """Generate Python code using Claude API."""
     if not ANTHROPIC_API_KEY:
         raise RuntimeError("ANTHROPIC_API_KEY not set in environment")
+    model = model or ANTHROPIC_MODEL
 
     url = "https://api.anthropic.com/v1/messages"
     headers = {
@@ -53,10 +58,11 @@ def generate_python_from_claude(prompt: str, model: str = "claude-3-5-sonnet-202
     return code
 
 
-def generate_python_from_openai(prompt: str, model: str = "gpt-4-turbo") -> str:
+def generate_python_from_openai(prompt: str, model: str = None) -> str:
     """Generate Python code using OpenAI API."""
     if not OPENAI_API_KEY:
         raise RuntimeError("OPENAI_API_KEY not set in environment")
+    model = model or OPENAI_MODEL
 
     messages = [
         {

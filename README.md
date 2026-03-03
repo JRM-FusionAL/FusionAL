@@ -1,4 +1,4 @@
-# 🚀 **FusionAL** - AI-Powered MCP Server Platform
+# 🚀 **FusionAL** - Self-Hosted MCP Governance Gateway
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
@@ -6,24 +6,39 @@
 ![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-orange)
 ![Stars](https://img.shields.io/github/stars/TangMan69/FusionAL?style=social)
 
-A unified platform for building, deploying, and managing **Model Context Protocol (MCP)** servers with **AI-driven code generation** and **Docker sandboxing**.
+A privacy-first, self-hosted **Model Context Protocol (MCP) governance gateway** for teams that need auditability, policy controls, and reliable operations across AI toolchains.
 
-Combines the best of:
-- **FastAPI** execution infrastructure
-- **Docker** security & isolation
-- **Claude/OpenAI** AI code generation  
-- **MCP** ecosystem standards
+Built for regulated and privacy-sensitive environments (healthcare, legal, fintech SMBs) where cloud-hosted tool orchestration is not acceptable.
+
+Core value:
+- **Self-hosted deployment** (Docker-first)
+- **Audit-ready operations** (tool call visibility and traceability)
+- **Policy enforcement** (control what tools can run and how)
+- **Privacy-first architecture** (keep sensitive data in your environment)
+- **Cross-platform reliability** including hard-earned Windows operational fixes
 
 ---
 
 ## 🎯 What is FusionAL?
 
-FusionAL is an end-to-end system for:
+FusionAL provides a governance control layer for MCP operations:
 
-1. **Generating** complete MCP servers from natural language prompts
-2. **Executing** Python code safely in isolated Docker containers
-3. **Managing** multiple MCP servers through a unified registry
-4. **Deploying** servers to Claude Desktop, Cursor, or any MCP-compatible client
+1. **Centralizing** MCP server access behind a self-hosted gateway
+2. **Enforcing** policies for tool availability, limits, and runtime behavior
+3. **Auditing** MCP activity for compliance and incident response
+4. **Deploying** governed MCP access to Claude Desktop and other MCP-compatible clients
+
+---
+
+## 🏢 Enterprise Positioning
+
+FusionAL is moving from "tool bundle" positioning to an **enterprise MCP governance gateway**:
+
+- **Community**: open-source gateway + deployment templates
+- **Enterprise**: governance features (policy profiles, audit exports, tenant controls, rate-limit presets)
+- **Services**: architecture, rollout, and hardening for production MCP deployments
+
+If you need implementation support, current consulting focus is MCP governance rollout for healthcare, legal, and fintech SMBs.
 
 ---
 
@@ -376,7 +391,6 @@ MIT License - see [LICENSE](LICENSE)
 
 - **MCP Foundation** - Model Context Protocol
 - **Anthropic** - Claude AI
-- **NetworkChuck** - MCP tutorial inspiration
 - **Docker** - Container technology
 - **FastAPI** - API framework
 

@@ -59,6 +59,12 @@ try:
 except ImportError:
     _SECURITY_ENABLED = False
 
+try:
+    from tracing import configure_tracing
+    _TRACING_IMPORTABLE = True
+except ImportError:
+    _TRACING_IMPORTABLE = False
+
 # --- Docker runner ---
 try:
     from runner_docker import run_in_docker
@@ -76,6 +82,9 @@ if _SECURITY_ENABLED:
     configure_cors(app)
     configure_observability(app)
     initialize_rate_limit_store(app)
+
+if _TRACING_IMPORTABLE:
+    configure_tracing(app)
 
 def _auth():
     pass

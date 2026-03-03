@@ -139,6 +139,15 @@ def _get_or_create_logger() -> logging.Logger:
     return logger
 
 
+def _get_trace_context() -> dict:
+    """Return current trace_id/span_id if opentelemetry tracing is active."""
+    try:
+        from tracing import get_trace_context  # pyright: ignore[reportMissingImports]
+        return get_trace_context()
+    except ImportError:
+        return {"trace_id": "", "span_id": ""}
+
+
 def _build_log_payload(
     request: Request,
     request_id: str,
@@ -149,7 +158,7 @@ def _build_log_payload(
     client_ip = request.client.host if request.client else "unknown"
     user_agent = request.headers.get("user-agent", "")
     redacted_headers = redact_sensitive_data(dict(request.headers))
-    return {
+    payload = {
         "event": "http_request",
         "service": service_name,
         "request_id": request_id,
@@ -161,6 +170,8 @@ def _build_log_payload(
         "user_agent": user_agent,
         "headers": redacted_headers,
     }
+    payload.update(_get_trace_context())
+    return payload
 
 
 def configure_cors(app: FastAPI) -> None:
