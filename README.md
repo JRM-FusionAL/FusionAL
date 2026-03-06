@@ -6,16 +6,17 @@
 ![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-orange)
 ![Stars](https://img.shields.io/github/stars/JonathanMelton-FusionAL/FusionAL?style=social)
 
-A privacy-first, self-hosted **Model Context Protocol (MCP) governance gateway** for teams that need auditability, policy controls, and reliable operations across AI toolchains.
+A privacy-first, self-hosted **Model Context Protocol (MCP) governance gateway** for teams that need auditability, policy controls, and reliable operations across AI toolchains — without a dedicated platform engineering department.
 
-Built for regulated and privacy-sensitive environments (healthcare, legal, fintech SMBs) where cloud-hosted tool orchestration is not acceptable.
+Built for regulated and privacy-sensitive environments (healthcare, legal, fintech SMBs) where cloud-hosted tool orchestration is not acceptable. While VC-backed gateways like TrueFoundry, MintMCP, and Composio target enterprises with existing platform teams, FusionAL serves the 80% of companies that need governed MCP but can't operate it themselves.
 
 Core value:
-- **Self-hosted deployment** (Docker-first)
+- **Self-hosted deployment** (Docker-first, your data never leaves)
 - **Audit-ready operations** (tool call visibility and traceability)
 - **Policy enforcement** (control what tools can run and how)
 - **Privacy-first architecture** (keep sensitive data in your environment)
-- **Cross-platform reliability** including hard-earned Windows operational fixes
+- **Cross-platform reliability** including 6 documented Windows-specific MCP failure modes solved publicly
+- **Done-for-you option** (we deploy, govern, and manage it for you)
 
 ---
 
@@ -30,15 +31,22 @@ FusionAL provides a governance control layer for MCP operations:
 
 ---
 
-## 🏢 Enterprise Positioning
+## 🏢 Who Is FusionAL For?
 
-FusionAL is moving from "tool bundle" positioning to an **enterprise MCP governance gateway**:
+**Teams without a platform engineering department** who need governed MCP operations:
 
-- **Community**: open-source gateway + deployment templates
-- **Enterprise**: governance features (policy profiles, audit exports, tenant controls, rate-limit presets)
-- **Services**: architecture, rollout, and hardening for production MCP deployments
+- **Healthcare tech** (20–150 employees) — HIPAA data residency, audit trail requirements
+- **Legal tech startups** — client data sensitivity, self-hosted mandate
+- **Fintech compliance teams** — auditability, policy enforcement, key rotation
+- **AI consultancies** — deploying governed MCP for their clients
 
-If you need implementation support, current consulting focus is MCP governance rollout for healthcare, legal, and fintech SMBs.
+### Enterprise vs. Community
+
+- **Community**: open-source gateway + deployment templates (MIT licensed, always free)
+- **Enterprise services**: MCP operations pilots, security audits, managed governance
+- **Done-for-you**: architecture, rollout, and ongoing managed ops for production MCP deployments
+
+If you need implementation support, see the [MCP Consulting Kit](https://github.com/JonathanMelton-FusionAL/FusionAL-mcp-consulting-kit) or book a call: [calendly.com/jonathanmelton004/30min](https://calendly.com/jonathanmelton004/30min)
 
 ---
 
