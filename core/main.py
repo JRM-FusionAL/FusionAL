@@ -20,6 +20,7 @@ from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel
+from showcase_servers.common.security_baseline import apply_security_baseline
 
 PORT = int(os.getenv("PORT", "8009"))
 
