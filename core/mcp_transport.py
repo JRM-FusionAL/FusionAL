@@ -6,7 +6,6 @@ Mounts at /mcp on the FastAPI app — any MCP client can connect here.
 """
 
 from mcp.server.fastmcp import FastMCP
-from mcp.server.transport_security import TransportSecuritySettings
 from .ai_agent import (
     generate_and_execute as _generate_and_execute,
     generate_mcp_project as _gen_mcp_project,
@@ -15,7 +14,6 @@ from .ai_agent import (
 mcp = FastMCP(
     "fusional",
     streamable_http_path="/",
-    transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
 )
 
 
