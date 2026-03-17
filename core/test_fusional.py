@@ -9,13 +9,14 @@ import requests
 import json
 
 SERVER_URL = "http://localhost:8009"
+REQUEST_TIMEOUT = 15
 
 
 def test_health():
     """Test the health endpoint."""
     print("🔍 Testing health endpoint...")
     try:
-        resp = requests.get(f"{SERVER_URL}/health")
+        resp = requests.get(f"{SERVER_URL}/health", timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
         print("✅ Health check passed!")
         print(json.dumps(resp.json(), indent=2))
@@ -38,7 +39,8 @@ def test_execute_simple():
                 "code": code,
                 "timeout": 5,
                 "use_docker": False
-            }
+            },
+            timeout=REQUEST_TIMEOUT,
         )
         resp.raise_for_status()
         result = resp.json()
@@ -65,7 +67,8 @@ def test_execute_docker():
                 "timeout": 10,
                 "use_docker": True,
                 "memory_mb": 128
-            }
+            },
+            timeout=REQUEST_TIMEOUT,
         )
         resp.raise_for_status()
         result = resp.json()
@@ -83,7 +86,7 @@ def test_catalog():
     """Test the MCP server catalog endpoint."""
     print("\n🔍 Testing catalog endpoint...")
     try:
-        resp = requests.get(f"{SERVER_URL}/catalog")
+        resp = requests.get(f"{SERVER_URL}/catalog", timeout=REQUEST_TIMEOUT)
         resp.raise_for_status()
         result = resp.json()
         print("✅ Catalog check passed!")
@@ -111,7 +114,8 @@ def test_register():
                 "description": "Test MCP server for validation",
                 "url": "docker://test-mcp-server",
                 "metadata": {"version": "1.0.0", "tools": ["test_tool"]}
-            }
+            },
+            timeout=REQUEST_TIMEOUT,
         )
         resp.raise_for_status()
         result = resp.json()

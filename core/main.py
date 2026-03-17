@@ -11,8 +11,9 @@ Security: API key auth + rate limiting via shared common/security.py
 import os
 import sys
 import json
+import logging
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -21,6 +22,7 @@ from typing import Optional
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel
 PORT = int(os.getenv("PORT", "8009"))
+LOGGER = logging.getLogger("fusional.main")
 
 # --- Security module: cross-platform path resolution ---
 _this_file = Path(__file__).resolve()
@@ -166,16 +168,16 @@ def _load_registry():
         if os.path.exists(REGISTRY_FILE):
             with open(REGISTRY_FILE, "r", encoding="utf-8") as f:
                 REGISTRY.update(json.load(f))
-    except Exception:
-        pass
+    except Exception as exc:
+        LOGGER.warning("Failed loading registry file %s: %s", REGISTRY_FILE, exc)
 
 
 def _save_registry():
     try:
         with open(REGISTRY_FILE, "w", encoding="utf-8") as f:
             json.dump(REGISTRY, f, indent=2)
-    except Exception:
-        pass
+    except Exception as exc:
+        LOGGER.warning("Failed saving registry file %s: %s", REGISTRY_FILE, exc)
 
 
 _load_registry()
@@ -210,7 +212,7 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
     with open(script_path, "w", encoding="utf-8") as f:
         f.write(req.code)
     try:
-        proc = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=req.timeout)
+        proc = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=req.timeout)  # nosec B603
         return {"stdout": proc.stdout, "stderr": proc.stderr, "returncode": proc.returncode}
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=504, detail="Execution timed out")

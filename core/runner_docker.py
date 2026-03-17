@@ -14,8 +14,11 @@ Securely executes Python code in isolated Docker containers with hardened securi
 import tempfile
 import os
 import shutil
-import subprocess
+import subprocess  # nosec B404
+import logging
 from typing import Dict
+
+LOGGER = logging.getLogger("fusional.runner_docker")
 
 
 def _abs_path_for_docker(path: str) -> str:
@@ -69,7 +72,7 @@ def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> Dict:
             "--security-opt", "no-new-privileges",  # No privilege escalation
             "--cap-drop", "ALL",             # Drop all capabilities
             "--read-only",                   # Read-only root filesystem
-            "--tmpfs", "/tmp:rw,exec,nosuid,size=64m",  # Writable /tmp
+            "--tmpfs", "/tmp:rw,exec,nosuid,size=64m",  # nosec B108
             "-v", f"{abs_tmp}:/workdir:ro",  # Mount code as read-only
             "-w", "/workdir",                # Set working directory
             "--user", "1000:1000",           # Non-root user
@@ -78,7 +81,7 @@ def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> Dict:
             "script.py",
         ]
 
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)  # nosec B603
         return {
             "stdout": proc.stdout,
             "stderr": proc.stderr,
@@ -87,5 +90,5 @@ def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> Dict:
     finally:
         try:
             shutil.rmtree(tmpdir)
-        except Exception:
-            pass
+        except Exception as exc:
+            LOGGER.debug("Failed cleaning temp directory %s: %s", tmpdir, exc)

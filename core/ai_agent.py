@@ -10,7 +10,7 @@ import requests
 from dotenv import load_dotenv
 import openai
 import json
-import subprocess
+import subprocess  # nosec B404
 import tempfile
 import re
 
@@ -22,6 +22,7 @@ SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8009")
 # Model selection — override via env vars to swap models without code changes
 ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")
+HTTP_REQUEST_TIMEOUT_SECONDS = int(os.getenv("HTTP_REQUEST_TIMEOUT_SECONDS", "30"))
 
 if OPENAI_API_KEY:
     openai.api_key = OPENAI_API_KEY
@@ -51,7 +52,12 @@ def generate_python_from_claude(prompt: str, model: str = None) -> str:
         ]
     }
 
-    resp = requests.post(url, headers=headers, data=json.dumps(body))
+    resp = requests.post(
+        url,
+        headers=headers,
+        data=json.dumps(body),
+        timeout=HTTP_REQUEST_TIMEOUT_SECONDS,
+    )
     resp.raise_for_status()
     data = resp.json()
     code = data["content"][0]["text"]
@@ -110,7 +116,12 @@ def generate_and_execute(
         "timeout": timeout,
         "use_docker": use_docker
     }
-    res = requests.post(f"{SERVER_URL}/execute", json=payload)
+    # Timeout is explicitly set based on execution timeout budget.
+    res = requests.post(  # nosec B113
+        f"{SERVER_URL}/execute",
+        json=payload,
+        timeout=max(timeout + 5, 10),
+    )
     res.raise_for_status()
     
     return {
@@ -220,7 +231,7 @@ def generate_mcp_project(
             image_tag = f"fusional-mcp:{int(time.time())}"
         
         cmd = ["docker", "build", "-t", image_tag, out_dir]
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True)  # nosec B603
         build_result = {
             "stdout": proc.stdout,
             "stderr": proc.stderr,

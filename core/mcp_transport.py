@@ -26,7 +26,7 @@ mcp = FastMCP(
 )
 def execute_code(code: str, timeout: int = 5) -> dict:
     import shutil
-    import subprocess
+    import subprocess  # nosec B404
     import sys
     import tempfile
 
@@ -36,7 +36,7 @@ def execute_code(code: str, timeout: int = 5) -> dict:
     with open(script_path, "w", encoding="utf-8") as f:
         f.write(code)
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec B603
             [sys.executable, script_path],
             capture_output=True,
             text=True,
