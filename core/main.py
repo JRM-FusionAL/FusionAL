@@ -17,6 +17,7 @@ import subprocess  # nosec B404
 import tempfile
 from datetime import datetime
 from pathlib import Path
+from contextlib import asynccontextmanager
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -72,11 +73,26 @@ try:
 except Exception:
     run_in_docker = None
 
+# --- MCP transport ---
+from .mcp_transport import mcp
+
+
+@asynccontextmanager
+async def _lifespan(app):
+    app.state._mcp_session_context = mcp.session_manager.run()
+    await app.state._mcp_session_context.__aenter__()
+    yield
+    ctx = getattr(app.state, "_mcp_session_context", None)
+    if ctx is not None:
+        await ctx.__aexit__(None, None, None)
+
+
 # --- App ---
 app = FastAPI(
     title="FusionAL - MCP Execution Server",
     description="AI-powered MCP server builder and executor with Docker sandboxing",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=_lifespan,
 )
 
 if _SECURITY_ENABLED:
@@ -87,23 +103,9 @@ if _SECURITY_ENABLED:
 if _TRACING_IMPORTABLE:
     configure_tracing(app)
 
-from .mcp_transport import mcp
 mcp.settings.streamable_http_path = "/"
 mcp_app = mcp.streamable_http_app()
 app.mount("/mcp", mcp_app)
-
-
-@app.on_event("startup")
-async def startup_mcp_app():
-    app.state._mcp_session_context = mcp.session_manager.run()
-    await app.state._mcp_session_context.__aenter__()
-
-
-@app.on_event("shutdown")
-async def shutdown_mcp_app():
-    context_manager = getattr(app.state, "_mcp_session_context", None)
-    if context_manager is not None:
-        await context_manager.__aexit__(None, None, None)
 
 
 def _auth():

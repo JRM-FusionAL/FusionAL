@@ -8,7 +8,7 @@ and manages MCP project scaffolding with Docker integration.
 import os
 import requests
 from dotenv import load_dotenv
-import openai
+from openai import OpenAI
 import json
 import subprocess  # nosec B404
 import tempfile
@@ -24,8 +24,6 @@ ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")
 HTTP_REQUEST_TIMEOUT_SECONDS = int(os.getenv("HTTP_REQUEST_TIMEOUT_SECONDS", "30"))
 
-if OPENAI_API_KEY:
-    openai.api_key = OPENAI_API_KEY
 
 
 def generate_python_from_claude(prompt: str, model: str = None) -> str:
@@ -78,7 +76,8 @@ def generate_python_from_openai(prompt: str, model: str = None) -> str:
         {"role": "user", "content": prompt},
     ]
 
-    resp = openai.ChatCompletion.create(
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    resp = client.chat.completions.create(
         model=model,
         messages=messages,
         max_tokens=4096
