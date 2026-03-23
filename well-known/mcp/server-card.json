@@ -1,0 +1,67 @@
+﻿{
+  "serverInfo": {
+    "name": "FusionAL",
+    "version": "1.0.0"
+  },
+  "authentication": {
+    "required": true,
+    "schemes": [
+      "apiKey"
+    ]
+  },
+  "tools": [
+    {
+      "name": "execute_code",
+      "description": "Execute Python code in a sandboxed subprocess. Returns stdout, stderr, and return code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      }
+    },
+    {
+      "name": "generate_and_execute",
+      "description": "Generate Python code from a natural language prompt using Claude, then execute it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      }
+    },
+    {
+      "name": "generate_mcp_project",
+      "description": "Generate a complete MCP server project from a description using Claude.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "description"
+        ]
+      }
+    }
+  ],
+  "resources": [],
+  "prompts": []
+}
