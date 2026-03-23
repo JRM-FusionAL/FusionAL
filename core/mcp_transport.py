@@ -6,6 +6,7 @@ Mounts at /mcp on the FastAPI app — any MCP client can connect here.
 """
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from .ai_agent import (
     generate_and_execute as _generate_and_execute,
     generate_mcp_project as _gen_mcp_project,
@@ -14,6 +15,9 @@ from .ai_agent import (
 mcp = FastMCP(
     "fusional",
     streamable_http_path="/",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
+    ),
 )
 
 
@@ -26,7 +30,7 @@ mcp = FastMCP(
 )
 def execute_code(code: str, timeout: int = 5) -> dict:
     import shutil
-    import subprocess  # nosec B404
+    import subprocess
     import sys
     import tempfile
 
@@ -36,7 +40,7 @@ def execute_code(code: str, timeout: int = 5) -> dict:
     with open(script_path, "w", encoding="utf-8") as f:
         f.write(code)
     try:
-        proc = subprocess.run(  # nosec B603
+        proc = subprocess.run(
             [sys.executable, script_path],
             capture_output=True,
             text=True,
