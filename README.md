@@ -1,4 +1,4 @@
-# 🚀 **FusionAL** - Self-Hosted MCP Governance Gateway
+# 🚀 FusionAL — Self-Hosted MCP Governance Gateway
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)
@@ -6,138 +6,108 @@
 ![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-orange)
 
 > **Deploy governed MCP in weeks, not quarters.**  
-> 🌐 [**fusional.dev**](https://fusional.dev) • 📧 [jonathanmelton.fusional@gmail.com](mailto:jonathanmelton.fusional@gmail.com) • 🗓️ [Book Call](https://calendly.com/jonathanmelton004/30min)
+> 🌐 [fusional.dev](https://fusional.dev) • 📧 [jonathanmelton.fusional@gmail.com](mailto:jonathanmelton.fusional@gmail.com) • 🗓️ [Book a Call](https://calendly.com/jonathanmelton004/30min)
 
-A privacy-first, self-hosted **Model Context Protocol (MCP) governance gateway** for teams that need auditability, policy controls, and reliable operations across AI toolchains — without a dedicated platform engineering department.
+A privacy-first, self-hosted **Model Context Protocol (MCP) governance gateway** for teams that need
+auditability, policy controls, and reliable AI tool operations — without a dedicated platform
+engineering department.
 
-Built for regulated and privacy-sensitive environments (healthcare, legal, fintech SMBs) where cloud-hosted tool orchestration is not acceptable. While VC-backed gateways like TrueFoundry, MintMCP, and Composio target enterprises with existing platform teams, FusionAL serves the 80% of companies that need governed MCP but can't operate it themselves.
+Built for regulated and privacy-sensitive environments (healthcare, legal, fintech SMBs) where
+cloud-hosted tool orchestration is not acceptable. FusionAL serves the 80% of companies that need
+governed MCP but can't operate it themselves.
 
-Core value:
-- **Self-hosted deployment** (Docker-first, your data never leaves)
-- **Audit-ready operations** (tool call visibility and traceability)
-- **Policy enforcement** (control what tools can run and how)
-- **Privacy-first architecture** (keep sensitive data in your environment)
-- **Cross-platform reliability** including 6 documented Windows-specific MCP failure modes solved publicly
-- **Done-for-you option** (we deploy, govern, and manage it for you)
-
----
-
-## 🎯 What is FusionAL?
-
-FusionAL provides a governance control layer for MCP operations:
-
-1. **Centralizing** MCP server access behind a self-hosted gateway
-2. **Enforcing** policies for tool availability, limits, and runtime behavior
-3. **Auditing** MCP activity for compliance and incident response
-4. **Deploying** governed MCP access to Claude Desktop and other MCP-compatible clients
-
----
-
-## 🏢 Who Is FusionAL For?
-
-**Teams without a platform engineering department** who need governed MCP operations:
-
-- **Healthcare tech** (20–150 employees) — HIPAA data residency, audit trail requirements
-- **Legal tech startups** — client data sensitivity, self-hosted mandate
-- **Fintech compliance teams** — auditability, policy enforcement, key rotation
-- **AI consultancies** — deploying governed MCP for their clients
-
-### Enterprise vs. Community
-
-- **Community**: open-source gateway + deployment templates (MIT licensed, always free)
-- **Enterprise services**: MCP operations pilots, security audits, managed governance
-- **Done-for-you**: architecture, rollout, and ongoing managed ops for production MCP deployments
-
-If you need implementation support, see **[fusional.dev](https://fusional.dev)** for done-for-you MCP deployments or book a call: [calendly.com/jonathanmelton004/30min](https://calendly.com/jonathanmelton004/30min)
+**Core value:**
+- **Self-hosted deployment** — Docker-first, your data never leaves your environment
+- **Audit-ready operations** — tool call visibility and traceability
+- **Policy enforcement** — control what tools can run and how
+- **AI-powered server generation** — describe a tool in plain English, FusionAL builds it
+- **6 documented Windows-specific MCP failure modes** solved and published
+- **Done-for-you option** — we deploy, govern, and manage it for you
 
 ---
 
 ## ⚡ Quick Start (5 Minutes)
 
 ### Prerequisites
-- Docker Desktop installed and running
-- Claude Desktop (or compatible MCP client)
+- Docker Desktop (installed and running)
+- Claude Desktop
 - Python 3.11+
+- Git
 
-### Step 1: Clone & Setup
+### Step 1: Clone & Install
 
 ```bash
 git clone https://github.com/JRM-FusionAL/FusionAL.git
 cd FusionAL
 
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+source venv/bin/activate        # macOS/Linux
+# venv\Scripts\activate         # Windows
 
-# Install dependencies
 pip install -r core/requirements.txt
 ```
 
-### Step 2: Start FusionAL Server
+### Step 2: Start FusionAL
 
 ```bash
-# From the core directory
 cd core
 python -m uvicorn main:app --reload --port 8009
 ```
 
-### Step 2b: Attach FusionAL to VS Code Debugger
-
-This repo includes ready-to-use VS Code configs in `.vscode/`.
-
-1. Open the **Run and Debug** panel in VS Code.
-2. Select **FusionAL: Attach (debugpy :5678)**.
-3. Press **F5**.
-
-VS Code will start FusionAL under `debugpy` and attach automatically.
-
-### Step 3: Build Example (Dice Roller)
-
+Verify it's running:
 ```bash
-cd examples/dice-roller
-docker build -t dice-mcp-server .
+curl http://localhost:8009/health
 ```
 
-### Step 4: Configure Claude Desktop
+### Step 3: Configure Claude Desktop
 
-Find your Claude config:
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+Find your config file:
+- **Windows:** `C:\Users\YourName\AppData\Roaming\Claude\claude_desktop_config.json`
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
 
-Add the FusionAL gateway:
+
+> ⚠️ **Windows users:** Do NOT use `%APPDATA%` in the path — Claude Desktop won't expand it.
+> Hardcode the full path. Example: `C:\Users\YourName\AppData\Roaming\Claude\claude_desktop_config.json`
+
+Add FusionAL as an MCP server:
 
 ```json
 {
   "mcpServers": {
     "fusional-gateway": {
-      "command": "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe",
-      "args": [
-        "run", "-i", "--rm",
-        "-v", "/var/run/docker.sock:/var/run/docker.sock",
-        "-v", "[YOUR_HOME]/.docker/mcp:/mcp",
-        "docker/mcp-gateway",
-        "--catalog=/mcp/catalogs/docker-mcp.yaml",
-        "--catalog=/mcp/catalogs/custom.yaml",
-        "--config=/mcp/config.yaml",
-        "--registry=/mcp/registry.yaml",
-        "--transport=stdio"
-      ]
+      "url": "http://localhost:8009/sse"
     }
   }
 }
 ```
 
-Replace `[YOUR_HOME]` with:
-- macOS: `/Users/your_username`
-- Windows: `C:\\Users\\your_username`
-- Linux: `/home/your_username`
+### Step 4: Restart Claude Desktop & Test
 
-### Step 5: Restart & Test
+Fully quit and reopen Claude Desktop. Open a new chat and try:
 
-1. Quit and restart Claude Desktop
-2. Open a new chat
-3. Try: _"Roll 2d6+5 for damage"_
+> *"Generate a Python MCP server that fetches the current weather for a given city."*
+
+FusionAL will generate, register, and run it automatically.
+
+---
+
+## 🐳 Docker Deploy
+
+Build and run the full gateway in Docker:
+
+```bash
+docker build -t fusional .
+docker run -d -p 8089:8009 --name fusional fusional
+```
+
+Or with Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+Gateway available at `http://localhost:8089`.
 
 ---
 
@@ -145,97 +115,150 @@ Replace `[YOUR_HOME]` with:
 
 ```
 Claude Desktop / Any MCP Client
-         ↓
-   Docker MCP Gateway
-         ↓
-   FusionAL Platform
-    ┌────┬────┬────┐
-    ↓    ↓    ↓    ↓
- FastAPI Sandbox Registry AI Agent
-  Server  (Docker) (JSON)  (Claude/OpenAI)
+         │
+         ▼  (SSE or Streamable HTTP)
+  FusionAL Gateway  (:8009)
+         │
+   ┌─────┴──────┐
+   ▼            ▼
+FastAPI      MCP Transport (/mcp)
+REST API     ├── execute_code
+             ├── generate_and_execute
+             └── generate_mcp_project
+         │
+         ▼
+  Docker Sandbox Executor
+  (network isolated, memory capped)
+         │
+         ▼
+  MCP Server Registry (JSON)
+  ├── business-intelligence-mcp  (:8101)
+  ├── api-integration-hub        (:8102)
+  └── content-automation-mcp     (:8103)
 ```
 
-### Core Components
+### MCP Tools (via `/mcp`)
 
-| Component | Purpose |
-|-----------|---------|
-| **main.py** | FastAPI REST server with /execute, /register, /catalog endpoints |
-| **runner_docker.py** | Hardened Docker sandbox executor with security constraints |
-| **ai_agent.py** | Claude/OpenAI integration for MCP server generation |
+| Tool | Description |
+|------|-------------|
+| `execute_code` | Run Python in an isolated subprocess sandbox |
+| `generate_and_execute` | Plain English prompt → Claude writes it → runs it |
+| `generate_mcp_project` | Describe an MCP server → Claude builds the full project |
 
-### Docker Sandbox Constraints
+### REST API
 
-Each execution runs with:
-- ✅ Network isolation (`--network none`)
-- ✅ Memory limits (default 128MB, configurable)
-- ✅ Process limits (max 64 processes)
-- ✅ No privilege escalation
-- ✅ All capabilities dropped
-- ✅ Read-only filesystem (except /tmp)
-- ✅ Non-root user execution
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/execute` | POST | Execute Python (optional Docker sandbox) |
+| `/register` | POST | Register an MCP server in the registry |
+| `/catalog` | GET | List all registered servers |
+| `/generate` | POST | Generate and launch a new server from a prompt |
 
 ---
 
-## 🛠️ Building Your First MCP Server
+## 🛠️ Showcase Servers
 
-### Using the AI-Powered Builder
+These servers ship with the [mcp-consulting-kit](https://github.com/JRM-FusionAL/mcp-consulting-kit)
+and are pre-registered in the FusionAL gateway:
 
-```python
-from core.ai_agent import generate_mcp_project
+| Server | Port | Tools |
+|--------|------|-------|
+| `business-intelligence-mcp` | 8101 | Natural language → SQL (PostgreSQL, MySQL, SQLite) |
+| `api-integration-hub` | 8102 | Slack, GitHub Issues, Stripe customer lookup |
+| `content-automation-mcp` | 8103 | Web scraping, link extraction, table parsing, RSS feeds |
 
-# Generate a complete server from a description
-result = generate_mcp_project(
-    prompt="Build a weather MCP server that gets current weather and 5-day forecast using OpenWeather API",
-    provider="claude",
-    out_dir="./my-weather-server",
-    build=True,
-    image_tag="weather-mcp:latest"
-)
+Start the full showcase stack:
 
-print(f"Generated files: {result['files']}")
-print(f"Docker image built: {result['build_result']['image_tag']}")
+```bash
+cd ../mcp-consulting-kit
+docker compose up -d
 ```
 
-### Manual MCP Server Structure
+---
+
+## 🔒 Security Model
+
+### Docker Sandbox
+
+Each code execution runs with:
+- ✅ Network isolation (`--network none`)
+- ✅ Memory limits (default 128 MB, configurable)
+- ✅ Process limits (max 64 processes)
+- ✅ Read-only filesystem (except `/tmp`)
+- ✅ No privilege escalation
+- ✅ Non-root user execution
+
+### API Security (optional)
+
+When `mcp-consulting-kit/showcase-servers/common/security.py` is present, the gateway enables:
+- API key authentication on `/execute`, `/register`, `/generate`
+- Rate limiting
+- CORS configuration
+
+---
+
+## 🪟 Windows-Specific Fixes
+
+FusionAL documents and solves 6 Windows MCP failure modes not covered in official docs:
+
+1. **The 60-Second Silence** — Claude Desktop times out with zero error. Caused by Docker socket init lag.  
+   [Read the fix →](https://dev.to/jonathanmeltonfusional/why-your-mcp-setup-keeps-timing-out-in-60-seconds-and-how-i-fixed-it-on-windows-367a)
+
+2. **The BOM Trap** — Notepad/VS Code injects a byte-order mark into JSON configs, silently breaking MCP.  
+   Fix: `[System.IO.File]::WriteAllText(path, content, New-Object System.Text.UTF8Encoding($false))`
+
+3. **The Backslash Trap** — Windows path separators in `claude_desktop_config.json` break startup silently.  
+   Use forward slashes or escaped double backslashes.
+
+4. **`%USERPROFILE%` expansion** — Claude Desktop does NOT expand env vars in config paths. Hardcode them.
+
+5. **Docker named pipe failure** — Docker's named pipe transport fails on WSL2. Use `/var/run/docker.sock`.
+
+6. **Registry timeout at 8+ servers** — Claude Desktop hits a timeout threshold on lower-end hardware.  
+   Cap your registry at 8 servers on i5/i7 7th gen and below.
+
+---
+
+## 🧰 Building Your Own MCP Server
+
+### Using the AI Builder (via Claude Desktop)
+
+After connecting FusionAL, ask Claude:
+
+> *"Generate an MCP server that queries our PostgreSQL database using natural language."*
+
+FusionAL generates the full project, builds it, and registers it in the gateway automatically.
+
+### Manual Server Structure
 
 ```
 my-server/
-├── Dockerfile           # Docker configuration
-├── requirements.txt     # Python dependencies
-├── my_server.py        # Main MCP server (with @mcp.tool() decorators)
-├── README.md           # Documentation
-└── .env                # Secrets (not committed)
+├── Dockerfile
+├── requirements.txt
+├── my_server.py       ← FastMCP tools go here
+└── .env
 ```
 
-### Key Rules for MCP Servers
+### Key Rules
 
-1. ✅ Use `@mcp.tool()` decorators on async functions
-2. ✅ Single-line docstrings ONLY (multi-line breaks gateway)
-3. ✅ Return formatted strings from all tools
-4. ✅ Default parameters to empty strings `""` not `None`
-5. ✅ Log to `sys.stderr`
-6. ✅ Run as non-root in Docker
-
-Example:
+1. Use `@mcp.tool()` decorators on async functions
+2. Single-line docstrings only (multi-line breaks some MCP clients)
+3. Return formatted strings from all tools
+4. Default parameters to `""` not `None`
+5. Log to `sys.stderr`
+6. Run as non-root in Docker
 
 ```python
 from mcp.server.fastmcp import FastMCP
-import logging
 import sys
 
-logging.basicConfig(stream=sys.stderr)
-logger = logging.getLogger("myserver")
-mcp = FastMCP("myserver")
+mcp = FastMCP("my-server")
 
 @mcp.tool()
-async def my_tool(param: str = "") -> str:
-    """Concise single-line description of what this does."""
-    try:
-        # Implementation
-        return "✅ Result"
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        return f"❌ Error: {str(e)}"
+async def my_tool(query: str = "") -> str:
+    """What this tool does in one line."""
+    return f"✅ Result for: {query}"
 
 if __name__ == "__main__":
     mcp.run(transport='stdio')
@@ -245,171 +268,74 @@ if __name__ == "__main__":
 
 ## 📚 Examples
 
-### Built-in Examples
-
-1. **Dice Roller** (`examples/dice-roller/`) - D&D dice rolling suite (8 tools)
-   - Roll standard dice, custom dice, stats, advantage/disadvantage rolls
-   - Demonstrates: Dice notation parsing, utility functions
-
-2. **Weather API** (`examples/weather-api/`) - Real-time weather information
-   - Get current weather, multi-day forecasts, parse weather data
-   - Demonstrates: External API integration, error handling
-
-3. **File Utilities** (`examples/file-utils/`) - File system operations
-   - Count lines, get file info, search text, list files
-   - Demonstrates: Safe filesystem access, pagination, permissions handling
-
-### Generating More Examples
-
-Use the AI agent to generate servers for:
-- Task tracking (Todoist, Toggl integration)
-- Web scraping with BeautifulSoup
-- Database queries (PostgreSQL, MongoDB)
-- API integrations (GitHub, Slack, Stripe)
-- Code analysis and linting
-- Automation workflows
+| Example | Path | What it demonstrates |
+|---------|------|----------------------|
+| Dice Roller | `examples/dice-roller/` | D&D dice (8 tools), dice notation parsing |
+| Weather API | `examples/weather-api/` | External API integration, error handling |
+| File Utils | `examples/file-utils/` | Safe filesystem access, pagination |
 
 ---
 
-## 🔌 API Reference
+## 🚀 Done-for-You Consulting
 
-### POST /execute
+Don't want to self-manage? FusionAL offers done-for-you MCP deployments:
 
-Execute Python code with optional Docker sandboxing.
+| Tier | Scope | Price |
+|------|-------|-------|
+| **Starter Install** | Single environment, core servers, Windows hardening | $2,500–$3,500 |
+| **Core Install** | Full stack, custom servers, governance layer, team onboarding | $5,000–$9,000 |
+| **Retainer** | Ongoing ops, incident response, new server builds | $1,500–$4,000/mo |
 
-```bash
-curl -X POST http://localhost:8009/execute \
-  -H "Content-Type: application/json" \
-  -d '{
-    "language": "python",
-    "code": "print(2 + 2)",
-    "timeout": 5,
-    "use_docker": true,
-    "memory_mb": 128
-  }'
-```
-
-### POST /register
-
-Register a new MCP server.
-
-```bash
-curl -X POST http://localhost:8009/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "dice-roller",
-    "description": "D&D dice rolling",
-    "url": "docker://dice-mcp-server",
-    "metadata": {"version": "1.0","tools": ["roll_dice", "roll_stats"]}
-  }'
-```
-
-### GET /catalog
-
-List all registered MCP servers.
-
-```bash
-curl http://localhost:8009/catalog
-```
-
-### GET /health
-
-Health check.
-
-```bash
-curl http://localhost:8009/health
-```
-
----
-
-## 🔒 Security Model
-
-### Docker Sandbox Features
-
-- **Network Isolation**: No external network access
-- **Memory Limits**: Prevents DoS via memory exhaustion
-- **Process Limits**: Caps runaway process forks
-- **Filesystem**: Read-only root with tmpfs /tmp
-- **User Isolation**: Runs as non-root (UID 1000)
-- **Capability Drop**: All Linux capabilities dropped
-
-### Limitations
-
-- Designed for **developer machines**, not production hardening
-- For production, add: AppArmor/SELinux, privilege gating, resource monitoring
-- External API calls not possible (network isolation)
-
----
-
-## 🚀 Deployment
-
-### Local Development
-
-```bash
-cd core
-python -m uvicorn main:app --reload --port 8009
-```
-
-### Production (Docker)
-
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY core/ .
-RUN pip install -r requirements.txt
-EXPOSE 8009
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8009"]
-```
-
-Build and run:
-
-```bash
-docker build -t fusional-server .
-docker run -p 8009:8009 -v /var/run/docker.sock:/var/run/docker.sock fusional-server
-```
-
----
-
-## 📖 Documentation
-
-- [Quick Start Guide](quick-start/setup-guide.md)
-- [Building Custom Servers](docs/custom-servers.md)
+[Book a free 15-min MCP security audit →](https://calendly.com/jonathanmelton004/30min)
 
 ---
 
 ## 🤝 Contributing
 
-Contributions welcome! Areas to help:
-
-- Build new example servers
-- Improve documentation
-- Add tests
-- Optimize Docker constraints
-- Multi-language support
+Contributions welcome. Priority areas:
+- New example servers
+- Windows compatibility fixes
+- Documentation improvements
+- Test coverage
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE)
+MIT — see [LICENSE](LICENSE)
 
 ---
 
 ## 🙏 Credits
 
-- **MCP Foundation** - Model Context Protocol
-- **Anthropic** - Claude AI
-- **Docker** - Container technology
-- **FastAPI** - API framework
+- [Anthropic](https://anthropic.com) — Claude AI + MCP protocol
+- [FastAPI](https://fastapi.tiangolo.com) — API framework
+- [FastMCP](https://github.com/jlowin/fastmcp) — MCP server framework
+- [Docker](https://docker.com) — Container infrastructure
 
 ---
 
-## ☕ Support
-
-- 🐛 Found a bug? [Open an issue](https://github.com/JRM-FusionAL/FusionAL/issues)
-- 💡 Have an idea? Submit a discussion
-- ⭐ Like it? Star the repo!
+**Built by a self-taught developer who fixed the MCP problems nobody else documented.**  
+🌐 [fusional.dev](https://fusional.dev) • ⭐ Star the repo if it saved you hours
 
 ---
 
-**Let's build the future of AI-powered automation tools together! 🚀**
+## 🙌 Origin & Inspiration
+
+FusionAL started with a NetworkChuck video.
+
+If you haven't watched [*"you need to learn MCP RIGHT NOW!!"*](https://youtube.com/@NetworkChuck) — go watch it first. Chuck explains the fundamentals better than anyone, and his [docker-mcp-tutorial repo](https://github.com/theNetworkChuck/docker-mcp-tutorial) is the best starting point for understanding how MCP servers work with Docker.
+
+The dice-roller example and quick-start structure in this repo are adapted from that tutorial (MIT licensed).
+
+**Where FusionAL goes further:**
+
+Chuck's tutorial shows you how to build MCP servers manually — edit a prompt template, paste it into Claude, implement the result yourself.
+
+FusionAL removes the human from that loop entirely. Instead of a prompt file you copy-paste, `generate_mcp_project` is a live tool call — Claude describes what it wants built, FusionAL generates it, registers it, and runs it. No clipboard. No manual steps.
+
+More importantly, Chuck's video covers Docker's MCP catalog — 300+ servers you can enable with a click. That's step one. FusionAL is what you need when a CTO asks:
+
+> *"Great — but how do we audit what those tools are doing? How do we enforce policy? How do we make sure this doesn't become a security incident?"*
+
+That's the gap FusionAL was built to fill: governance, auditability, and operational control for teams deploying MCP at scale — especially on Windows, where the catalog alone isn't enough.

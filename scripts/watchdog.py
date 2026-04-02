@@ -12,6 +12,8 @@ import time
 import logging
 from datetime import datetime
 from pathlib import Path
+import threading
+import think_tank_trigger as tt
 
 LOG_DIR = Path(__file__).parent.parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
@@ -150,19 +152,43 @@ def handle_fault(server: dict):
     name = server["name"]
 
     if not can_restart(name):
-        msg = f"Budget gate: max restarts reached for {name}, alerting only"
+        msg = f"Budget gate: max restarts reached for {name}, escalating to Think Tank"
         log.error(msg)
-        log_fault(name, "crash", "health check failed", "alert_only_budget_exceeded")
+        log_fault(name, "crash", "health check failed", "budget_gate_think_tank_triggered")
+        _fire_think_tank(server, "crash", "health check failed", "budget_gate")
         return
 
     recovered = restart_container(server)
     if recovered:
         log_fault(name, "crash", "health check failed", "restarted_successfully")
     else:
-        action = "restart_failed_manual_intervention_required"
+        action = "restart_failed_think_tank_triggered"
         if server["critical"]:
-            log.critical(f"CRITICAL SERVER DOWN: {name} — manual intervention needed")
+            log.critical(f"CRITICAL SERVER DOWN: {name} — escalating to Think Tank")
         log_fault(name, "crash", "health check failed + restart failed", action)
+        _fire_think_tank(server, "crash", "health check failed + restart failed", "restart_failed")
+
+
+def _fire_think_tank(server: dict, fault_type: str, detail: str, trigger_reason: str):
+    """Non-blocking Think Tank dispatch — runs in background thread."""
+    def _run():
+        try:
+            result = tt.trigger(
+                server_name=server["name"],
+                fault_type=fault_type,
+                detail=detail,
+                trigger_reason=trigger_reason,
+                servers=SERVERS,
+            )
+            log.info(f"[ThinkTank] Verdict={result.verdict} | Plan={result.action_plan}")
+            if result.escalate:
+                log.critical(f"[ThinkTank] ESCALATE TO HUMAN: {result.escalation_reason}")
+        except Exception as e:
+            log.error(f"[ThinkTank] Failed to run: {e}")
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+    log.info(f"[ThinkTank] Dispatched in background for {server['name']}")
 
 
 def run():
