@@ -1,0 +1,101 @@
+﻿{
+    "mcp-proxy":  {
+                      "description":  "Docker container mcp-proxy (image: nginx:1.27-alpine)",
+                      "url":  "docker://mcp-proxy",
+                      "metadata":  {
+                                       "version":  "unknown",
+                                       "tools":  [
+
+                                                 ]
+                                   },
+                      "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                  },
+    "social-poster-mcp":  {
+                              "description":  "Docker container social-poster-mcp (image: mcp-consulting-kit-social-poster-mcp)",
+                              "url":  "docker://social-poster-mcp",
+                              "metadata":  {
+                                               "version":  "unknown",
+                                               "tools":  [
+
+                                                         ]
+                                           },
+                              "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                          },
+    "portainer_portainer-docker-extension-desktop-extension-service":  {
+                                                                           "description":  "Docker container portainer_portainer-docker-extension-desktop-extension-service (image: portainer/portainer-docker-extension:2.39.0)",
+                                                                           "url":  "docker://portainer_portainer-docker-extension-desktop-extension-service",
+                                                                           "metadata":  {
+                                                                                            "version":  "unknown",
+                                                                                            "tools":  [
+
+                                                                                                      ]
+                                                                                        },
+                                                                           "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                                                                       },
+    "business-intelligence-mcp":  {
+                                      "description":  "Docker container business-intelligence-mcp (image: mcp-consulting-kit-business-intelligence-mcp)",
+                                      "url":  "docker://business-intelligence-mcp",
+                                      "metadata":  {
+                                                       "version":  "unknown",
+                                                       "tools":  [
+
+                                                                 ]
+                                                   },
+                                      "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                                  },
+    "intelligence-mcp":  {
+                             "description":  "Docker container intelligence-mcp (image: mcp-consulting-kit-intelligence-mcp)",
+                             "url":  "docker://intelligence-mcp",
+                             "metadata":  {
+                                              "version":  "unknown",
+                                              "tools":  [
+
+                                                        ]
+                                          },
+                             "registered_at":  "2026-03-06T10:33:35.7050241Z"
+                         },
+    "content-automation-mcp":  {
+                                   "description":  "Docker container content-automation-mcp (image: mcp-consulting-kit-content-automation-mcp)",
+                                   "url":  "docker://content-automation-mcp",
+                                   "metadata":  {
+                                                    "version":  "unknown",
+                                                    "tools":  [
+
+                                                              ]
+                                                },
+                                   "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                               },
+    "docker_labs-vscode-installer-desktop-extension-service":  {
+                                                                   "description":  "Docker container docker_labs-vscode-installer-desktop-extension-service (image: docker/labs-vscode-installer:0.0.9)",
+                                                                   "url":  "docker://docker_labs-vscode-installer-desktop-extension-service",
+                                                                   "metadata":  {
+                                                                                    "version":  "unknown",
+                                                                                    "tools":  [
+
+                                                                                              ]
+                                                                                },
+                                                                   "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                                                               },
+    "api-integration-hub":  {
+                                "description":  "Docker container api-integration-hub (image: mcp-consulting-kit-api-integration-hub)",
+                                "url":  "docker://api-integration-hub",
+                                "metadata":  {
+                                                 "version":  "unknown",
+                                                 "tools":  [
+
+                                                           ]
+                                             },
+                                "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                            },
+    "prizz_deep-dive-desktop-extension-service":  {
+                                                      "description":  "Docker container prizz_deep-dive-desktop-extension-service (image: prizz/deep-dive:1.0.95)",
+                                                      "url":  "docker://prizz_deep-dive-desktop-extension-service",
+                                                      "metadata":  {
+                                                                       "version":  "unknown",
+                                                                       "tools":  [
+
+                                                                                 ]
+                                                                   },
+                                                      "registered_at":  "2026-03-06T10:33:35.7120296Z"
+                                                  }
+}

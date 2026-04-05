@@ -1,0 +1,94 @@
+[
+  {
+    "timestamp": "2026-04-02T06:46:50.758614",
+    "plan": [
+      "check logs for content-automation-mcp",
+      "restart container content-automation-mcp",
+      "inspect container content-automation-mcp"
+    ],
+    "results": [
+      {
+        "step": "check logs for content-automation-mcp",
+        "command": "docker logs content-automation-mcp --tail 50",
+        "success": true,
+        "skipped": false,
+        "skip_reason": "",
+        "returncode": 0,
+        "stdout": "[DRY RUN] Would execute: docker logs content-automation-mcp --tail 50",
+        "stderr": ""
+      },
+      {
+        "step": "restart container content-automation-mcp",
+        "command": "docker restart content-automation-mcp",
+        "success": true,
+        "skipped": false,
+        "skip_reason": "",
+        "returncode": 0,
+        "stdout": "[DRY RUN] Would execute: docker restart content-automation-mcp",
+        "stderr": ""
+      },
+      {
+        "step": "inspect container content-automation-mcp",
+        "command": "docker inspect content-automation-mcp",
+        "success": true,
+        "skipped": false,
+        "skip_reason": "",
+        "returncode": 0,
+        "stdout": "[DRY RUN] Would execute: docker inspect content-automation-mcp",
+        "stderr": ""
+      }
+    ],
+    "summary": {
+      "total": 3,
+      "succeeded": 3,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  {
+    "timestamp": "2026-04-02T06:51:28.160882",
+    "plan": [
+      "check logs for content-automation-mcp",
+      "restart container content-automation-mcp",
+      "inspect container content-automation-mcp"
+    ],
+    "results": [
+      {
+        "step": "check logs for content-automation-mcp",
+        "command": "docker logs content-automation-mcp --tail 50",
+        "success": true,
+        "skipped": false,
+        "skip_reason": "",
+        "returncode": 0,
+        "stdout": "[DRY RUN] Would execute: docker logs content-automation-mcp --tail 50",
+        "stderr": ""
+      },
+      {
+        "step": "restart container content-automation-mcp",
+        "command": "docker restart content-automation-mcp",
+        "success": true,
+        "skipped": false,
+        "skip_reason": "",
+        "returncode": 0,
+        "stdout": "[DRY RUN] Would execute: docker restart content-automation-mcp",
+        "stderr": ""
+      },
+      {
+        "step": "inspect container content-automation-mcp",
+        "command": "docker inspect content-automation-mcp",
+        "success": true,
+        "skipped": false,
+        "skip_reason": "",
+        "returncode": 0,
+        "stdout": "[DRY RUN] Would execute: docker inspect content-automation-mcp",
+        "stderr": ""
+      }
+    ],
+    "summary": {
+      "total": 3,
+      "succeeded": 3,
+      "failed": 0,
+      "skipped": 0
+    }
+  }
+]
