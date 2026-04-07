@@ -53,9 +53,28 @@ def _validate_cors_origins(origins: list[str]) -> list[str]:
 
 
 def get_rate_limit() -> tuple[int, int]:
-    requests = int(os.getenv("RATE_LIMIT_REQUESTS", "60"))
-    window_seconds = int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
-    return requests, window_seconds
+    """Return ``(requests, window_seconds)`` for the active rate-limit config.
+
+    Explicit ``RATE_LIMIT_REQUESTS`` / ``RATE_LIMIT_WINDOW_SECONDS`` env vars
+    take precedence for backward-compatibility.  When neither is set the
+    active preset (``RATE_LIMIT_PROFILE``) provides the defaults.
+    """
+    explicit_requests = os.getenv("RATE_LIMIT_REQUESTS")
+    explicit_window = os.getenv("RATE_LIMIT_WINDOW_SECONDS")
+    if explicit_requests is not None and explicit_window is not None:
+        return int(explicit_requests), int(explicit_window)
+
+    try:
+        from rate_limit_presets import get_active_preset  # pyright: ignore[reportMissingImports]
+
+        preset = get_active_preset()
+        return preset.requests_per_window, preset.window_seconds
+    except ImportError:
+        # Fallback to hard-coded defaults when presets module is unavailable
+        return (
+            int(explicit_requests or "60"),
+            int(explicit_window or "60"),
+        )
 
 
 def get_log_level() -> str:
