@@ -1,19 +1,19 @@
 # FusionAL Core - requirements.txt
-# Python 3.11+ | Last updated: 2026-04-02
+# Python 3.11+ | Last updated: 2026-04-22
 
-fastapi==0.135.3
-uvicorn[standard]==0.42.0
+fastapi==0.143.0
+uvicorn[standard]==0.43.0
 python-dotenv==1.2.2
-anthropic==0.88.0
-pydantic==2.12.5
+anthropic==0.95.0
+pydantic==2.15.0
 redis==7.4.0
 requests==2.33.1
 httpx==0.28.1
-openai==2.30.0
-mcp[cli]==1.26.0
+openai==2.31.0
+mcp[cli]==1.27.1
 
 # Notion Poller (notion_poller.py)
-notion-client==3.0.0
+otion-client==3.0.1
 rich==14.3.3
 
 # Tracing (OpenTelemetry)
