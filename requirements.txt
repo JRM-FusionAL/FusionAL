@@ -13,7 +13,7 @@ openai==2.31.0
 mcp[cli]==1.27.1
 
 # Notion Poller (notion_poller.py)
-otion-client==3.0.1
+notion-client==3.0.1
 rich==14.3.3
 
 # Tracing (OpenTelemetry)
