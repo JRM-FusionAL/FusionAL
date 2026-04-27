@@ -21,6 +21,12 @@ from models.api_key import TenantAPIKey
 
 logger = logging.getLogger("fusional.key_manager")
 
+
+def _s(value: str) -> str:
+    """Sanitize user-controlled strings before logging to prevent log injection."""
+    return value.replace("\r", "\\r").replace("\n", "\\n")
+
+
 # ---------------------------------------------------------------------------
 # Config — override via env vars if needed
 # ---------------------------------------------------------------------------
@@ -50,8 +56,8 @@ def _audit(event: str, tenant_id: str, key_hash: str, actor: Optional[str] = Non
     try:
         os.makedirs(os.path.dirname(AUDIT_LOG_PATH), exist_ok=True)
         ts = datetime.now(timezone.utc).isoformat()
-        actor_str = f" actor={actor}" if actor else ""
-        line = f"{ts} {event} tenant={tenant_id} hash={key_hash[:12]}...{actor_str}\n"
+        actor_str = f" actor={_s(actor)}" if actor else ""
+        line = f"{ts} {event} tenant={_s(tenant_id)} hash={key_hash[:12]}...{actor_str}\n"
         with open(AUDIT_LOG_PATH, "a") as f:
             f.write(line)
         logger.info(line.strip())
@@ -108,7 +114,7 @@ def issue_key(tenant_id: str, label: str) -> str:
         )
 
     _audit("KEY_ISSUED", tenant_id, h)
-    logger.info("Issued key for tenant=%s label=%s", tenant_id, label)
+    logger.info("Issued key for tenant=%s label=%s", _s(tenant_id), _s(label))
     return raw_key
 
 
@@ -136,7 +142,7 @@ def validate_key(raw_key: str, tenant_id: str) -> bool:
         ).fetchone()
 
     if row is None:
-        logger.warning("validate_key: unknown key or tenant mismatch tenant=%s", tenant_id)
+        logger.warning("validate_key: unknown key or tenant mismatch tenant=%s", _s(tenant_id))
         return False
 
     if row["revoked_at"] is not None:
@@ -178,7 +184,7 @@ def revoke_key(raw_key: str, revoked_by: str) -> bool:
 
     tenant_id = tenant_row["tenant_id"] if tenant_row else "unknown"
     _audit("KEY_REVOKED", tenant_id, h, actor=revoked_by)
-    logger.info("Key revoked tenant=%s by=%s", tenant_id, revoked_by)
+    logger.info("Key revoked tenant=%s by=%s", _s(tenant_id), _s(revoked_by))
     return True
 
 

@@ -26,6 +26,11 @@ from services.key_manager import validate_key
 
 logger = logging.getLogger("fusional.auth")
 
+
+def _s(value: str) -> str:
+    """Sanitize user-controlled strings before logging to prevent log injection."""
+    return value.replace("\r", "\\r").replace("\n", "\\n")
+
 # ---------------------------------------------------------------------------
 # Paths that bypass auth (health checks, docs)
 # ---------------------------------------------------------------------------
@@ -63,8 +68,8 @@ class TenantAuthMiddleware(BaseHTTPMiddleware):
         if not api_key or not tenant_id:
             logger.warning(
                 "auth: missing credentials path=%s ip=%s",
-                request.url.path,
-                request.client.host if request.client else "unknown",
+                _s(request.url.path),
+                _s(request.client.host) if request.client else "unknown",
             )
             return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -74,9 +79,9 @@ class TenantAuthMiddleware(BaseHTTPMiddleware):
         if not validate_key(api_key, tenant_id):
             logger.warning(
                 "auth: invalid/revoked key tenant=%s path=%s ip=%s",
-                tenant_id,
-                request.url.path,
-                request.client.host if request.client else "unknown",
+                _s(tenant_id),
+                _s(request.url.path),
+                _s(request.client.host) if request.client else "unknown",
             )
             return JSONResponse(
                 status_code=status.HTTP_403_FORBIDDEN,
