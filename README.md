@@ -5,24 +5,30 @@
 ![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)
 ![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-orange)
 
-> **Deploy governed MCP in weeks, not quarters.**  
+> **Your team connected 10 MCP servers. Now what?**  
 > 🌐 [fusional.dev](https://fusional.dev) • 📧 [jonathanmelton.fusional@gmail.com](mailto:jonathanmelton.fusional@gmail.com) • 🗓️ [Book a Call](https://calendly.com/jonathanmelton004/30min)
 
-A privacy-first, self-hosted **Model Context Protocol (MCP) governance gateway** for teams that need
-auditability, policy controls, and reliable AI tool operations — without a dedicated platform
-engineering department.
+MCP is powerful. Enterprise MCP deployment is a different problem entirely.
 
-Built for regulated and privacy-sensitive environments (healthcare, legal, fintech SMBs) where
-cloud-hosted tool orchestration is not acceptable. FusionAL serves the 80% of companies that need
-governed MCP but can't operate it themselves.
+Every server you connect loads its full tool manifest into Claude's context window before
+processing a single token of your request. At 84 tools across several servers, that's
+**15,540 tokens consumed at session start** — before your team has asked anything.
+At scale, that's cost, latency, and an audit surface nobody can explain to legal.
 
-**Core value:**
-- **Self-hosted deployment** — Docker-first, your data never leaves your environment
-- **Audit-ready operations** — tool call visibility and traceability
-- **Policy enforcement** — control what tools can run and how
-- **AI-powered server generation** — describe a tool in plain English, FusionAL builds it
-- **6 documented Windows-specific MCP failure modes** solved and published
+FusionAL is a **self-hosted MCP governance gateway** that sits between your AI clients
+and your tool servers. One endpoint. Central auth. Tool-level policy enforcement.
+Full audit trail. Deployable in a single Docker command — including on Windows,
+where MCP has 6 documented failure modes the official docs don't cover.
+
+**Built for teams that have already said yes to MCP and now need to run it safely:**
+- **Token control** — filter tool exposure per client so context bloat doesn't scale with your server count
+- **Audit-ready operations** — every tool call logged with caller, input, latency, and response status
+- **Policy enforcement** — control what tools run, for whom, and under what conditions
+- **Windows-hardened** — 6 documented failure modes solved, none of which appear in official MCP docs
+- **AI-powered server generation** — describe a tool in plain English, FusionAL builds and registers it
 - **Done-for-you option** — we deploy, govern, and manage it for you
+
+> *The question isn't whether to adopt MCP. It's whether your deployment will survive contact with your security team.*
 
 ---
 
