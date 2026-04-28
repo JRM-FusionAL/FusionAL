@@ -11,7 +11,7 @@ mcp[cli]==1.27.0
 notion-client==3.0.0
 rich==15.0.0
 opentelemetry-sdk>=1.41.0
-opentelemetry-instrumentation-fastapi>=0.62b0
+opentelemetry-instrumentation-fastapi>=0.62b1
 opentelemetry-exporter-otlp-proto-http>=1.41.0
 setuptools>=82.0.1
 jaraco.context>=6.1.2
