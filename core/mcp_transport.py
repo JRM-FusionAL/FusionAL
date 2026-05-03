@@ -7,10 +7,13 @@ Mounts at /mcp on the FastAPI app — any MCP client can connect here.
 
 import time
 from pathlib import Path
+from typing import Annotated, Any, Optional, TypedDict
 import sys
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.types import ToolAnnotations
+from pydantic import Field
 from .ai_agent import (
     generate_and_execute as _generate_and_execute,
     generate_mcp_project as _gen_mcp_project,
@@ -71,20 +74,50 @@ mcp = FastMCP(
 )
 
 
+# --- Output schemas ---
+
+class ExecuteCodeResult(TypedDict, total=False):
+    stdout: str
+    stderr: str
+    returncode: int
+    error: str
+
+
+class GenerateAndExecuteResult(TypedDict):
+    generated_code: str
+    execution_result: dict[str, Any]
+
+
+class GenerateMcpProjectResult(TypedDict):
+    out_dir: str
+    files: list[str]
+    build_result: Optional[dict[str, Any]]
+
+
 @mcp.tool(
     name="execute_code",
     description=(
         "Execute Python code in a sandboxed subprocess. "
         "Returns stdout, stderr, and return code. Timeout is capped at 30 seconds."
     ),
+    annotations=ToolAnnotations(
+        title="Execute Code",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+        openWorldHint=False,
+    ),
 )
-def execute_code(code: str, timeout: int = 5) -> dict:
+def execute_code(
+    code: Annotated[str, Field(description="Python source code to execute in the sandboxed subprocess")],
+    timeout: Annotated[int, Field(description="Maximum execution time in seconds; clamped to 1–30", ge=1, le=30)] = 5,
+) -> ExecuteCodeResult:
     import shutil
     import subprocess
     import sys as _sys
     import tempfile
 
-    def _run():
+    def _run() -> ExecuteCodeResult:
         _timeout = min(max(timeout, 1), 30)
         tmpdir = tempfile.mkdtemp(prefix="fusional-")
         script_path = f"{tmpdir}/script.py"
@@ -112,8 +145,18 @@ def execute_code(code: str, timeout: int = 5) -> dict:
         "Generate Python code from a natural language prompt using Claude, then execute it. "
         "Returns the generated code and execution result. Requires ANTHROPIC_API_KEY."
     ),
+    annotations=ToolAnnotations(
+        title="Generate and Execute",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+        openWorldHint=True,
+    ),
 )
-def generate_and_execute(prompt: str, timeout: int = 10) -> dict:
+def generate_and_execute(
+    prompt: Annotated[str, Field(description="Natural language description of the Python task to generate and run via Claude")],
+    timeout: Annotated[int, Field(description="Maximum execution time in seconds for the generated code", ge=1, le=60)] = 10,
+) -> GenerateAndExecuteResult:
     return _audit_call(
         "generate_and_execute",
         _generate_and_execute,
@@ -130,10 +173,19 @@ def generate_and_execute(prompt: str, timeout: int = 10) -> dict:
         "Generate a complete MCP server project from a description using Claude. "
         "Returns the output directory path and list of generated files. Requires ANTHROPIC_API_KEY."
     ),
+    annotations=ToolAnnotations(
+        title="Generate MCP Project",
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=False,
+        openWorldHint=True,
+    ),
 )
-def generate_mcp_project(description: str) -> dict:
-    def _run():
+def generate_mcp_project(
+    description: Annotated[str, Field(description="Natural language description of the MCP server project to scaffold, including desired tools and functionality")],
+) -> GenerateMcpProjectResult:
+    def _run() -> GenerateMcpProjectResult:
         result = _gen_mcp_project(description, provider="claude", build=False)
-        return {"out_dir": result["out_dir"], "files": result["files"]}
+        return {"out_dir": result["out_dir"], "files": result["files"], "build_result": result.get("build_result")}
 
     return _audit_call("generate_mcp_project", _run)
