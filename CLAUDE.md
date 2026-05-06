@@ -1,5 +1,51 @@
 # CLAUDE.md — FusionAL
 
+## SESSION INIT — RUN THIS FIRST
+
+Before responding to anything, in this order:
+
+1. Read `C:\Users\puddi\Projects\fusional-knowledge-base\00-CURRENT-STATUS\STATUS.md`
+2. Read `C:\Users\puddi\Projects\fusional-knowledge-base\00-CURRENT-STATUS\PRIORITIES.md`
+3. Read `C:\Users\puddi\Projects\fusional-knowledge-base\05-RECALL\SOLVED-ISSUES.md`
+4. State runtime: "Running as: <model> on <platform>, tools available: <summary>"
+
+---
+
+## RECALL PROTOCOL (mandatory, visible)
+
+Before debugging ANY error or unexpected behavior:
+1. State "Recall check: searching SOLVED-ISSUES for <error fingerprint>"
+2. State outcome: "Match: SI-XXX — applying documented fix" OR "No match — proceeding with new diagnosis"
+
+The Recall check is VISIBLE OUTPUT. If the line is not in the response, the check did not happen.
+
+---
+
+## AUTO-LOG PROTOCOL (mandatory, ambient)
+
+While working, monitor for AUTO-LOG TRIGGERS: wrong assumption corrected, path/config drift, command failed + root cause identified, protocol violation, cross-system surprise, "why isn't this working" >2 min, repeated pattern.
+
+When a trigger fires:
+1. State: "Auto-log trigger: <which trigger> — drafting SI-XXX"
+2. Read `C:\Users\puddi\Projects\fusional-knowledge-base\05-RECALL\SOLVED-ISSUES.md`, find highest SI number
+3. Append entry IMMEDIATELY before "## TEMPLATE — copy this for new entries"
+4. Confirm: "Logged SI-XXX: <title>"
+5. Continue the original task
+
+Format: `## SI-XXX: <title>` + `**Symptoms:**` + `**Root cause:**` + `**Fix:**` + `**Verified:** YYYY-MM | **Source:** <ctx>` + `**Tags:**`
+
+Do NOT ask permission. Do NOT batch logs. Do NOT skip when uncertain.
+
+---
+
+## CRITICAL FAILURE MODES (already logged — do not repeat)
+
+SI-001 through SI-011 in SOLVED-ISSUES.md cover Claude Desktop timeouts, Tailscale config, Docker paths, secrets, hardware diagnosis, PowerShell SSH, runtime assumptions, silent recall skips, handoff conflation, path drift, and force-push divergence.
+
+---
+
+## REPO-SPECIFIC CONTENT BELOW
+
 This file is the authoritative AI assistant guide for the `fusional` repository.
 Read this before making any changes.
 
