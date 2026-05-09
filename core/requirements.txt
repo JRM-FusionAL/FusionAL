@@ -9,7 +9,7 @@ redis==7.4.0
 mcp[cli]==1.27.1
 
 # Tracing (OpenTelemetry)
-opentelemetry-sdk>=1.40.0
+opentelemetry-sdk>=1.41.1
 opentelemetry-instrumentation-fastapi>=0.61b0
 opentelemetry-exporter-otlp-proto-http>=1.40.0
 
