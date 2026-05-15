@@ -7,7 +7,7 @@ redis==7.4.0
 requests==2.33.1
 httpx==0.28.1
 openai==2.32.0
-mcp[cli]==1.27.0
+mcp[cli]==1.27.1
 notion-client==3.0.0
 rich==15.0.0
 opentelemetry-sdk>=1.41.1
