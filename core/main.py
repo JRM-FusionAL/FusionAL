@@ -26,20 +26,14 @@ from typing import List, Optional
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
 
 # --- Security module: cross-platform path resolution ---
 _this_file = Path(__file__).resolve()
 _SECURITY_CANDIDATES = [
-_SECURITY_CANDIDATES = [
-    Path(__file__).resolve().parent,
-    Path(__file__).resolve().parents[2] / "mcp-consulting-kit" / "showcase-servers" / "common",
-    Path(__file__).resolve().parent / "common",
-    Path.home() / "Projects" / "mcp-consulting-kit" / "showcase-servers" / "common",
-    Path.home() / "projects" / "mcp-consulting-kit" / "showcase-servers" / "common",
-    Path.home() / "mcp-consulting-kit" / "showcase-servers" / "common",
-]
+    _this_file.parent / "common",
     Path.home() / "Projects" / "mcp-consulting-kit" / "showcase-servers" / "common",
     Path.home() / "projects" / "mcp-consulting-kit" / "showcase-servers" / "common",
     Path.home() / "mcp-consulting-kit" / "showcase-servers" / "common",
@@ -79,11 +73,10 @@ except ImportError:
     _TRACING_IMPORTABLE = False
 
 try:
-    from audit import get_audit_store, records_to_json, records_to_csv
+    from audit import get_audit_store, record_tool_call, records_to_json, records_to_csv
     _AUDIT_ENABLED = True
 except ImportError:
     _AUDIT_ENABLED = False
-
 
 # --- Docker runner ---
 try:
@@ -91,16 +84,29 @@ try:
 except Exception:
     run_in_docker = None
 
-# --- MCP transport ---
-from .mcp_transport import mcp
+# --- MCP transport + aggregating proxy ---
+from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
 from .ai_agent import generate_python_from_claude, generate_python_from_openai
+
+# Wire the audit hook so proxied tool calls are recorded
+if _AUDIT_ENABLED:
+    set_audit_hook(record_tool_call)
 
 
 @asynccontextmanager
 async def _lifespan(app):
+    # Start MCP session manager
     app.state._mcp_session_context = mcp.session_manager.run()
     await app.state._mcp_session_context.__aenter__()
+
+    # Register downstream tools (failures are logged but non-fatal)
+    try:
+        await register_downstream_tools(REGISTRY)
+    except Exception as exc:
+        LOGGER.warning("proxy.register_failed error=%s", exc)
+
     yield
+
     ctx = getattr(app.state, "_mcp_session_context", None)
     if ctx is not None:
         await ctx.__aexit__(None, None, None)
@@ -129,19 +135,20 @@ from fastapi.staticfiles import StaticFiles
 app.mount("/.well-known", StaticFiles(directory="/app/well-known"), name="well-known")
 
 
-
 def _auth():
     pass
 
+
 def _rate():
     pass
+
 
 if _SECURITY_ENABLED:
     _auth = verify_api_key
     _rate = enforce_rate_limit
 
 
-# ΓöÇΓöÇ Models ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# ── Models ──────────────────────────────────────────────────────────────────
 
 class ExecRequest(BaseModel):
     language: str = "python"
@@ -163,30 +170,49 @@ class GenerateRequest(BaseModel):
     sandbox: bool = True
 
 
-# ΓöÇΓöÇ Registry ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# ── Registry ────────────────────────────────────────────────────────────────
 
 REGISTRY: dict = {}
 REGISTRY_FILE = os.path.join(os.getcwd(), "mcp_registry.json")
 
+# Showcase servers: `url` is the external/catalog URL; `internal_url` is used
+# by the aggregating proxy when connecting from inside the Docker network.
 _SHOWCASE_SERVERS = {
     "business-intelligence-mcp": {
-        "description": "Natural language ΓåÆ SQL queries against PostgreSQL/MySQL/SQLite",
+        "description": "Natural language → SQL queries against PostgreSQL/MySQL/SQLite",
         "url": "http://localhost:8101",
-        "metadata": {"version": "0.3.0", "tools": ["nl-query"], "port": 8101, "source": "mcp-consulting-kit"},
+        "internal_url": "http://business-intelligence-mcp:8101",
+        "metadata": {"version": "0.3.0", "tools": ["nl_query"], "port": 8101, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
     "api-integration-hub": {
         "description": "Slack, GitHub, and Stripe integrations via natural language",
         "url": "http://localhost:8102",
+        "internal_url": "http://api-integration-hub:8102",
         "metadata": {"version": "0.3.0", "tools": ["slack/send", "github/create-issue", "stripe/customer"], "port": 8102, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
     "content-automation-mcp": {
         "description": "Web scraping, link extraction, table parsing, and RSS feeds",
         "url": "http://localhost:8103",
+        "internal_url": "http://content-automation-mcp:8103",
         "metadata": {"version": "0.3.0", "tools": ["scrape/article", "scrape/links", "scrape/tables", "rss/parse"], "port": 8103, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
-    }
+    },
+    "github-mcp-safe": {
+        "description": "Safe GitHub API operations (list issues, create issue, search code)",
+        "url": "http://localhost:8105",
+        "internal_url": "http://github-mcp-safe:8105",
+        "metadata": {"version": "0.3.0", "tools": ["github_list_issues", "github_create_issue"], "port": 8105, "source": "mcp-consulting-kit"},
+        "registered_at": "2026-02-23T00:00:00"
+    },
+    "intelligence-mcp": {
+        "description": "Intelligence and research tools",
+        "url": "http://localhost:8104",
+        "internal_url": "http://intelligence-mcp:8104",
+        "metadata": {"version": "0.3.0", "tools": [], "port": 8104, "source": "mcp-consulting-kit"},
+        "registered_at": "2026-02-23T00:00:00"
+    },
 }
 
 
@@ -291,7 +317,7 @@ if __name__ == "__main__":
 '''
 
 
-# ΓöÇΓöÇ Endpoints ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+# ── Endpoints ────────────────────────────────────────────────────────────────
 
 @app.get("/health")
 async def health():
@@ -445,7 +471,8 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
     except Exception as exc:
         return {"status": "error", "error": str(exc)}
 
-# --- Audit Export Endpoints ---
+
+# ── Audit Export Endpoints ───────────────────────────────────────────────────
 
 @app.get("/audit/export/json")
 async def audit_export_json(
@@ -504,7 +531,6 @@ async def audit_export_csv(
 
 
 def _parse_export_datetime(value: Optional[str], param_name: str) -> Optional[datetime]:
-    """Parse an ISO 8601 datetime string from a query parameter."""
     if value is None:
         return None
     try:

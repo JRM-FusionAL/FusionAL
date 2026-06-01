@@ -173,7 +173,7 @@ async def _call_claude(
     kwargs = dict(
         model=model,
         max_tokens=8192,
-        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral", "ttl": 3600}}],
+        system=system,
         messages=[{"role": "user", "content": user_content}],
     )
     if use_thinking:
