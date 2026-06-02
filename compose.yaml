@@ -11,6 +11,8 @@ services:
       PORT: "8009"
     ports:
       - 127.0.0.1:8089:8009
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - default
       - mcp-kit

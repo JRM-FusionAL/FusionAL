@@ -213,6 +213,21 @@ _SHOWCASE_SERVERS = {
         "metadata": {"version": "0.3.0", "tools": [], "port": 8104, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
+    # Host-network services (systemd, not Docker) — reachable via host.docker.internal
+    "fusional-recall": {
+        "description": "Semantic recall and solved-issues memory search",
+        "url": "http://localhost:8107",
+        "internal_url": "http://host.docker.internal:8107",
+        "metadata": {"version": "0.1.0", "tools": ["recall"], "port": 8107, "source": "fusional"},
+        "registered_at": "2026-05-31T00:00:00"
+    },
+    "kb-server": {
+        "description": "FusionAL knowledge base search",
+        "url": "http://localhost:8106",
+        "internal_url": "http://host.docker.internal:8106",
+        "metadata": {"version": "0.1.0", "tools": ["search"], "port": 8106, "source": "fusional"},
+        "registered_at": "2026-05-31T00:00:00"
+    },
 }
 
 
