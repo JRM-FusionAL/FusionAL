@@ -224,7 +224,7 @@ _SHOWCASE_SERVERS = {
     "kb-server": {
         "description": "FusionAL knowledge base search",
         "url": "http://localhost:8106",
-        "internal_url": "http://host.docker.internal:8106",
+        "internal_url": "http://host.docker.internal:8108",
         "metadata": {"version": "0.1.0", "tools": ["search"], "port": 8106, "source": "fusional"},
         "registered_at": "2026-05-31T00:00:00"
     },
