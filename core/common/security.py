@@ -168,7 +168,7 @@ def _build_log_payload(
         "duration_ms": round(duration_ms, 2),
         "client_ip": client_ip,
         "user_agent": user_agent,
-        "headers": redacted_headers,
+        "header_names": sorted(redacted_headers.keys()),
     }
     payload.update(_get_trace_context())
     return payload
