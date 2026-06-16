@@ -484,7 +484,8 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             "logs": startup_logs,
         }
     except Exception as exc:
-        return {"status": "error", "error": str(exc)}
+        LOGGER.exception("Unexpected error in /generate endpoint")
+        return {"status": "error", "error": "Internal server error"}
 
 
 # ── Audit Export Endpoints ───────────────────────────────────────────────────
