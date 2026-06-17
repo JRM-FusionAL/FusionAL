@@ -433,7 +433,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         tools = _extract_tools_from_code(generated_code)
         port = _find_available_port(8200, 8299)
 
-        tmpdir = tempfile.mkdtemp(prefix=f"{server_name}-")
+        tmpdir = tempfile.mkdtemp(prefix="generated-server-")
         script_path = os.path.join(tmpdir, "generated_server.py")
         with open(script_path, "w", encoding="utf-8") as f:
             f.write(generated_code)
