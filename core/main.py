@@ -132,7 +132,9 @@ mcp.settings.streamable_http_path = "/"
 mcp_app = mcp.streamable_http_app()
 app.mount("/mcp", mcp_app)
 from fastapi.staticfiles import StaticFiles
-app.mount("/.well-known", StaticFiles(directory="/app/well-known"), name="well-known")
+_wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))
+if os.path.isdir(_wk_dir):
+    app.mount("/.well-known", StaticFiles(directory=_wk_dir), name="well-known")
 
 
 def _auth():
