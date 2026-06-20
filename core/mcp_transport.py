@@ -5,14 +5,17 @@ Exposes FusionAL's built-in tools plus an aggregating proxy that surfaces
 every registered downstream MCP server as namespaced tools on this server.
 
 Built-in tools (always present):
-  execute_code          - run Python in a subprocess
-  generate_and_execute  - generate + run Python via Claude
   generate_mcp_project  - scaffold a new MCP server project
+
+NOTE: execute_code and generate_and_execute are intentionally NOT registered
+as MCP tools (Phase 0 security gate — raw subprocess must not reach brain).
+They remain available as internal functions for the REST /execute endpoint only.
 
 Proxied tools (registered at startup from REGISTRY):
   <namespace>_<tool>    e.g. bi_nl_query, github_create_issue
 """
 
+import asyncio
 import logging
 import time
 from typing import Any
@@ -55,13 +58,8 @@ def set_audit_hook(fn) -> None:
 # Built-in tools
 # ---------------------------------------------------------------------------
 
-@mcp.tool(
-    name="execute_code",
-    description=(
-        "Execute Python code in a sandboxed subprocess. "
-        "Returns stdout, stderr, and return code. Timeout is capped at 30 seconds."
-    ),
-)
+# NOT registered as MCP tool — Phase 0 security gate.
+# Available to REST /execute endpoint only.
 def execute_code(code: str, timeout: int = 5) -> dict:
     import shutil
     import subprocess
@@ -87,13 +85,7 @@ def execute_code(code: str, timeout: int = 5) -> dict:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
-@mcp.tool(
-    name="generate_and_execute",
-    description=(
-        "Generate Python code from a natural language prompt using Claude, then execute it. "
-        "Returns the generated code and execution result. Requires ANTHROPIC_API_KEY."
-    ),
-)
+# NOT registered as MCP tool — Phase 0 security gate.
 def generate_and_execute(prompt: str, timeout: int = 10) -> dict:
     return _generate_and_execute(prompt, provider="claude", timeout=timeout, use_docker=False)
 
@@ -244,10 +236,24 @@ async def register_downstream_tools(registry: dict) -> None:
         namespace = _server_namespace(server_name)
 
         try:
-            async with streamablehttp_client(mcp_url, timeout=5.0) as (read, write, _):
-                async with ClientSession(read, write) as session:
-                    await session.initialize()
-                    tools_result = await session.list_tools()
+            # Retry once after a short delay to handle startup race conditions
+            # (e.g. kb-server's MCP thread may not be bound when FusionAL starts).
+            tools_result = None
+            last_exc: Exception | None = None
+            for attempt in range(2):
+                try:
+                    async with streamablehttp_client(mcp_url, timeout=5.0) as (read, write, _):
+                        async with ClientSession(read, write) as session:
+                            await session.initialize()
+                            tools_result = await session.list_tools()
+                    break
+                except Exception as exc:
+                    last_exc = exc
+                    if attempt == 0:
+                        await asyncio.sleep(3)
+
+            if tools_result is None:
+                raise last_exc  # type: ignore[misc]
 
             registered = 0
             for tool in tools_result.tools:
@@ -267,8 +273,8 @@ async def register_downstream_tools(registry: dict) -> None:
                 registered += 1
 
             logger.info(
-                "proxy.registered server=%s namespace=%s tools=%d url=%s",
-                server_name, namespace, registered, mcp_url,
+                "proxy.registered server=%s namespace=%s tools=%d",
+                server_name, namespace, registered,
             )
 
         except Exception as exc:
