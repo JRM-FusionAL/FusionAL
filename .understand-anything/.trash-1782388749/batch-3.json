@@ -1,0 +1,380 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/common/rate_limit_presets.py",
+      "type": "file",
+      "name": "rate_limit_presets.py",
+      "filePath": "core/common/rate_limit_presets.py",
+      "summary": "Defines named rate-limit profiles (pilot, production, permissive) and an error-budget tracking subsystem that monitors API error rates and emits log warnings/errors when configurable thresholds are breached. Exports preset lookup, ErrorBudgetTracker, and a FastAPI middleware factory.",
+      "tags": ["middleware", "rate-limiting", "utility", "service", "validation"],
+      "complexity": "complex",
+      "languageNotes": "Uses dataclasses for RateLimitPreset and a classmethod factory on ErrorBudgetConfig for environment-driven construction; ErrorBudgetTracker maintains a monotonic-clock event ring for sliding-window error rate calculation."
+    },
+    {
+      "id": "class:core/common/rate_limit_presets.py:RateLimitPreset",
+      "type": "class",
+      "name": "RateLimitPreset",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [54, 64],
+      "summary": "Dataclass holding a named rate-limit profile with requests-per-window, window duration, and profile name; provides a description string for logging.",
+      "tags": ["data-model", "rate-limiting", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/rate_limit_presets.py:ErrorBudgetConfig",
+      "type": "class",
+      "name": "ErrorBudgetConfig",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [108, 133],
+      "summary": "Configuration dataclass for error-budget thresholds (warn/error) and observation window, loadable from environment variables via the from_env classmethod.",
+      "tags": ["data-model", "configuration", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/rate_limit_presets.py:ErrorBudgetTracker",
+      "type": "class",
+      "name": "ErrorBudgetTracker",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [136, 240],
+      "summary": "Sliding-window error-budget tracker that records request outcomes, prunes expired events, calculates current error rate, and emits log warnings or errors when warn/error thresholds are crossed.",
+      "tags": ["service", "middleware", "monitoring", "rate-limiting"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/common/rate_limit_presets.py:get_active_preset",
+      "type": "function",
+      "name": "get_active_preset",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [82, 99],
+      "summary": "Reads the RATE_LIMIT_PROFILE environment variable, looks up the corresponding RateLimitPreset, and falls back to the pilot preset with a warning if the value is unrecognized.",
+      "tags": ["utility", "configuration", "rate-limiting"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/rate_limit_presets.py:configure_error_budget_tracking",
+      "type": "function",
+      "name": "configure_error_budget_tracking",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [248, 271],
+      "summary": "Attaches an ErrorBudgetTracker to a FastAPI app's state and registers an HTTP middleware that records each response's success/error status into the tracker.",
+      "tags": ["middleware", "service", "monitoring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/security.py",
+      "type": "file",
+      "name": "security.py",
+      "filePath": "core/common/security.py",
+      "summary": "Core security and observability module for the FusionAL gateway providing CORS configuration, API key verification with revocation support, sliding-window rate limiting with optional Redis backend, request ID sanitization, sensitive-data redaction, and JSON structured request logging middleware.",
+      "tags": ["security", "middleware", "api-handler", "validation", "service"],
+      "complexity": "complex",
+      "languageNotes": "Implements in-process rate limiting with a dict-of-lists store as Redis fallback; uses FastAPI dependency injection for verify_api_key and enforce_rate_limit; all config reads from environment variables at call time rather than module load."
+    },
+    {
+      "id": "function:core/common/security.py:configure_cors",
+      "type": "function",
+      "name": "configure_cors",
+      "filePath": "core/common/security.py",
+      "lineRange": [177, 183],
+      "summary": "Adds FastAPI CORSMiddleware using the validated origin list from get_allowed_origins.",
+      "tags": ["middleware", "security", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/security.py:configure_observability",
+      "type": "function",
+      "name": "configure_observability",
+      "filePath": "core/common/security.py",
+      "lineRange": [186, 219],
+      "summary": "Registers a FastAPI middleware that injects request IDs, attaches security headers to responses, logs structured JSON request/response data, and conditionally skips health-check endpoint logging.",
+      "tags": ["middleware", "service", "security"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/common/security.py:initialize_rate_limit_store",
+      "type": "function",
+      "name": "initialize_rate_limit_store",
+      "filePath": "core/common/security.py",
+      "lineRange": [222, 226],
+      "summary": "Initializes the app-state rate-limit store by attempting to connect a Redis client and falling back to an empty in-process dict.",
+      "tags": ["service", "rate-limiting", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/security.py:verify_api_key",
+      "type": "function",
+      "name": "verify_api_key",
+      "filePath": "core/common/security.py",
+      "lineRange": [261, 271],
+      "summary": "FastAPI dependency that checks the X-API-Key header against active keys from environment config, then rejects the request if the key is absent or appears in the runtime or env-var revocation lists.",
+      "tags": ["security", "validation", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:enforce_rate_limit",
+      "type": "function",
+      "name": "enforce_rate_limit",
+      "filePath": "core/common/security.py",
+      "lineRange": [301, 319],
+      "summary": "FastAPI dependency that enforces per-client-IP rate limits, delegating to Redis-backed counting when available and falling back to in-process window tracking, raising HTTP 429 when the limit is exceeded.",
+      "tags": ["security", "rate-limiting", "middleware"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:redact_sensitive_data",
+      "type": "function",
+      "name": "redact_sensitive_data",
+      "filePath": "core/common/security.py",
+      "lineRange": [115, 128],
+      "summary": "Recursively walks dicts, lists, and tuples to mask values whose key names match known sensitive patterns (api_key, token, secret, password, authorization, etc.).",
+      "tags": ["security", "utility", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:_enforce_rate_limit_with_redis",
+      "type": "function",
+      "name": "_enforce_rate_limit_with_redis",
+      "filePath": "core/common/security.py",
+      "lineRange": [274, 298],
+      "summary": "Implements Redis-backed sliding-window rate limiting using INCR and EXPIRE commands, logging warnings and raising HTTP 429 when the per-key counter exceeds the configured limit.",
+      "tags": ["rate-limiting", "security", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:_build_log_payload",
+      "type": "function",
+      "name": "_build_log_payload",
+      "filePath": "core/common/security.py",
+      "lineRange": [151, 174],
+      "summary": "Constructs the structured JSON log payload for a completed request, including method, path, status, duration, redacted headers, client IP, and optional OpenTelemetry trace context.",
+      "tags": ["utility", "service", "middleware"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/test_rate_limit_presets.py",
+      "type": "file",
+      "name": "test_rate_limit_presets.py",
+      "filePath": "core/common/test_rate_limit_presets.py",
+      "summary": "Pytest test suite for rate_limit_presets.py, covering preset lookup by env var, fallback behavior for unknown profiles, ErrorBudgetConfig env loading, ErrorBudgetTracker recording/pruning/reset/threshold signals, and the configure_error_budget_tracking FastAPI middleware integration.",
+      "tags": ["test", "rate-limiting", "middleware"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/common/test_security_common.py",
+      "type": "file",
+      "name": "test_security_common.py",
+      "filePath": "core/common/test_security_common.py",
+      "summary": "Pytest test suite for security.py, verifying CORS origin validation, API key acceptance/rejection/revocation, in-process and Redis-backed rate limiting, observability middleware request-ID injection, security header attachment, sensitive-header redaction, and health-log toggling.",
+      "tags": ["test", "security", "middleware"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/test_security_common.py:FakeRedisClient",
+      "type": "class",
+      "name": "FakeRedisClient",
+      "filePath": "core/common/test_security_common.py",
+      "lineRange": [28, 45],
+      "summary": "In-memory test double for a Redis client with configurable failure injection, implementing incr and expire methods used by the rate-limit path under test.",
+      "tags": ["test", "utility", "service"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:RateLimitPreset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetTracker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:get_active_preset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:configure_error_budget_tracking",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:RateLimitPreset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetTracker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:get_active_preset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:configure_error_budget_tracking",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_cors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_observability",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:initialize_rate_limit_store",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:verify_api_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:enforce_rate_limit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:redact_sensitive_data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:_enforce_rate_limit_with_redis",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:_build_log_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_cors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_observability",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:initialize_rate_limit_store",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:verify_api_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:enforce_rate_limit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:redact_sensitive_data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:_enforce_rate_limit_with_redis",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/test_security_common.py",
+      "target": "class:core/common/test_security_common.py:FakeRedisClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "file:core/common/test_rate_limit_presets.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "file:core/common/test_security_common.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

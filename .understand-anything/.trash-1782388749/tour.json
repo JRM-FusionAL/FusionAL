@@ -1,0 +1,100 @@
+[
+  {
+    "order": 1,
+    "title": "Project Overview",
+    "description": "Start with README.md to understand FusionAL's purpose: a self-hosted MCP governance gateway that sits between AI clients (Claude Desktop, custom agents) and MCP tool servers. It provides central authentication, rate limiting, tool-level policy enforcement, a full audit trail, Docker-sandboxed code execution, and AI-powered MCP server generation. Reading this first gives you the mental map for everything else in the codebase.",
+    "nodeIds": ["document:README.md"]
+  },
+  {
+    "order": 2,
+    "title": "Gateway Entry Point",
+    "description": "core/main.py is the FastAPI application entry point and the most-referenced file in the entire codebase (fan-in of 16). It mounts the MCP transport, defines REST endpoints for code execution, AI-powered generation, server registration, and audit export, and wires together all governance middleware during startup. Understanding this file is essential because every other layer either serves it or is called by it.",
+    "nodeIds": ["file:core/main.py"],
+    "languageLesson": "FastAPI's lifespan context manager (the `_lifespan` async generator decorated with `@asynccontextmanager`) is the modern replacement for startup/shutdown event handlers. Code before `yield` runs at startup; code after `yield` runs at shutdown. This is where FusionAL registers downstream MCP tools into the gateway."
+  },
+  {
+    "order": 3,
+    "title": "Security & Auth Layer",
+    "description": "core/security.py provides API key authentication, CORS enforcement, and the ObservabilityMiddleware that logs every request. core/common/security.py extends this with Redis-backed rate limiting, configurable CORS allowlists, and request-level data redaction. Together they form the governance wall that every inbound request must pass before reaching a tool — this is FusionAL's core value proposition for regulated environments.",
+    "nodeIds": ["file:core/security.py", "file:core/common/security.py"],
+    "languageLesson": "FastAPI dependency injection (`Depends(verify_api_key)`) lets you attach security checks as function parameters on any route. The check runs before the handler body, and raising `HTTPException` short-circuits the request cleanly — no need for guard clauses inside business logic."
+  },
+  {
+    "order": 4,
+    "title": "Rate Limiting & Error Budgets",
+    "description": "core/common/rate_limit_presets.py defines named rate-limit profiles (pilot, production, permissive) and an error-budget tracking subsystem. The active profile is selected by environment variable at startup, so you can tune aggressiveness without redeploying code. This design means the same gateway binary can serve a cautious pilot rollout or a high-throughput production fleet just by changing a single env var.",
+    "nodeIds": ["file:core/common/rate_limit_presets.py"],
+    "languageLesson": "Python dataclasses and Pydantic models both appear in this module. Pydantic models (like `RateLimitPreset`) enforce field types at runtime and can be serialized to JSON, making them a better choice than plain dataclasses for configuration objects that must cross process or API boundaries."
+  },
+  {
+    "order": 5,
+    "title": "Audit Trail",
+    "description": "core/common/audit.py provides AuditStore — an in-memory, thread-safe, optionally file-persisted ring buffer of AuditRecords. Every tool call that passes through the gateway is recorded here with its request ID, caller, tool name, result, and timestamp. The main gateway exposes /audit/export endpoints (JSON and CSV) that read from this store, giving compliance teams a durable record of all MCP activity.",
+    "nodeIds": ["file:core/common/audit.py"],
+    "languageLesson": "Python's `threading.Lock` combined with a bounded deque makes a simple but effective thread-safe ring buffer. The `maxlen` parameter on `collections.deque` automatically evicts oldest entries, bounding memory usage without explicit cleanup code."
+  },
+  {
+    "order": 6,
+    "title": "MCP Transport Layer",
+    "description": "core/mcp_transport.py is where FusionAL becomes an MCP server. It defines the FastMCP server instance and its built-in tools (execute_code, generate_and_execute, generate_mcp_project), and the register_downstream_tools function that dynamically proxies tools from registered downstream MCP servers into the gateway's own tool namespace. This proxy pattern is what lets a single FusionAL endpoint expose dozens of backend tools to any MCP client.",
+    "nodeIds": ["file:core/mcp_transport.py", "config:well-known/mcp/server-card.json"],
+    "languageLesson": "The `_make_proxy_fn` closure pattern captures a reference to the downstream tool at registration time. Each proxy function closes over the server URL and tool name so the gateway can forward calls to the right backend without a lookup at call time — an efficient way to generate many similar forwarding functions dynamically."
+  },
+  {
+    "order": 7,
+    "title": "AI Code Generation",
+    "description": "core/ai_agent.py is FusionAL's AI tier. It calls Claude or OpenAI APIs to generate Python code from a natural-language prompt, parses the multi-file output, and can scaffold an entire MCP server project including Dockerfile and requirements.txt. The main gateway's /generate endpoint delegates to this module, enabling users to describe a tool in plain English and get a deployable MCP server back in seconds.",
+    "nodeIds": ["file:core/ai_agent.py", "document:docs/custom-servers.md"],
+    "languageLesson": "Parsing structured output from LLMs using delimiter-based extraction (looking for markdown fences or sentinel tags like `# FILE:`) is a common pattern when you need multiple named outputs from a single prompt. It avoids JSON parsing fragility while still letting the model produce multiple files in one response."
+  },
+  {
+    "order": 8,
+    "title": "Docker Sandbox Execution",
+    "description": "core/runner_docker.py implements the security boundary for code execution. When a user submits Python to the /execute endpoint, this module writes it to a temp directory, spins up a fresh ephemeral Docker container, runs the code inside it with resource constraints and a timeout, and returns stdout/stderr. The container is torn down afterward, ensuring untrusted code never touches the host filesystem.",
+    "nodeIds": ["file:core/runner_docker.py", "service:core/Dockerfile"],
+    "languageLesson": "Python's `subprocess.run` with `timeout=` raises `subprocess.TimeoutExpired` if the process doesn't finish in time. Combining this with `docker run --rm` (auto-remove) means cleanup is guaranteed even if the timeout fires — the container is gone regardless of how the process terminates."
+  },
+  {
+    "order": 9,
+    "title": "Configuration & Environment",
+    "description": "config/.env.example documents all 17 environment variables FusionAL reads — API keys (Anthropic, OpenAI), gateway auth tokens, CORS origins, Redis URL, rate-limit preset selection, and Docker image names. Reading this file alongside core/main.py reveals the full operational surface of the gateway: every tuneable parameter is driven by environment, which is what makes FusionAL deployable identically on a developer laptop or a production server.",
+    "nodeIds": ["config:.env.example", "service:compose.yaml"],
+    "languageLesson": "Docker Compose's `env_file` directive loads a .env file into container environment at runtime, keeping secrets out of the image layer. Combined with `depends_on` and health checks, compose.yaml defines the full boot sequence including any Redis sidecar the rate limiter needs."
+  },
+  {
+    "order": 10,
+    "title": "Watchdog & Think Tank",
+    "description": "scripts/watchdog.py is a continuous health-monitoring daemon that polls configured MCP server HTTP health endpoints. When it detects a fault it calls scripts/think_tank_trigger.py, which spawns a multi-agent Claude-powered analysis: three specialized roles (diagnostician, remediator, reviewer) debate the failure and produce an action plan. scripts/action_executor.py then translates that plan into safe shell commands and executes them with timeout guards.",
+    "nodeIds": ["file:scripts/watchdog.py", "file:scripts/think_tank_trigger.py", "file:scripts/action_executor.py"]
+  },
+  {
+    "order": 11,
+    "title": "Incident Reporting",
+    "description": "scripts/notion_reporter.py closes the watchdog loop by posting structured incident reports and think-tank diagnostic results to a Notion database page via the Notion API. This gives operations teams a searchable, persistent record of every detected fault, the AI's diagnosis, the remediation steps taken, and whether they succeeded — all without requiring manual log triage.",
+    "nodeIds": ["file:scripts/notion_reporter.py", "config:logs/execution_log.json"]
+  },
+  {
+    "order": 12,
+    "title": "Notion-Driven Build Queue",
+    "description": "notion_poller.py is a long-running daemon that polls a Notion database for pending MCP server build requests, forwards them to the FusionAL /generate endpoint, and writes the results back to Notion. It also performs fleet health checks and auto-resolves incidents. This closes the loop on the AI server-generation feature: a non-technical user can create a Notion row describing a tool, and get a deployed MCP server without touching code.",
+    "nodeIds": ["file:notion_poller.py"]
+  },
+  {
+    "order": 13,
+    "title": "Tracing & Observability",
+    "description": "core/common/tracing.py provides OpenTelemetry distributed tracing setup with an OTLP exporter. It wraps FastAPI with trace context propagation so every gateway request gets a trace ID that flows into the audit log, downstream tool calls, and any external observability platform (Jaeger, Tempo, etc.). The no-op fallback ensures the gateway runs cleanly even when no collector is configured.",
+    "nodeIds": ["file:core/common/tracing.py", "document:core/common/SECURITY-HARDENING.md"]
+  },
+  {
+    "order": 14,
+    "title": "Example MCP Servers",
+    "description": "The examples/ directory contains three reference MCP server implementations (dice-roller, weather-api, file-utils), each with its own FastMCP server, Dockerfile, and README. These serve a dual purpose: they demonstrate how to build a FusionAL-compatible MCP server from scratch, and they are the default downstream servers used in the quick-start guide. Studying one of them reveals the exact interface FusionAL's proxy layer expects from any registered backend.",
+    "nodeIds": ["file:examples/dice-roller/dice_server.py", "file:examples/weather-api/weather_server.py", "file:examples/file-utils/file_utils_server.py"]
+  },
+  {
+    "order": 15,
+    "title": "Registry & Build Scripts",
+    "description": "core/mcp_registry.json is the runtime registry of all MCP servers FusionAL knows about. scripts/generate_registry_from_docker.sh (and its PowerShell twin) auto-populate it by inspecting running Docker containers. scripts/build_examples.ps1 builds and tags all three example server images. Together these scripts operationalize the deploy story: build images, register them in the registry, and FusionAL's proxy layer picks them up at the next startup.",
+    "nodeIds": ["file:core/mcp_registry.json", "file:scripts/generate_registry_from_docker.sh", "file:init.py"]
+  }
+]

@@ -1,0 +1,4201 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "606777ba0f9ffd4088ac9b807fe523a8a50a938e",
+  "generatedAt": "2026-06-25T11:58:55.015Z",
+  "files": {
+    ".dockerignore": {
+      "filePath": ".dockerignore",
+      "contentHash": "967f0eab414a5af45dd06a77ccf099d3183c89c041c808139932207936a03283",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    ".env.example": {
+      "filePath": ".env.example",
+      "contentHash": "ec5e18178ba720a88fcb00dc80039b6f9a557e29df46598947512bba9791645a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 55,
+      "hasStructuralAnalysis": true
+    },
+    ".gitattributes": {
+      "filePath": ".gitattributes",
+      "contentHash": "4fcc484de6f920c22479f8f866771f544e06986ff1708c67f08a40505ce794a3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": false
+    },
+    ".github/FUNDING.yml": {
+      "filePath": ".github/FUNDING.yml",
+      "contentHash": "8b5808cfb235bb7cceddb05b81e5fa6966c3cb0c926e59e56ed9c8b44d24efe7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": true
+    },
+    ".github/ISSUE_TEMPLATE/bug_report.md": {
+      "filePath": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "contentHash": "d4c90a31d607d3194cc65f46a3a1035506d79b4f41aec29c7a1d0de4fd2ca3f0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 39,
+      "hasStructuralAnalysis": true
+    },
+    ".github/ISSUE_TEMPLATE/feature_request.md": {
+      "filePath": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "contentHash": "a42cbe3f12dc0b8a43568e3f3316d5240161491ff21d80a4bfc358f89f077039",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 27,
+      "hasStructuralAnalysis": true
+    },
+    ".hermes/maintenance-wrapper.sh": {
+      "filePath": ".hermes/maintenance-wrapper.sh",
+      "contentHash": "1de9539a83cbc7be21852698514a567ec6337f11a8bd1e87d3f0f7a82fca5b4a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": true
+    },
+    ".hermes/maintenance.sh": {
+      "filePath": ".hermes/maintenance.sh",
+      "contentHash": "e181d49cd2bf2dc51386d75fc3b8c3cd12480f9dc65230bb769637a4122af6d3",
+      "functions": [
+        {
+          "name": "log",
+          "params": [],
+          "exported": false,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 235,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.understandignore": {
+      "filePath": ".understand-anything/.understandignore",
+      "contentHash": "59c4e837ace8dd16d7932c66fcfe6f8f1fffe42a93ae2152cdb1855275c61637",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": false
+    },
+    "claude_desktop_config_windows.json": {
+      "filePath": "claude_desktop_config_windows.json",
+      "contentHash": "1673c106a05a64299dacdf01464ce91b37f20226306fe01a99e9f34e942d79c8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": true
+    },
+    "CLAUDE.md": {
+      "filePath": "CLAUDE.md",
+      "contentHash": "280d6f7ae6c6e1a5d710f7cb12e0bac95862869b66bb6dd747d5285f06267d35",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 411,
+      "hasStructuralAnalysis": true
+    },
+    "compose.debug.yaml": {
+      "filePath": "compose.debug.yaml",
+      "contentHash": "aab042939ebc2a9d70f639c777009b6c923299a763f3801da8041c41bc7d90f0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "compose.yaml": {
+      "filePath": "compose.yaml",
+      "contentHash": "8e3a941d1be2129a7426ef324468c8fab20bf99c0201b77e6bdb0f9c5ad23595",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    "CONTRIBUTING.md": {
+      "filePath": "CONTRIBUTING.md",
+      "contentHash": "4e239068e6e84bf41e9eb2c0fba6ca0148af19bcb6d231de706f1a885b842af6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 48,
+      "hasStructuralAnalysis": true
+    },
+    "core/__init__.py": {
+      "filePath": "core/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "core/.bandit": {
+      "filePath": "core/.bandit",
+      "contentHash": "0984e9bcc7032b7b8f33929398ac6f462b29abeecb97d85621dd072ae25f583b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": false
+    },
+    "core/ai_agent.py": {
+      "filePath": "core/ai_agent.py",
+      "contentHash": "d03571d613210ac825f2a360e5d3c2a10d663f21818a7c45e7dc70bb43d33531",
+      "functions": [
+        {
+          "name": "generate_python_from_claude",
+          "params": [
+            "prompt",
+            "model"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "generate_python_from_openai",
+          "params": [
+            "prompt",
+            "model"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "generate_and_execute",
+          "params": [
+            "prompt",
+            "provider",
+            "timeout",
+            "use_docker"
+          ],
+          "exported": true,
+          "lineCount": 41
+        },
+        {
+          "name": "_parse_files_from_ai_output",
+          "params": [
+            "text"
+          ],
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "generate_mcp_project",
+          "params": [
+            "prompt",
+            "provider",
+            "out_dir",
+            "build",
+            "image_tag"
+          ],
+          "exported": true,
+          "lineCount": 91
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "requests",
+          "specifiers": [
+            "requests"
+          ]
+        },
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "openai",
+          "specifiers": [
+            "OpenAI"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "tempfile",
+          "specifiers": [
+            "tempfile"
+          ]
+        },
+        {
+          "source": "re",
+          "specifiers": [
+            "re"
+          ]
+        }
+      ],
+      "exports": [
+        "generate_python_from_claude",
+        "generate_python_from_openai",
+        "generate_and_execute",
+        "_parse_files_from_ai_output",
+        "generate_mcp_project"
+      ],
+      "totalLines": 270,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/audit.py": {
+      "filePath": "core/common/audit.py",
+      "contentHash": "077860e2c93a7ddee89203d59460594b6c5e776f74cd6e9f092581e5763c044c",
+      "functions": [
+        {
+          "name": "get_audit_store",
+          "params": [],
+          "returnType": "AuditStore",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "record_tool_call",
+          "params": [
+            "tool",
+            "status",
+            "duration_ms",
+            "request_id",
+            "trace_id",
+            "span_id",
+            "error"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 29
+        },
+        {
+          "name": "records_to_json",
+          "params": [
+            "records"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "records_to_csv",
+          "params": [
+            "records"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_parse_utc",
+          "params": [
+            "ts"
+          ],
+          "returnType": "datetime",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "_as_utc",
+          "params": [
+            "dt"
+          ],
+          "returnType": "datetime",
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [
+        {
+          "name": "AuditRecord",
+          "methods": [],
+          "properties": [
+            "timestamp",
+            "tool",
+            "status",
+            "duration_ms",
+            "request_id",
+            "trace_id",
+            "span_id",
+            "error"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "AuditStore",
+          "methods": [
+            "__init__",
+            "append",
+            "query",
+            "__len__",
+            "_persist"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 71
+        }
+      ],
+      "imports": [
+        {
+          "source": "csv",
+          "specifiers": [
+            "csv"
+          ]
+        },
+        {
+          "source": "io",
+          "specifiers": [
+            "io"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Optional"
+          ]
+        },
+        {
+          "source": "pydantic",
+          "specifiers": [
+            "BaseModel"
+          ]
+        }
+      ],
+      "exports": [
+        "AuditRecord",
+        "AuditStore",
+        "get_audit_store",
+        "record_tool_call",
+        "records_to_json",
+        "records_to_csv",
+        "_parse_utc",
+        "_as_utc"
+      ],
+      "totalLines": 204,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/P2-HARDENING.md": {
+      "filePath": "core/common/P2-HARDENING.md",
+      "contentHash": "cd3e2fbede3a62e670ecf8ee90ed30f3f17c78337a3b6d41d3ed9683ec3bb928",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 149,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/rate_limit_presets.py": {
+      "filePath": "core/common/rate_limit_presets.py",
+      "contentHash": "25fd270be25c134777a29b564a2ffbfb35145684c9c4cc589860055412a2bded",
+      "functions": [
+        {
+          "name": "get_active_preset",
+          "params": [],
+          "returnType": "RateLimitPreset",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "configure_error_budget_tracking",
+          "params": [
+            "app",
+            "config"
+          ],
+          "returnType": "ErrorBudgetTracker",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "_logger",
+          "params": [],
+          "returnType": "logging.Logger",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [
+        {
+          "name": "RateLimitPreset",
+          "methods": [
+            "description"
+          ],
+          "properties": [
+            "requests_per_window",
+            "window_seconds",
+            "profile"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "ErrorBudgetConfig",
+          "methods": [
+            "from_env"
+          ],
+          "properties": [
+            "warn_threshold",
+            "error_threshold",
+            "window_seconds"
+          ],
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "ErrorBudgetTracker",
+          "methods": [
+            "__init__",
+            "record",
+            "current_error_rate",
+            "stats",
+            "reset",
+            "_prune",
+            "_check_budget"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 105
+        }
+      ],
+      "imports": [
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "dataclasses",
+          "specifiers": [
+            "dataclass",
+            "field"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "TYPE_CHECKING"
+          ]
+        }
+      ],
+      "exports": [
+        "RateLimitPreset",
+        "get_active_preset",
+        "ErrorBudgetConfig",
+        "ErrorBudgetTracker",
+        "configure_error_budget_tracking",
+        "_logger"
+      ],
+      "totalLines": 281,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/SECURITY-HARDENING.md": {
+      "filePath": "core/common/SECURITY-HARDENING.md",
+      "contentHash": "0c64fdddc420c26be41fc9a73b8d7e39d80d78dda74aa14bfb692060a1b65cb1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/security.py": {
+      "filePath": "core/common/security.py",
+      "contentHash": "db406b958511f370fd08b9eec95acffa7ece10f3ce528183fa77bf25e523c7e6",
+      "functions": [
+        {
+          "name": "get_allowed_origins",
+          "params": [],
+          "returnType": "list[str]",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "_validate_cors_origins",
+          "params": [
+            "origins"
+          ],
+          "returnType": "list[str]",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "get_rate_limit",
+          "params": [],
+          "returnType": "tuple[int, int]",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "get_log_level",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "get_redis_url",
+          "params": [],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "should_log_health_requests",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_sanitize_request_id",
+          "params": [
+            "request_id"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_get_security_headers",
+          "params": [],
+          "returnType": "dict[str, str]",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_is_sensitive_key",
+          "params": [
+            "key"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_mask_secret",
+          "params": [
+            "value"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "redact_sensitive_data",
+          "params": [
+            "value",
+            "key_name"
+          ],
+          "returnType": "Any",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "_resolve_service_name",
+          "params": [
+            "app"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_get_or_create_logger",
+          "params": [],
+          "returnType": "logging.Logger",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_get_trace_context",
+          "params": [],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "_build_log_payload",
+          "params": [
+            "request",
+            "request_id",
+            "status_code",
+            "duration_ms",
+            "service_name"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "configure_cors",
+          "params": [
+            "app"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "configure_observability",
+          "params": [
+            "app"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "initialize_rate_limit_store",
+          "params": [
+            "app"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "_create_redis_client",
+          "params": [],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_load_active_api_keys",
+          "params": [],
+          "returnType": "list[str]",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_load_revoked_api_keys",
+          "params": [],
+          "returnType": "set[str]",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "revoke_api_key",
+          "params": [
+            "app",
+            "api_key"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "verify_api_key",
+          "params": [
+            "request",
+            "x_api_key"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_enforce_rate_limit_with_redis",
+          "params": [
+            "request",
+            "limit",
+            "window"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "enforce_rate_limit",
+          "params": [
+            "request"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "uuid",
+          "specifiers": [
+            "uuid"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "FastAPI",
+            "Header",
+            "HTTPException",
+            "Request",
+            "Response"
+          ]
+        },
+        {
+          "source": "fastapi.middleware.cors",
+          "specifiers": [
+            "CORSMiddleware"
+          ]
+        }
+      ],
+      "exports": [
+        "get_allowed_origins",
+        "_validate_cors_origins",
+        "get_rate_limit",
+        "get_log_level",
+        "get_redis_url",
+        "should_log_health_requests",
+        "_sanitize_request_id",
+        "_get_security_headers",
+        "_is_sensitive_key",
+        "_mask_secret",
+        "redact_sensitive_data",
+        "_resolve_service_name",
+        "_get_or_create_logger",
+        "_get_trace_context",
+        "_build_log_payload",
+        "configure_cors",
+        "configure_observability",
+        "initialize_rate_limit_store",
+        "_create_redis_client",
+        "_load_active_api_keys",
+        "_load_revoked_api_keys",
+        "revoke_api_key",
+        "verify_api_key",
+        "_enforce_rate_limit_with_redis",
+        "enforce_rate_limit"
+      ],
+      "totalLines": 320,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/test_audit.py": {
+      "filePath": "core/common/test_audit.py",
+      "contentHash": "4e10c29ee5f2ec5b450909242fc4cd5cfc89f7e66694196a9cf3baeba0d5ffe5",
+      "functions": [
+        {
+          "name": "_make_record",
+          "params": [
+            "**kwargs"
+          ],
+          "returnType": "AuditRecord",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "test_get_audit_store_returns_same_instance",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestAuditRecord",
+          "methods": [
+            "test_required_fields",
+            "test_optional_fields_default_to_empty_string",
+            "test_error_status",
+            "test_model_dump_includes_all_columns"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "TestAuditStore",
+          "methods": [
+            "test_append_and_len",
+            "test_evicts_oldest_when_max_exceeded",
+            "test_query_no_filter_returns_all",
+            "test_query_with_start_filter",
+            "test_query_with_end_filter",
+            "test_query_with_start_and_end_filter",
+            "test_query_empty_store_returns_empty_list",
+            "test_query_empty_store_with_range_returns_empty_list",
+            "test_query_with_no_matching_range_returns_empty_list",
+            "test_inclusive_bounds",
+            "test_persist_writes_to_file",
+            "test_persist_is_skipped_when_no_path",
+            "test_thread_safety_under_concurrent_writes"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 126
+        },
+        {
+          "name": "TestRecordToolCall",
+          "methods": [
+            "test_records_success",
+            "test_records_error",
+            "test_timestamp_is_utc_iso"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 33
+        },
+        {
+          "name": "TestRecordsToJson",
+          "methods": [
+            "test_empty_returns_empty_array",
+            "test_single_record",
+            "test_multiple_records",
+            "test_all_columns_present"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "TestRecordsToCsv",
+          "methods": [
+            "_parse_csv",
+            "test_empty_returns_header_only",
+            "test_header_columns",
+            "test_single_record",
+            "test_multiple_records",
+            "test_all_columns_present"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 39
+        },
+        {
+          "name": "TestDatetimeHelpers",
+          "methods": [
+            "test_parse_utc_with_timezone_info",
+            "test_parse_utc_naive_becomes_utc",
+            "test_as_utc_naive_becomes_utc",
+            "test_as_utc_aware_unchanged"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "imports": [
+        {
+          "source": "csv",
+          "specifiers": [
+            "csv"
+          ]
+        },
+        {
+          "source": "io",
+          "specifiers": [
+            "io"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone",
+            "timedelta"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        },
+        {
+          "source": "audit",
+          "specifiers": [
+            "AuditRecord",
+            "AuditStore",
+            "get_audit_store",
+            "record_tool_call",
+            "records_to_json",
+            "records_to_csv",
+            "_parse_utc",
+            "_as_utc"
+          ]
+        }
+      ],
+      "exports": [
+        "_make_record",
+        "TestAuditRecord",
+        "TestAuditStore",
+        "TestRecordToolCall",
+        "TestRecordsToJson",
+        "TestRecordsToCsv",
+        "TestDatetimeHelpers",
+        "test_get_audit_store_returns_same_instance"
+      ],
+      "totalLines": 342,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/test_rate_limit_presets.py": {
+      "filePath": "core/common/test_rate_limit_presets.py",
+      "contentHash": "5c80d121a766473f4c118496a0a6b16b3dc394999458bc74023805079178cb76",
+      "functions": [
+        {
+          "name": "test_presets_contain_expected_profiles",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "test_preset_values",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_get_active_preset_defaults_to_pilot",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "test_get_active_preset_respects_env",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "test_get_active_preset_permissive",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "test_get_active_preset_unknown_falls_back_to_pilot",
+          "params": [
+            "monkeypatch",
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_preset_description_contains_profile_name",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_get_rate_limit_uses_explicit_env_vars_over_preset",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_get_rate_limit_falls_back_to_pilot_preset",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_get_rate_limit_falls_back_to_production_preset",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_error_budget_config_defaults",
+          "params": [],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "test_error_budget_config_from_env",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "test_tracker_starts_empty",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_tracker_records_successes",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_tracker_records_errors",
+          "params": [],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "test_tracker_reset",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_tracker_emits_warning_at_warn_threshold",
+          "params": [
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "test_tracker_emits_error_at_error_threshold",
+          "params": [
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "test_tracker_no_signal_below_warn_threshold",
+          "params": [
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "test_tracker_prunes_old_events",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "test_tracker_stats_keys",
+          "params": [],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "test_configure_error_budget_tracking_attaches_tracker",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_error_budget_middleware_counts_errors",
+          "params": [],
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "test_error_budget_middleware_emits_signal_on_high_error_rate",
+          "params": [
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 24
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        },
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "FastAPI"
+          ]
+        },
+        {
+          "source": "fastapi.testclient",
+          "specifiers": [
+            "TestClient"
+          ]
+        },
+        {
+          "source": "rate_limit_presets",
+          "specifiers": [
+            "rlp"
+          ]
+        },
+        {
+          "source": "security",
+          "specifiers": [
+            "security"
+          ]
+        }
+      ],
+      "exports": [
+        "test_presets_contain_expected_profiles",
+        "test_preset_values",
+        "test_get_active_preset_defaults_to_pilot",
+        "test_get_active_preset_respects_env",
+        "test_get_active_preset_permissive",
+        "test_get_active_preset_unknown_falls_back_to_pilot",
+        "test_preset_description_contains_profile_name",
+        "test_get_rate_limit_uses_explicit_env_vars_over_preset",
+        "test_get_rate_limit_falls_back_to_pilot_preset",
+        "test_get_rate_limit_falls_back_to_production_preset",
+        "test_error_budget_config_defaults",
+        "test_error_budget_config_from_env",
+        "test_tracker_starts_empty",
+        "test_tracker_records_successes",
+        "test_tracker_records_errors",
+        "test_tracker_reset",
+        "test_tracker_emits_warning_at_warn_threshold",
+        "test_tracker_emits_error_at_error_threshold",
+        "test_tracker_no_signal_below_warn_threshold",
+        "test_tracker_prunes_old_events",
+        "test_tracker_stats_keys",
+        "test_configure_error_budget_tracking_attaches_tracker",
+        "test_error_budget_middleware_counts_errors",
+        "test_error_budget_middleware_emits_signal_on_high_error_rate"
+      ],
+      "totalLines": 313,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/test_security_common.py": {
+      "filePath": "core/common/test_security_common.py",
+      "contentHash": "537283df1f4afae39a1674d927ab0aed0d50a6edee739911d8ff61534de4b18b",
+      "functions": [
+        {
+          "name": "build_request",
+          "params": [
+            "path",
+            "ip"
+          ],
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "test_get_allowed_origins_from_env",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_get_allowed_origins_rejects_wildcards",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_get_allowed_origins_rejects_invalid_schemes",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_verify_api_key_rejects_missing_config",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_verify_api_key_rejects_invalid_key",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "test_verify_api_key_accepts_valid_key",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_verify_api_key_accepts_dual_rotation_keys",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_verify_api_key_rejects_revoked_runtime_key",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "test_verify_api_key_rejects_revoked_env_key",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_enforce_rate_limit_blocks_after_limit",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "test_enforce_rate_limit_resets_after_window",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "test_enforce_rate_limit_increments_within_window",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "test_enforce_rate_limit_uses_redis_when_available",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "test_enforce_rate_limit_redis_blocks_after_limit",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "test_enforce_rate_limit_falls_back_when_redis_degraded",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "test_observability_adds_request_id_header_and_logs",
+          "params": [
+            "monkeypatch",
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "test_observability_redacts_sensitive_headers",
+          "params": [
+            "monkeypatch",
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "test_sanitize_request_id_accepts_valid_format",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_sanitize_request_id_generates_uuid_for_invalid",
+          "params": [],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "test_sanitize_request_id_truncates_long_ids",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "test_sanitize_request_id_generates_uuid_for_none",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "test_observability_adds_security_headers",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "test_enforce_rate_limit_blocks_burst_same_route",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "test_enforce_rate_limit_per_route_isolation",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "test_enforce_rate_limit_different_paths_tracked_separately",
+          "params": [
+            "monkeypatch"
+          ],
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "test_observability_skips_health_logs_by_default",
+          "params": [
+            "monkeypatch",
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "test_observability_logs_health_when_enabled",
+          "params": [
+            "monkeypatch",
+            "caplog"
+          ],
+          "exported": true,
+          "lineCount": 18
+        }
+      ],
+      "classes": [
+        {
+          "name": "FakeRedisClient",
+          "methods": [
+            "__init__",
+            "incr",
+            "expire"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 18
+        }
+      ],
+      "imports": [
+        {
+          "source": "types",
+          "specifiers": [
+            "SimpleNamespace"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        },
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "FastAPI",
+            "HTTPException"
+          ]
+        },
+        {
+          "source": "fastapi.testclient",
+          "specifiers": [
+            "TestClient"
+          ]
+        },
+        {
+          "source": "security",
+          "specifiers": [
+            "security"
+          ]
+        }
+      ],
+      "exports": [
+        "build_request",
+        "FakeRedisClient",
+        "test_get_allowed_origins_from_env",
+        "test_get_allowed_origins_rejects_wildcards",
+        "test_get_allowed_origins_rejects_invalid_schemes",
+        "test_verify_api_key_rejects_missing_config",
+        "test_verify_api_key_rejects_invalid_key",
+        "test_verify_api_key_accepts_valid_key",
+        "test_verify_api_key_accepts_dual_rotation_keys",
+        "test_verify_api_key_rejects_revoked_runtime_key",
+        "test_verify_api_key_rejects_revoked_env_key",
+        "test_enforce_rate_limit_blocks_after_limit",
+        "test_enforce_rate_limit_resets_after_window",
+        "test_enforce_rate_limit_increments_within_window",
+        "test_enforce_rate_limit_uses_redis_when_available",
+        "test_enforce_rate_limit_redis_blocks_after_limit",
+        "test_enforce_rate_limit_falls_back_when_redis_degraded",
+        "test_observability_adds_request_id_header_and_logs",
+        "test_observability_redacts_sensitive_headers",
+        "test_sanitize_request_id_accepts_valid_format",
+        "test_sanitize_request_id_generates_uuid_for_invalid",
+        "test_sanitize_request_id_truncates_long_ids",
+        "test_sanitize_request_id_generates_uuid_for_none",
+        "test_observability_adds_security_headers",
+        "test_enforce_rate_limit_blocks_burst_same_route",
+        "test_enforce_rate_limit_per_route_isolation",
+        "test_enforce_rate_limit_different_paths_tracked_separately",
+        "test_observability_skips_health_logs_by_default",
+        "test_observability_logs_health_when_enabled"
+      ],
+      "totalLines": 373,
+      "hasStructuralAnalysis": true
+    },
+    "core/common/tracing.py": {
+      "filePath": "core/common/tracing.py",
+      "contentHash": "e25389a5d8c6e8db2cd7b781c687178f2ac70a466e1ad851bb1e7a04fa36b801",
+      "functions": [
+        {
+          "name": "_is_tracing_enabled",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "configure_tracing",
+          "params": [
+            "app",
+            "service_name"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 41
+        },
+        {
+          "name": "get_trace_context",
+          "params": [],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "get_tracer",
+          "params": [
+            "name"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "_NoopTracer",
+          "methods": [
+            "start_as_current_span"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_NoopSpan",
+          "methods": [
+            "set_attribute",
+            "record_exception",
+            "set_status"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        }
+      ],
+      "exports": [
+        "_is_tracing_enabled",
+        "configure_tracing",
+        "get_trace_context",
+        "get_tracer",
+        "_NoopTracer",
+        "_NoopSpan"
+      ],
+      "totalLines": 145,
+      "hasStructuralAnalysis": true
+    },
+    "core/Dockerfile": {
+      "filePath": "core/Dockerfile",
+      "contentHash": "4d893a48edc6dc298359695c1c271d9c4207efad9331d3d196b192d0f47b6aec",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "core/main.py": {
+      "filePath": "core/main.py",
+      "contentHash": "6e23a5ce7ad40f9d04a00686dec8d5fb97815c429186808c586cad0c9ef308fd",
+      "functions": [
+        {
+          "name": "_lifespan",
+          "params": [
+            "app"
+          ],
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "_auth",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_rate",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "_load_registry",
+          "params": [],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_save_registry",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "_slugify_server_name",
+          "params": [
+            "prompt"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "_find_available_port",
+          "params": [
+            "start",
+            "end"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "_extract_tools_from_code",
+          "params": [
+            "code"
+          ],
+          "returnType": "List[str]",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "_generate_local_server_code",
+          "params": [
+            "server_name",
+            "user_request"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 40
+        },
+        {
+          "name": "health",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "execute",
+          "params": [
+            "req",
+            "_auth_dep",
+            "_rate_dep"
+          ],
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "register",
+          "params": [
+            "req",
+            "_auth_dep",
+            "_rate_dep"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "catalog",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "generate",
+          "params": [
+            "req",
+            "_auth_dep",
+            "_rate_dep"
+          ],
+          "exported": true,
+          "lineCount": 102
+        },
+        {
+          "name": "audit_export_json",
+          "params": [
+            "start",
+            "end",
+            "_auth_dep"
+          ],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "audit_export_csv",
+          "params": [
+            "start",
+            "end",
+            "_auth_dep"
+          ],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "_parse_export_datetime",
+          "params": [
+            "value",
+            "param_name"
+          ],
+          "returnType": "Optional[datetime]",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [
+        {
+          "name": "ExecRequest",
+          "methods": [],
+          "properties": [
+            "language",
+            "code",
+            "timeout",
+            "use_docker",
+            "memory_mb"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "RegisterRequest",
+          "methods": [],
+          "properties": [
+            "name",
+            "description",
+            "url",
+            "metadata"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "GenerateRequest",
+          "methods": [],
+          "properties": [
+            "prompt",
+            "sandbox"
+          ],
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "re",
+          "specifiers": [
+            "re"
+          ]
+        },
+        {
+          "source": "socket",
+          "specifiers": [
+            "socket"
+          ]
+        },
+        {
+          "source": "shutil",
+          "specifiers": [
+            "shutil"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "tempfile",
+          "specifiers": [
+            "tempfile"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "contextlib",
+          "specifiers": [
+            "asynccontextmanager"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "List",
+            "Optional"
+          ]
+        },
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "Depends",
+            "FastAPI",
+            "HTTPException"
+          ]
+        },
+        {
+          "source": "fastapi.responses",
+          "specifiers": [
+            "StreamingResponse"
+          ]
+        },
+        {
+          "source": "pydantic",
+          "specifiers": [
+            "BaseModel"
+          ]
+        },
+        {
+          "source": ".mcp_transport",
+          "specifiers": [
+            "mcp",
+            "register_downstream_tools",
+            "set_audit_hook"
+          ]
+        },
+        {
+          "source": ".ai_agent",
+          "specifiers": [
+            "generate_python_from_claude",
+            "generate_python_from_openai"
+          ]
+        },
+        {
+          "source": "fastapi.staticfiles",
+          "specifiers": [
+            "StaticFiles"
+          ]
+        }
+      ],
+      "exports": [
+        "_lifespan",
+        "_auth",
+        "_rate",
+        "ExecRequest",
+        "RegisterRequest",
+        "GenerateRequest",
+        "_load_registry",
+        "_save_registry",
+        "_slugify_server_name",
+        "_find_available_port",
+        "_extract_tools_from_code",
+        "_generate_local_server_code",
+        "health",
+        "execute",
+        "register",
+        "catalog",
+        "generate",
+        "audit_export_json",
+        "audit_export_csv",
+        "_parse_export_datetime"
+      ],
+      "totalLines": 561,
+      "hasStructuralAnalysis": true
+    },
+    "core/mcp_registry.json.bak": {
+      "filePath": "core/mcp_registry.json.bak",
+      "contentHash": "c7595afce0d05d9cb8c71ef5f36c53be40e221c8405f0a6dc4434d186d64cbcb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 102,
+      "hasStructuralAnalysis": false
+    },
+    "core/mcp_transport.py": {
+      "filePath": "core/mcp_transport.py",
+      "contentHash": "1501b641a33c5fea054a849918e1d4761d0ed994f28e2a2a5907364dd9ee6268",
+      "functions": [
+        {
+          "name": "set_audit_hook",
+          "params": [
+            "fn"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "execute_code",
+          "params": [
+            "code",
+            "timeout"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "generate_and_execute",
+          "params": [
+            "prompt",
+            "timeout"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "generate_mcp_project",
+          "params": [
+            "description"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_make_passthrough_tool",
+          "params": [
+            "name",
+            "description",
+            "input_schema",
+            "fn"
+          ],
+          "returnType": "Tool",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "_server_namespace",
+          "params": [
+            "server_name"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "_proxy_tool_name",
+          "params": [
+            "namespace",
+            "tool_name"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "_make_proxy_fn",
+          "params": [
+            "mcp_url",
+            "tool_name",
+            "proxied_name"
+          ],
+          "exported": true,
+          "lineCount": 33
+        },
+        {
+          "name": "register_downstream_tools",
+          "params": [
+            "registry"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 68
+        }
+      ],
+      "classes": [
+        {
+          "name": "_PassthroughArgModel",
+          "methods": [
+            "model_dump_one_level"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 18
+        }
+      ],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Any"
+          ]
+        },
+        {
+          "source": "pydantic",
+          "specifiers": [
+            "ConfigDict",
+            "create_model"
+          ]
+        },
+        {
+          "source": "mcp.server.fastmcp",
+          "specifiers": [
+            "FastMCP"
+          ]
+        },
+        {
+          "source": "mcp.server.fastmcp.tools.base",
+          "specifiers": [
+            "Tool"
+          ]
+        },
+        {
+          "source": "mcp.server.fastmcp.utilities.func_metadata",
+          "specifiers": [
+            "ArgModelBase",
+            "FuncMetadata"
+          ]
+        },
+        {
+          "source": "mcp.server.transport_security",
+          "specifiers": [
+            "TransportSecuritySettings"
+          ]
+        },
+        {
+          "source": "mcp.client.streamable_http",
+          "specifiers": [
+            "streamablehttp_client"
+          ]
+        },
+        {
+          "source": "mcp",
+          "specifiers": [
+            "ClientSession"
+          ]
+        },
+        {
+          "source": ".ai_agent",
+          "specifiers": [
+            "_generate_and_execute",
+            "_gen_mcp_project"
+          ]
+        }
+      ],
+      "exports": [
+        "set_audit_hook",
+        "execute_code",
+        "generate_and_execute",
+        "generate_mcp_project",
+        "_PassthroughArgModel",
+        "_make_passthrough_tool",
+        "_server_namespace",
+        "_proxy_tool_name",
+        "_make_proxy_fn",
+        "register_downstream_tools"
+      ],
+      "totalLines": 285,
+      "hasStructuralAnalysis": true
+    },
+    "core/quick_test.py": {
+      "filePath": "core/quick_test.py",
+      "contentHash": "f5480d8e63dc6668b9e638fd97223743975972862f162fca533f9b07c08411ec",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "ai_agent",
+          "specifiers": [
+            "generate_mcp_project"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "core/requirements.txt": {
+      "filePath": "core/requirements.txt",
+      "contentHash": "748a5e5b12a13e6a648285261de2e5c7fe3a6ad9a58abf7663fcf96fe5a9fd37",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": false
+    },
+    "core/runner_docker.py": {
+      "filePath": "core/runner_docker.py",
+      "contentHash": "3b16820d89c4a65e71695609d1b2533b1c069efd04c5dd3ab027eaa3c53940c3",
+      "functions": [
+        {
+          "name": "_abs_path_for_docker",
+          "params": [
+            "path"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "run_in_docker",
+          "params": [
+            "code",
+            "timeout",
+            "memory_mb"
+          ],
+          "returnType": "Dict",
+          "exported": true,
+          "lineCount": 66
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "tempfile",
+          "specifiers": [
+            "tempfile"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "shutil",
+          "specifiers": [
+            "shutil"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Dict"
+          ]
+        }
+      ],
+      "exports": [
+        "_abs_path_for_docker",
+        "run_in_docker"
+      ],
+      "totalLines": 95,
+      "hasStructuralAnalysis": true
+    },
+    "core/security.py": {
+      "filePath": "core/security.py",
+      "contentHash": "4b6e77d41f3afac870ce6ce8018e7bfe10e6165385b5d4e0267f20cf59b0b20c",
+      "functions": [
+        {
+          "name": "_get_valid_keys",
+          "params": [],
+          "returnType": "set",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_get_revoked_keys",
+          "params": [],
+          "returnType": "set",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "verify_api_key",
+          "params": [
+            "api_key"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "initialize_rate_limit_store",
+          "params": [
+            "app"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "enforce_rate_limit",
+          "params": [
+            "request"
+          ],
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "configure_cors",
+          "params": [
+            "app"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "configure_observability",
+          "params": [
+            "app"
+          ],
+          "exported": true,
+          "lineCount": 6
+        }
+      ],
+      "classes": [
+        {
+          "name": "ObservabilityMiddleware",
+          "methods": [
+            "dispatch"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 16
+        }
+      ],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Optional"
+          ]
+        },
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "FastAPI",
+            "HTTPException",
+            "Request",
+            "Security"
+          ]
+        },
+        {
+          "source": "fastapi.middleware.cors",
+          "specifiers": [
+            "CORSMiddleware"
+          ]
+        },
+        {
+          "source": "fastapi.security.api_key",
+          "specifiers": [
+            "APIKeyHeader"
+          ]
+        },
+        {
+          "source": "starlette.middleware.base",
+          "specifiers": [
+            "BaseHTTPMiddleware"
+          ]
+        },
+        {
+          "source": "starlette.responses",
+          "specifiers": [
+            "Response"
+          ]
+        }
+      ],
+      "exports": [
+        "_get_valid_keys",
+        "_get_revoked_keys",
+        "verify_api_key",
+        "initialize_rate_limit_store",
+        "enforce_rate_limit",
+        "configure_cors",
+        "ObservabilityMiddleware",
+        "configure_observability"
+      ],
+      "totalLines": 109,
+      "hasStructuralAnalysis": true
+    },
+    "core/test_fusional.py": {
+      "filePath": "core/test_fusional.py",
+      "contentHash": "5c0a5279611a614940b3ad2bdf5c6df9c4e9580669ab66f475bf419f2c27699d",
+      "functions": [
+        {
+          "name": "test_health",
+          "params": [],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "test_execute_simple",
+          "params": [],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "test_execute_docker",
+          "params": [],
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "test_catalog",
+          "params": [],
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "test_register",
+          "params": [],
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "run_all_tests",
+          "params": [],
+          "exported": true,
+          "lineCount": 33
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "requests",
+          "specifiers": [
+            "requests"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        }
+      ],
+      "exports": [
+        "test_health",
+        "test_execute_simple",
+        "test_execute_docker",
+        "test_catalog",
+        "test_register",
+        "run_all_tests"
+      ],
+      "totalLines": 173,
+      "hasStructuralAnalysis": true
+    },
+    "Dockerfile": {
+      "filePath": "Dockerfile",
+      "contentHash": "5411066a363abc6c5b21988e6c80cd83c5bdc0494d574e37f0910034442bca7a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    "docs/custom-servers.md": {
+      "filePath": "docs/custom-servers.md",
+      "contentHash": "2d679984a65bea4433d2b988a0851d96ad3c46824d4566c2338dde94e144be27",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 416,
+      "hasStructuralAnalysis": true
+    },
+    "docs/docker-gateway.md": {
+      "filePath": "docs/docker-gateway.md",
+      "contentHash": "378c30083a0a50690ecd4fe570781b3f4fddd87476e0cc35f0bccf3d8579d648",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "docs/troubleshooting.md": {
+      "filePath": "docs/troubleshooting.md",
+      "contentHash": "3fe6aeca473a66cf9c4cd7d3c71eb3be3a6b5e429c353b452ede0334b47945ae",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": true
+    },
+    "examples/dice-roller/dice_server.py": {
+      "filePath": "examples/dice-roller/dice_server.py",
+      "contentHash": "d1c885916cc23c1bb027954a3b20c29917df91e28b3562a2d47a669727a7e2ee",
+      "functions": [
+        {
+          "name": "parse_dice_notation",
+          "params": [
+            "notation"
+          ],
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "roll_dice",
+          "params": [
+            "notation"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 32
+        },
+        {
+          "name": "roll_stats",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 29
+        },
+        {
+          "name": "flip_coin",
+          "params": [
+            "count"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "roll_check",
+          "params": [
+            "dc",
+            "modifier",
+            "skill"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 37
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "random",
+          "specifiers": [
+            "random"
+          ]
+        },
+        {
+          "source": "mcp.server.fastmcp",
+          "specifiers": [
+            "FastMCP"
+          ]
+        }
+      ],
+      "exports": [
+        "parse_dice_notation",
+        "roll_dice",
+        "roll_stats",
+        "flip_coin",
+        "roll_check"
+      ],
+      "totalLines": 199,
+      "hasStructuralAnalysis": true
+    },
+    "examples/dice-roller/Dockerfile": {
+      "filePath": "examples/dice-roller/Dockerfile",
+      "contentHash": "b56968a8a42f69f351d3c6bde9b344da2f5092e793afc2de5a864c9f42dc1575",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 18,
+      "hasStructuralAnalysis": true
+    },
+    "examples/dice-roller/README.md": {
+      "filePath": "examples/dice-roller/README.md",
+      "contentHash": "cb2ec47dd35d4fda7411a15887f6211ff906e1109145e2438268d3edc432f546",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "examples/dice-roller/requirements.txt": {
+      "filePath": "examples/dice-roller/requirements.txt",
+      "contentHash": "a6e72c01762121eb962ae083f6af7e133efa0da4a44501f323deb0e0c514c6f1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": false
+    },
+    "examples/file-utils/Dockerfile": {
+      "filePath": "examples/file-utils/Dockerfile",
+      "contentHash": "0505a7bc5b617e553810c6906afe56d8673201a036ac94dca939a333a5895728",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "examples/file-utils/file_utils_server.py": {
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "contentHash": "fb97791a7eec79666730af7d232c11eaac13765a37aa888718af26748d907237",
+      "functions": [
+        {
+          "name": "count_lines",
+          "params": [
+            "filepath"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "get_file_info",
+          "params": [
+            "filepath"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "search_text",
+          "params": [
+            "filepath",
+            "pattern"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "list_files",
+          "params": [
+            "directory",
+            "extension"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 38
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "mcp.server.fastmcp",
+          "specifiers": [
+            "FastMCP"
+          ]
+        }
+      ],
+      "exports": [
+        "count_lines",
+        "get_file_info",
+        "search_text",
+        "list_files"
+      ],
+      "totalLines": 171,
+      "hasStructuralAnalysis": true
+    },
+    "examples/file-utils/README.md": {
+      "filePath": "examples/file-utils/README.md",
+      "contentHash": "24774de2db677135e4f848b6b4c6c44ad464b0b7d66fc43d03ae68d17e1d4d13",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 128,
+      "hasStructuralAnalysis": true
+    },
+    "examples/file-utils/requirements.txt": {
+      "filePath": "examples/file-utils/requirements.txt",
+      "contentHash": "a6e72c01762121eb962ae083f6af7e133efa0da4a44501f323deb0e0c514c6f1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": false
+    },
+    "examples/weather-api/Dockerfile": {
+      "filePath": "examples/weather-api/Dockerfile",
+      "contentHash": "6fdfd73f59720f391a82422dec6ee4efd0617ca8287d598f9484062d53f282a7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "examples/weather-api/README.md": {
+      "filePath": "examples/weather-api/README.md",
+      "contentHash": "d9a41534e7c7ca71091bc3336c516ffdc491a15a4268a7746430be04500bd9f7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 107,
+      "hasStructuralAnalysis": true
+    },
+    "examples/weather-api/requirements.txt": {
+      "filePath": "examples/weather-api/requirements.txt",
+      "contentHash": "b90f7fee9056d734d62510642900952f9036afc281fd18af9f1c11677b58e90c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": false
+    },
+    "examples/weather-api/weather_server.py": {
+      "filePath": "examples/weather-api/weather_server.py",
+      "contentHash": "5e0806bb4cbb80f03292e5d64389a7e0d123117e4bc9686cab8e4c3b691bac97",
+      "functions": [
+        {
+          "name": "get_weather",
+          "params": [
+            "location"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 30
+        },
+        {
+          "name": "get_forecast",
+          "params": [
+            "location",
+            "days"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 41
+        },
+        {
+          "name": "parse_weather",
+          "params": [
+            "data_json"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "mcp.server.fastmcp",
+          "specifiers": [
+            "FastMCP"
+          ]
+        }
+      ],
+      "exports": [
+        "get_weather",
+        "get_forecast",
+        "parse_weather"
+      ],
+      "totalLines": 137,
+      "hasStructuralAnalysis": true
+    },
+    "fusion-stress-test.md": {
+      "filePath": "fusion-stress-test.md",
+      "contentHash": "e0a2c1115f4607089f66da6eb1e95f1112f13fe20de36c2945e341f681b462ef",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 145,
+      "hasStructuralAnalysis": true
+    },
+    "init.py": {
+      "filePath": "init.py",
+      "contentHash": "996d4943cb2f3929a4b93022da2936d8310f16c49a700ada34537bca13e3d6cd",
+      "functions": [
+        {
+          "name": "check_docker",
+          "params": [],
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "check_python",
+          "params": [],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "check_dependencies",
+          "params": [],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "setup_docker_mcp",
+          "params": [],
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 44
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "check_docker",
+        "check_python",
+        "check_dependencies",
+        "setup_docker_mcp",
+        "main"
+      ],
+      "totalLines": 119,
+      "hasStructuralAnalysis": true
+    },
+    "logs/execution_log.json": {
+      "filePath": "logs/execution_log.json",
+      "contentHash": "d30b7ec21b3c7eda865ffc1d614be7748edef256506460f3d0d4f95d0c1c6404",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 94,
+      "hasStructuralAnalysis": true
+    },
+    "MAINTENANCE.md": {
+      "filePath": "MAINTENANCE.md",
+      "contentHash": "17d7dc84b0d0fb646c66e23dfdc098caac7eb0ec2d8eb66a07aa2d3132c55ba0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "mcp-builder-prompt/README.md": {
+      "filePath": "mcp-builder-prompt/README.md",
+      "contentHash": "7f983bac0d9b6db0ecdbbb6b2845f373dfa104df9b2e85c2e39a69e47beed798",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 79,
+      "hasStructuralAnalysis": true
+    },
+    "notion_poller.py": {
+      "filePath": "notion_poller.py",
+      "contentHash": "a064e6bb4bd0ce70265ed1cc0a931b5195d871c0af34e4cba2c4abf55e226ed6",
+      "functions": [
+        {
+          "name": "now_iso",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "truncate_rich_text",
+          "params": [
+            "text"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "get_title_text",
+          "params": [
+            "page"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "get_select_value",
+          "params": [
+            "page",
+            "prop_name"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "get_number_value",
+          "params": [
+            "page",
+            "prop_name"
+          ],
+          "returnType": "Optional[int]",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "notion_call",
+          "params": [
+            "fn",
+            "*args",
+            "max_retries",
+            "**kwargs"
+          ],
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "poll_build_queue",
+          "params": [
+            "notion",
+            "http"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "_process_build",
+          "params": [
+            "notion",
+            "http",
+            "page"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 101
+        },
+        {
+          "name": "_fail_build",
+          "params": [
+            "notion",
+            "page_id",
+            "error_msg"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "health_check_fleet",
+          "params": [
+            "notion",
+            "http"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "_check_server",
+          "params": [
+            "notion",
+            "http",
+            "page"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 122
+        },
+        {
+          "name": "_get_registry_page_id",
+          "params": [
+            "notion",
+            "server_name"
+          ],
+          "returnType": "Optional[str]",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "_warm_registry_cache",
+          "params": [
+            "notion"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "_auto_resolve_incidents",
+          "params": [
+            "notion",
+            "server_name"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "recover_interrupted_builds",
+          "params": [
+            "notion"
+          ],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "check_fusional_health",
+          "params": [
+            "http"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "_banner_line",
+          "params": [
+            "content",
+            "width"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "print_banner",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "main",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 37
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "typing",
+          "specifiers": [
+            "Optional"
+          ]
+        },
+        {
+          "source": "httpx",
+          "specifiers": [
+            "httpx"
+          ]
+        },
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "notion_client",
+          "specifiers": [
+            "NotionClient"
+          ]
+        },
+        {
+          "source": "notion_client.errors",
+          "specifiers": [
+            "APIResponseError"
+          ]
+        },
+        {
+          "source": "rich.console",
+          "specifiers": [
+            "Console"
+          ]
+        },
+        {
+          "source": "rich.rule",
+          "specifiers": [
+            "Rule"
+          ]
+        }
+      ],
+      "exports": [
+        "now_iso",
+        "truncate_rich_text",
+        "get_title_text",
+        "get_select_value",
+        "get_number_value",
+        "notion_call",
+        "poll_build_queue",
+        "_process_build",
+        "_fail_build",
+        "health_check_fleet",
+        "_check_server",
+        "_get_registry_page_id",
+        "_warm_registry_cache",
+        "_auto_resolve_incidents",
+        "recover_interrupted_builds",
+        "check_fusional_health",
+        "_banner_line",
+        "print_banner",
+        "main"
+      ],
+      "totalLines": 621,
+      "hasStructuralAnalysis": true
+    },
+    "quick-start/setup-guide.md": {
+      "filePath": "quick-start/setup-guide.md",
+      "contentHash": "57520cf9a0f9d122a9b49f6088a80c5d5806868a16d7927b17f67173e37a9a6d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 194,
+      "hasStructuralAnalysis": true
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "7e4535443aac1f22bd330c612fa48009c452f814ce6610b6727aea9bc991eb2f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 349,
+      "hasStructuralAnalysis": true
+    },
+    "requirements.txt": {
+      "filePath": "requirements.txt",
+      "contentHash": "689877984fad2cecc6eed22499d68097985975887889ae4150781b5956300841",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/action_executor.py": {
+      "filePath": "scripts/action_executor.py",
+      "contentHash": "33697d6cd96348ea49a3a71c4140b1eb07b4003ac5e1445a37910dbf2b46cd46",
+      "functions": [
+        {
+          "name": "map_step_to_command",
+          "params": [
+            "step"
+          ],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "is_safe",
+          "params": [
+            "command"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "run_command",
+          "params": [
+            "command",
+            "timeout"
+          ],
+          "returnType": "tuple[str, str, int]",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "execute_plan",
+          "params": [
+            "action_plan",
+            "dry_run",
+            "stop_on_failure"
+          ],
+          "returnType": "list[StepResult]",
+          "exported": true,
+          "lineCount": 78
+        },
+        {
+          "name": "_log_execution",
+          "params": [
+            "action_plan",
+            "results"
+          ],
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "execution_summary",
+          "params": [
+            "results"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "classes": [
+        {
+          "name": "StepResult",
+          "methods": [],
+          "properties": [
+            "step",
+            "command",
+            "stdout",
+            "stderr",
+            "returncode",
+            "success",
+            "skipped",
+            "skip_reason",
+            "timestamp"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "imports": [
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "re",
+          "specifiers": [
+            "re"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "dataclasses",
+          "specifiers": [
+            "dataclass",
+            "field"
+          ]
+        }
+      ],
+      "exports": [
+        "StepResult",
+        "map_step_to_command",
+        "is_safe",
+        "run_command",
+        "execute_plan",
+        "_log_execution",
+        "execution_summary"
+      ],
+      "totalLines": 279,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/build_examples.ps1": {
+      "filePath": "scripts/build_examples.ps1",
+      "contentHash": "77c8736cce4803700ca79e8eb7bd8ade2829415d5b6eaf91e8304827c4ea99e2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/generate_registry_from_docker.ps1": {
+      "filePath": "scripts/generate_registry_from_docker.ps1",
+      "contentHash": "07b3054c438e3e89aae362702dea92bc5e1961673a1b5980e42a44e77b815c4c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/generate_registry_from_docker.sh": {
+      "filePath": "scripts/generate_registry_from_docker.sh",
+      "contentHash": "6b66fbd8087eb150425ceb875b398beeaa02bfe2e858809f473c211fdffbf570",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 84,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/notion_reporter.py": {
+      "filePath": "scripts/notion_reporter.py",
+      "contentHash": "6e14c6a17fa4cc667a0b3991694b4936e7e294cb308d6fc666fb33ae5ae82eaf",
+      "functions": [
+        {
+          "name": "_headers",
+          "params": [],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_rt",
+          "params": [
+            "text"
+          ],
+          "returnType": "list",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "post_incident",
+          "params": [
+            "server_name",
+            "fault_type",
+            "trigger_reason",
+            "verdict",
+            "action_plan",
+            "execution_summary",
+            "issues",
+            "escalate",
+            "escalation_reason"
+          ],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 69
+        },
+        {
+          "name": "report_think_tank_result",
+          "params": [
+            "fault_server",
+            "fault_type",
+            "trigger_reason",
+            "verdict",
+            "action_plan",
+            "exec_results",
+            "issues",
+            "escalate",
+            "escalation_reason"
+          ],
+          "returnType": "str | None",
+          "exported": true,
+          "lineCount": 40
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "_Path"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "requests",
+          "specifiers": [
+            "requests"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        }
+      ],
+      "exports": [
+        "_headers",
+        "_rt",
+        "post_incident",
+        "report_think_tank_result"
+      ],
+      "totalLines": 153,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/README.md": {
+      "filePath": "scripts/README.md",
+      "contentHash": "02a41ebd82e2d53ceb7a0bd3a50875ba9948842fc2db884eceb486a43d00ea77",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 56,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/smoke-generate-endpoint.ps1": {
+      "filePath": "scripts/smoke-generate-endpoint.ps1",
+      "contentHash": "2b1743d5298b33aaf1eb1e9509a94e01929d1ed89ab89f65c3955fe44148f0a8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 96,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/test_pipeline.py": {
+      "filePath": "scripts/test_pipeline.py",
+      "contentHash": "fe8cba1418a8ddbe3fefa9bf9d349ba5d0e1b24f995443fa76c797e7409edbb0",
+      "functions": [
+        {
+          "name": "sep",
+          "params": [
+            "label"
+          ],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "mock_think_tank",
+          "params": [
+            "fault"
+          ],
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "run_test",
+          "params": [],
+          "exported": true,
+          "lineCount": 73
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime",
+            "timezone"
+          ]
+        },
+        {
+          "source": "think_tank_trigger",
+          "specifiers": [
+            "tt"
+          ]
+        },
+        {
+          "source": "action_executor",
+          "specifiers": [
+            "executor"
+          ]
+        }
+      ],
+      "exports": [
+        "sep",
+        "mock_think_tank",
+        "run_test"
+      ],
+      "totalLines": 145,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/think_tank_trigger.py": {
+      "filePath": "scripts/think_tank_trigger.py",
+      "contentHash": "f0fc7b11143f020fc7e7f9a24ec5d982581615e7e31025da140ff76a7011ed64",
+      "functions": [
+        {
+          "name": "_get_recent_faults",
+          "params": [
+            "server_name",
+            "limit"
+          ],
+          "returnType": "list",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "_call_claude",
+          "params": [
+            "client",
+            "model",
+            "system",
+            "user_content",
+            "thinking_budget",
+            "use_thinking"
+          ],
+          "returnType": "tuple[str, int]",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "run_think_tank",
+          "params": [
+            "fault",
+            "servers",
+            "preset"
+          ],
+          "returnType": "ThinkTankResult",
+          "exported": true,
+          "lineCount": 143
+        },
+        {
+          "name": "_log_result",
+          "params": [
+            "fault",
+            "result"
+          ],
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "trigger",
+          "params": [
+            "server_name",
+            "fault_type",
+            "detail",
+            "trigger_reason",
+            "servers",
+            "preset"
+          ],
+          "returnType": "ThinkTankResult",
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "classes": [
+        {
+          "name": "ReasoningPreset",
+          "methods": [],
+          "properties": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "FaultEvent",
+          "methods": [],
+          "properties": [
+            "server_name",
+            "fault_type",
+            "detail",
+            "trigger",
+            "timestamp"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "ThinkTankResult",
+          "methods": [],
+          "properties": [
+            "verdict",
+            "action_plan",
+            "issues",
+            "escalate",
+            "escalation_reason",
+            "raw_diagnoses",
+            "timestamp"
+          ],
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "dataclasses",
+          "specifiers": [
+            "dataclass",
+            "field"
+          ]
+        },
+        {
+          "source": "enum",
+          "specifiers": [
+            "Enum"
+          ]
+        },
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "_Path"
+          ]
+        },
+        {
+          "source": "anthropic",
+          "specifiers": [
+            "anthropic"
+          ]
+        },
+        {
+          "source": "action_executor",
+          "specifiers": [
+            "executor"
+          ]
+        },
+        {
+          "source": "notion_reporter",
+          "specifiers": [
+            "reporter"
+          ]
+        }
+      ],
+      "exports": [
+        "ReasoningPreset",
+        "FaultEvent",
+        "ThinkTankResult",
+        "_get_recent_faults",
+        "_call_claude",
+        "run_think_tank",
+        "_log_result",
+        "trigger"
+      ],
+      "totalLines": 378,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/think_tank.py": {
+      "filePath": "scripts/think_tank.py",
+      "contentHash": "a34c5afdcc777da329f15c5b82a785341cae0b72a708e967e7300cc7be50b457",
+      "functions": [],
+      "classes": [
+        {
+          "name": "TTAgent",
+          "methods": [],
+          "properties": [
+            "name",
+            "role",
+            "system_prompt",
+            "model"
+          ],
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "imports": [
+        {
+          "source": "asyncio",
+          "specifiers": [
+            "asyncio"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "dataclasses",
+          "specifiers": [
+            "dataclass",
+            "field"
+          ]
+        },
+        {
+          "source": "anthropic",
+          "specifiers": [
+            "anthropic"
+          ]
+        }
+      ],
+      "exports": [
+        "TTAgent"
+      ],
+      "totalLines": 138,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/watchdog.py": {
+      "filePath": "scripts/watchdog.py",
+      "contentHash": "49d837ebaa13a68f8dfa63f409e5893421891a4dc23d4b48644105ed62e294a2",
+      "functions": [
+        {
+          "name": "log_fault",
+          "params": [
+            "server_name",
+            "fault_type",
+            "detail",
+            "action"
+          ],
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "check_health",
+          "params": [
+            "server"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "can_restart",
+          "params": [
+            "server_name"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "restart_container",
+          "params": [
+            "server"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "handle_fault",
+          "params": [
+            "server"
+          ],
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "_fire_think_tank",
+          "params": [
+            "server",
+            "fault_type",
+            "detail",
+            "trigger_reason"
+          ],
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "run",
+          "params": [],
+          "exported": true,
+          "lineCount": 15
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "subprocess",
+          "specifiers": [
+            "subprocess"
+          ]
+        },
+        {
+          "source": "requests",
+          "specifiers": [
+            "requests"
+          ]
+        },
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "threading",
+          "specifiers": [
+            "threading"
+          ]
+        },
+        {
+          "source": "think_tank_trigger",
+          "specifiers": [
+            "tt"
+          ]
+        }
+      ],
+      "exports": [
+        "log_fault",
+        "check_health",
+        "can_restart",
+        "restart_container",
+        "handle_fault",
+        "_fire_think_tank",
+        "run"
+      ],
+      "totalLines": 213,
+      "hasStructuralAnalysis": true
+    },
+    "well-known/mcp/server-card.json": {
+      "filePath": "well-known/mcp/server-card.json",
+      "contentHash": "466005b57d22185666c4d039cc22074fa4378e4bffb76aae2e0de40c3a44c47b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 68,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

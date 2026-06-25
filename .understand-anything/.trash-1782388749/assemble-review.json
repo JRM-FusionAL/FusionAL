@@ -1,0 +1,17 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 1,
+  "edgesRestored": 4,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Fixed section: 3 tested_by edge flips and 8 'tested' tag additions are reasonable for this codebase size. No systemic ID prefix issues.",
+    "document:CLAUDE.md → file:core/policy_profiles.py (documents): policy_profiles.py does not exist on disk (not in batch analysis, not in project). Dropped edge is correct — file absent from codebase. Not recovered.",
+    "document:docs/docker-gateway.md → file:compose.yaml: compose.yaml was analyzed as type 'service' (service:compose.yaml), not 'file'. Edge restored pointing to service:compose.yaml.",
+    "file:scripts/build_examples.ps1 → file:examples/dice-roller/Dockerfile (deploys): Dockerfile was analyzed as type 'service' (service:examples/dice-roller/Dockerfile). Edge restored pointing to correct node.",
+    "file:scripts/generate_registry_from_docker.ps1 and .sh → file:core/mcp_registry.json (related): mcp_registry.json exists on disk but was never analyzed in any batch (only its .bak counterpart was). Stub node created with summary derived from .bak sibling and CLAUDE.md description. Both edges restored.",
+    "Cross-batch import map was empty; no cross-batch import edges were added.",
+    "Final graph: 183 nodes, 242 edges."
+  ]
+}

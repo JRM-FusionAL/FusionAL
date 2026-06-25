@@ -1,0 +1,949 @@
+{
+  "nodes": [
+    {
+      "id": "file:.gitattributes",
+      "type": "file",
+      "name": ".gitattributes",
+      "filePath": ".gitattributes",
+      "summary": "Git attributes configuration that controls line-ending normalization and diff behavior for text and binary files in the repository.",
+      "tags": ["configuration", "git", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.github/FUNDING.yml",
+      "type": "config",
+      "name": "FUNDING.yml",
+      "filePath": ".github/FUNDING.yml",
+      "summary": "GitHub Sponsors funding configuration that declares the project's sponsorship channels (GitHub sponsors).",
+      "tags": ["configuration", "community", "github"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/ISSUE_TEMPLATE/bug_report.md",
+      "type": "document",
+      "name": "bug_report.md",
+      "filePath": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "summary": "GitHub issue template for bug reports with seven structured sections covering summary, environment, reproduction steps, expected vs actual behavior, logs, and additional context.",
+      "tags": ["documentation", "community", "github", "issue-template"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/ISSUE_TEMPLATE/feature_request.md",
+      "type": "document",
+      "name": "feature_request.md",
+      "filePath": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "summary": "GitHub issue template for feature requests with five sections covering problem statement, proposed solution, alternatives, scope and impact, and additional context.",
+      "tags": ["documentation", "community", "github", "issue-template"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.hermes/maintenance-wrapper.sh",
+      "type": "file",
+      "name": "maintenance-wrapper.sh",
+      "filePath": ".hermes/maintenance-wrapper.sh",
+      "summary": "Thin shell wrapper that invokes the main maintenance script from the FusionAL project root and appends all output to the maintenance log file.",
+      "tags": ["script", "utility", "automation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.hermes/maintenance.sh",
+      "type": "file",
+      "name": "maintenance.sh",
+      "filePath": ".hermes/maintenance.sh",
+      "summary": "Automated maintenance script for FusionAL that checks for outdated Python dependencies, opens a dependency-update PR, waits for CI to pass, merges the PR, labels new GitHub issues with 'triage', and appends a weekly summary to MAINTENANCE.md.",
+      "tags": ["script", "automation", "ci-cd", "dependency-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Pattern ignore file for the understand-anything knowledge graph tool, listing files and directories to exclude from codebase analysis such as build artifacts, virtual environments, and generated files.",
+      "tags": ["configuration", "tooling", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "core/__init__.py",
+      "summary": "Empty Python package initializer that marks the core directory as a Python package.",
+      "tags": ["entry-point", "barrel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/.bandit",
+      "type": "file",
+      "name": ".bandit",
+      "filePath": "core/.bandit",
+      "summary": "Bandit static security analysis configuration that skips specific test IDs (B404, B603) for the core module, suppressing known acceptable subprocess import and usage warnings.",
+      "tags": ["configuration", "security", "static-analysis"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/common/audit.py",
+      "type": "file",
+      "name": "audit.py",
+      "filePath": "core/common/audit.py",
+      "summary": "Provides the AuditStore (in-memory, thread-safe, optionally file-persisted) and AuditRecord Pydantic model for recording MCP tool call events, plus serialization helpers for JSON and CSV export with UTC timestamp filtering.",
+      "tags": ["audit", "logging", "utility", "middleware"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/audit.py:AuditRecord",
+      "type": "class",
+      "name": "AuditRecord",
+      "filePath": "core/common/audit.py",
+      "lineRange": [41, 51],
+      "summary": "Pydantic data model representing a single MCP tool call audit record with fields for timestamp, tool name, status, duration, request/trace/span IDs, and error message.",
+      "tags": ["data-model", "audit", "pydantic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/audit.py:AuditStore",
+      "type": "class",
+      "name": "AuditStore",
+      "filePath": "core/common/audit.py",
+      "lineRange": [54, 124],
+      "summary": "Thread-safe in-memory ring buffer for AuditRecord entries with optional JSONL file persistence, configurable maximum capacity, and time-range query support using UTC-aware inclusive bounds.",
+      "tags": ["service", "audit", "thread-safety", "singleton"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/common/audit.py:get_audit_store",
+      "type": "function",
+      "name": "get_audit_store",
+      "filePath": "core/common/audit.py",
+      "lineRange": [134, 136],
+      "summary": "Returns the module-level singleton AuditStore instance, initializing it on first call.",
+      "tags": ["factory", "singleton", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/audit.py:record_tool_call",
+      "type": "function",
+      "name": "record_tool_call",
+      "filePath": "core/common/audit.py",
+      "lineRange": [139, 167],
+      "summary": "Convenience function that constructs an AuditRecord from tool call metadata and appends it to the global AuditStore, computing duration and attaching trace context.",
+      "tags": ["audit", "utility", "middleware"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/audit.py:records_to_json",
+      "type": "function",
+      "name": "records_to_json",
+      "filePath": "core/common/audit.py",
+      "lineRange": [175, 177],
+      "summary": "Serializes a list of AuditRecord objects to a JSON string array.",
+      "tags": ["serialization", "utility", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/audit.py:records_to_csv",
+      "type": "function",
+      "name": "records_to_csv",
+      "filePath": "core/common/audit.py",
+      "lineRange": [180, 187],
+      "summary": "Serializes a list of AuditRecord objects to a CSV string with a header row matching the Pydantic model fields.",
+      "tags": ["serialization", "utility", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:core/common/P2-HARDENING.md",
+      "type": "document",
+      "name": "P2-HARDENING.md",
+      "filePath": "core/common/P2-HARDENING.md",
+      "summary": "P2 security hardening runbook covering CORS allowlist enforcement, request ID validation, security response headers, rate-limit abuse testing, managed secrets best practices, and a phased JWT authentication migration plan (SEC-04 through SEC-10).",
+      "tags": ["documentation", "security", "hardening", "runbook"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:core/common/SECURITY-HARDENING.md",
+      "type": "document",
+      "name": "SECURITY-HARDENING.md",
+      "filePath": "core/common/SECURITY-HARDENING.md",
+      "summary": "Security hardening runbook for FusionAL covering API key lifecycle management (SEC-02), Redis-backed rate limiting (SEC-01), structured log redaction (SEC-05), and CI vulnerability triage workflows (SEC-08).",
+      "tags": ["documentation", "security", "hardening", "runbook"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/test_audit.py",
+      "type": "file",
+      "name": "test_audit.py",
+      "filePath": "core/common/test_audit.py",
+      "summary": "Comprehensive pytest test suite for audit.py covering AuditRecord validation, AuditStore append/eviction/query/persistence/thread-safety, record_tool_call recording, and JSON/CSV serialization helpers.",
+      "tags": ["test", "audit", "pytest"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestAuditRecord",
+      "type": "class",
+      "name": "TestAuditRecord",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [41, 64],
+      "summary": "Tests for the AuditRecord Pydantic model verifying required fields, optional field defaults, error status handling, and model_dump completeness.",
+      "tags": ["test", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestAuditStore",
+      "type": "class",
+      "name": "TestAuditStore",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [71, 196],
+      "summary": "Tests for AuditStore covering append, eviction, time-range queries with start/end filters, inclusive bounds, file persistence, and concurrent write thread-safety.",
+      "tags": ["test", "audit", "thread-safety"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestRecordToolCall",
+      "type": "class",
+      "name": "TestRecordToolCall",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [203, 235],
+      "summary": "Tests for the record_tool_call convenience function verifying success/error recording and UTC ISO timestamp generation.",
+      "tags": ["test", "audit"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestRecordsToCsv",
+      "type": "class",
+      "name": "TestRecordsToCsv",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [268, 306],
+      "summary": "Tests for records_to_csv verifying CSV header, single and multiple record serialization, and complete column coverage.",
+      "tags": ["test", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/tracing.py",
+      "type": "file",
+      "name": "tracing.py",
+      "filePath": "core/common/tracing.py",
+      "summary": "Provides OpenTelemetry distributed tracing setup for FastAPI with OTLP exporter support, environment-flag-controlled enable/disable, trace context extraction, and no-op tracer/span fallbacks when tracing is disabled.",
+      "tags": ["middleware", "observability", "tracing", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/tracing.py:configure_tracing",
+      "type": "function",
+      "name": "configure_tracing",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [47, 87],
+      "summary": "Configures the OpenTelemetry TracerProvider for a FastAPI app, reading OTLP endpoint and service name from environment, adding OTLP or console exporters, and instrumenting FastAPI with FastAPIInstrumentor.",
+      "tags": ["observability", "tracing", "middleware", "configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/tracing.py:get_trace_context",
+      "type": "function",
+      "name": "get_trace_context",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [90, 108],
+      "summary": "Extracts the current OpenTelemetry span context and returns trace ID and span ID as zero-padded hex strings, returning empty strings when no active span exists.",
+      "tags": ["observability", "tracing", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/tracing.py:get_tracer",
+      "type": "function",
+      "name": "get_tracer",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [111, 120],
+      "summary": "Returns a real OpenTelemetry tracer when tracing is enabled, or a _NoopTracer instance when disabled, providing a consistent interface regardless of tracing state.",
+      "tags": ["factory", "observability", "tracing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/tracing.py:_NoopTracer",
+      "type": "class",
+      "name": "_NoopTracer",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [123, 133],
+      "summary": "No-op tracer context manager that yields a _NoopSpan, used when OpenTelemetry tracing is disabled to avoid conditional tracing code at call sites.",
+      "tags": ["utility", "observability", "tracing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/mcp_registry.json.bak",
+      "type": "file",
+      "name": "mcp_registry.json.bak",
+      "filePath": "core/mcp_registry.json.bak",
+      "summary": "Backup snapshot of the MCP server registry JSON containing registered server entries with their descriptions, URLs, metadata, and registration timestamps.",
+      "tags": ["data", "configuration", "backup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:core/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "core/requirements.txt",
+      "summary": "Pinned Python dependency manifest for the FusionAL core module specifying FastAPI, uvicorn, Pydantic, Anthropic, OpenAI, MCP, Redis, OpenTelemetry, and security-patched transitive dependencies.",
+      "tags": ["configuration", "dependencies", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/runner_docker.py",
+      "type": "file",
+      "name": "runner_docker.py",
+      "filePath": "core/runner_docker.py",
+      "summary": "Implements Docker sandbox execution for Python code snippets, writing code to a temp directory and running it in a network-isolated, memory-capped container via subprocess with configurable timeout and cleanup.",
+      "tags": ["service", "sandbox", "infrastructure", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/runner_docker.py:run_in_docker",
+      "type": "function",
+      "name": "run_in_docker",
+      "filePath": "core/runner_docker.py",
+      "lineRange": [29, 94],
+      "summary": "Executes a Python code string inside a Docker container with network isolation, memory limits, PID limits, read-only filesystem, and automatic temp directory cleanup after execution.",
+      "tags": ["sandbox", "security", "service", "infrastructure"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/security.py",
+      "type": "file",
+      "name": "security.py",
+      "filePath": "core/security.py",
+      "summary": "FastAPI security module providing API key authentication with support for single and multi-key configs and revocation lists, Redis-backed in-memory rate limiting, CORS middleware configuration, and an ObservabilityMiddleware that logs request timing.",
+      "tags": ["security", "middleware", "api-handler", "authentication"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/security.py:ObservabilityMiddleware",
+      "type": "class",
+      "name": "ObservabilityMiddleware",
+      "filePath": "core/security.py",
+      "lineRange": [86, 101],
+      "summary": "Starlette BaseHTTPMiddleware that measures request processing time and logs method, path, status code, and duration for non-health requests based on LOG_HEALTH_REQUESTS env config.",
+      "tags": ["middleware", "observability", "logging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/security.py:verify_api_key",
+      "type": "function",
+      "name": "verify_api_key",
+      "filePath": "core/security.py",
+      "lineRange": [38, 48],
+      "summary": "FastAPI security dependency that validates the X-API-Key header against the configured valid key set and revocation list, raising 401/403 HTTP exceptions on failure.",
+      "tags": ["security", "authentication", "api-handler", "middleware"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/security.py:enforce_rate_limit",
+      "type": "function",
+      "name": "enforce_rate_limit",
+      "filePath": "core/security.py",
+      "lineRange": [57, 69],
+      "summary": "FastAPI dependency that enforces per-client rate limiting using an in-memory sliding window store (keyed by client host), raising 429 when the request count exceeds the configured limit.",
+      "tags": ["security", "rate-limiting", "middleware", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/security.py:configure_cors",
+      "type": "function",
+      "name": "configure_cors",
+      "filePath": "core/security.py",
+      "lineRange": [73, 82],
+      "summary": "Adds CORSMiddleware to the FastAPI app using the ALLOWED_ORIGINS environment variable as the allowlist, enabling credentials and all methods and headers.",
+      "tags": ["security", "middleware", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/test_fusional.py",
+      "type": "file",
+      "name": "test_fusional.py",
+      "filePath": "core/test_fusional.py",
+      "summary": "Integration test script for the FusionAL gateway that exercises health check, code execution (local and Docker), catalog listing, and server registration endpoints against a running server instance.",
+      "tags": ["test", "integration", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/test_fusional.py:run_all_tests",
+      "type": "function",
+      "name": "run_all_tests",
+      "filePath": "core/test_fusional.py",
+      "lineRange": [136, 168],
+      "summary": "Orchestrates all integration tests, collects pass/fail results, prints a summary report, and exits with a non-zero status code if any test fails.",
+      "tags": ["test", "integration", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:examples/dice-roller/dice_server.py",
+      "type": "file",
+      "name": "dice_server.py",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "summary": "Reference MCP server implementation providing five dice-rolling tools (roll_dice, roll_stats, flip_coin, roll_check, parse_dice_notation) for D&D-style tabletop gaming scenarios using FastMCP.",
+      "tags": ["service", "mcp-server", "example"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/dice-roller/dice_server.py:parse_dice_notation",
+      "type": "function",
+      "name": "parse_dice_notation",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "lineRange": [28, 49],
+      "summary": "Parses dice notation strings (e.g., '2d6+3', '1d20') into a tuple of (count, sides, modifier) supporting both 'NdS+M' format and advantage/disadvantage keywords.",
+      "tags": ["utility", "parsing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/dice-roller/dice_server.py:roll_dice",
+      "type": "function",
+      "name": "roll_dice",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "lineRange": [55, 86],
+      "summary": "MCP tool that rolls dice using standard notation (e.g., '2d6+3') and returns individual roll results, total, and modifier breakdown as a formatted string.",
+      "tags": ["mcp-server", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/dice-roller/dice_server.py:roll_check",
+      "type": "function",
+      "name": "roll_check",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "lineRange": [151, 187],
+      "summary": "MCP tool that performs a D20 skill check against a difficulty class (DC) with optional modifier, determining success/failure and margin, with special handling for critical hits and fumbles.",
+      "tags": ["mcp-server", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/dice-roller/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "examples/dice-roller/README.md",
+      "summary": "Quick-start guide for the dice-roller MCP server example covering its five tools, installation steps, and usage examples for connecting to Claude Desktop.",
+      "tags": ["documentation", "example", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:examples/dice-roller/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "examples/dice-roller/requirements.txt",
+      "summary": "Single-dependency requirements file specifying the mcp package for the dice-roller example MCP server.",
+      "tags": ["configuration", "dependencies"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:examples/file-utils/file_utils_server.py",
+      "type": "file",
+      "name": "file_utils_server.py",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "summary": "MCP server providing four safe filesystem utility tools (count_lines, get_file_info, search_text, list_files) with proper error handling and path validation for integration with FusionAL.",
+      "tags": ["service", "mcp-server", "example", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:count_lines",
+      "type": "function",
+      "name": "count_lines",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [35, 56],
+      "summary": "MCP tool that counts lines in a text file, distinguishing between total lines, non-empty lines, and comment lines, with existence and type validation.",
+      "tags": ["mcp-server", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:get_file_info",
+      "type": "function",
+      "name": "get_file_info",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [60, 86],
+      "summary": "MCP tool that returns metadata for a file or directory including size, modification time, type, and read/write permissions.",
+      "tags": ["mcp-server", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:search_text",
+      "type": "function",
+      "name": "search_text",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [90, 124],
+      "summary": "MCP tool that performs case-insensitive text pattern search in a file, returning matching line numbers, content, and a summary of total matches.",
+      "tags": ["mcp-server", "utility", "search"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:list_files",
+      "type": "function",
+      "name": "list_files",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [128, 165],
+      "summary": "MCP tool that lists files in a directory with optional extension filtering, returning filenames, sizes, and a count summary.",
+      "tags": ["mcp-server", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/file-utils/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "examples/file-utils/README.md",
+      "summary": "Comprehensive guide for the file-utils MCP server example covering Docker and local setup, FusionAL integration instructions, tool usage examples for all four tools, implementation notes, security considerations, and extension guidance.",
+      "tags": ["documentation", "example", "entry-point", "security"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/file-utils/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "examples/file-utils/requirements.txt",
+      "summary": "Single-dependency requirements file specifying the mcp package for the file-utils example MCP server.",
+      "tags": ["configuration", "dependencies"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:.hermes/maintenance-wrapper.sh",
+      "target": "file:.hermes/maintenance.sh",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditRecord",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:get_audit_store",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:record_tool_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditRecord",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:get_audit_store",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:record_tool_call",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:core/common/P2-HARDENING.md",
+      "target": "file:core/security.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:core/common/SECURITY-HARDENING.md",
+      "target": "file:core/security.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:core/common/SECURITY-HARDENING.md",
+      "target": "file:core/common/audit.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestAuditRecord",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestAuditStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestRecordToolCall",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestRecordsToCsv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "file:core/common/test_audit.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:configure_tracing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_trace_context",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_tracer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "class:core/common/tracing.py:_NoopTracer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:configure_tracing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_trace_context",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_tracer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:core/requirements.txt",
+      "target": "file:core/common/audit.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:core/requirements.txt",
+      "target": "file:core/common/tracing.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:core/requirements.txt",
+      "target": "file:core/security.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/runner_docker.py",
+      "target": "function:core/runner_docker.py:run_in_docker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/runner_docker.py",
+      "target": "function:core/runner_docker.py:run_in_docker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "class:core/security.py:ObservabilityMiddleware",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:verify_api_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:enforce_rate_limit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:configure_cors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "class:core/security.py:ObservabilityMiddleware",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:verify_api_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:enforce_rate_limit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:configure_cors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "file:core/common/tracing.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/test_fusional.py",
+      "target": "function:core/test_fusional.py:run_all_tests",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/test_fusional.py",
+      "target": "function:core/test_fusional.py:run_all_tests",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/runner_docker.py",
+      "target": "file:core/test_fusional.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "file:core/test_fusional.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:parse_dice_notation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_dice",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:parse_dice_notation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_dice",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:examples/dice-roller/README.md",
+      "target": "file:examples/dice-roller/dice_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:examples/dice-roller/requirements.txt",
+      "target": "file:examples/dice-roller/dice_server.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:count_lines",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:get_file_info",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:search_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:list_files",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:count_lines",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:get_file_info",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:search_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:list_files",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:examples/file-utils/README.md",
+      "target": "file:examples/file-utils/file_utils_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:examples/file-utils/requirements.txt",
+      "target": "file:examples/file-utils/file_utils_server.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

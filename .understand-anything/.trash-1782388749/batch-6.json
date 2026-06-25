@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "service:examples/dice-roller/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "examples/dice-roller/Dockerfile",
+      "summary": "Single-stage Docker image for the dice-roller MCP example server, running dice_server.py as a non-root user (mcpuser) on python:3.11-slim with unbuffered output.",
+      "tags": ["containerization", "infrastructure", "deployment", "mcp-server"],
+      "complexity": "simple",
+      "languageNotes": "Non-root user (mcpuser, UID 1000) created at build time for security hardening — a best practice for containerized MCP servers."
+    },
+    {
+      "id": "service:examples/dice-roller/Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "examples/dice-roller/Dockerfile",
+      "summary": "Single runtime stage based on python:3.11-slim that installs dependencies and launches the dice MCP server.",
+      "tags": ["containerization", "runtime", "python"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:examples/dice-roller/Dockerfile",
+      "target": "service:examples/dice-roller/Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:examples/dice-roller/Dockerfile",
+      "target": "file:examples/dice-roller/dice_server.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

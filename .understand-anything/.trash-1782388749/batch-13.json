@@ -1,0 +1,538 @@
+{
+  "nodes": [
+    {
+      "id": "document:examples/weather-api/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "examples/weather-api/README.md",
+      "summary": "Documentation for the Weather API MCP server example, covering features, Docker and local run instructions, FusionAL integration steps, tool usage examples, and notes for extending the implementation.",
+      "tags": ["documentation", "example", "mcp-server", "weather-api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/weather-api/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "examples/weather-api/requirements.txt",
+      "summary": "Minimal Python dependency manifest for the weather API example server, specifying only the packages needed to run the weather MCP tool.",
+      "tags": ["documentation", "configuration", "dependencies"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:examples/weather-api/weather_server.py",
+      "type": "file",
+      "name": "weather_server.py",
+      "filePath": "examples/weather-api/weather_server.py",
+      "summary": "Example MCP server that exposes three tools for fetching current weather, multi-day forecasts, and parsing raw weather JSON responses via an external weather API.",
+      "tags": ["mcp-server", "api-handler", "example", "weather-api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/weather-api/weather_server.py:get_weather",
+      "type": "function",
+      "name": "get_weather",
+      "filePath": "examples/weather-api/weather_server.py",
+      "lineRange": [32, 61],
+      "summary": "Fetches current weather conditions for a given location from an external weather API and returns structured data including temperature, humidity, and conditions.",
+      "tags": ["api-handler", "utility", "weather-api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/weather-api/weather_server.py:get_forecast",
+      "type": "function",
+      "name": "get_forecast",
+      "filePath": "examples/weather-api/weather_server.py",
+      "lineRange": [65, 105],
+      "summary": "Fetches a multi-day weather forecast for a location, capping the number of days, and returning daily temperature and condition data.",
+      "tags": ["api-handler", "utility", "weather-api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/weather-api/weather_server.py:parse_weather",
+      "type": "function",
+      "name": "parse_weather",
+      "filePath": "examples/weather-api/weather_server.py",
+      "lineRange": [109, 131],
+      "summary": "Parses raw weather JSON data into a structured summary with temperature, humidity, and conditions, validating the input type before extraction.",
+      "tags": ["utility", "serialization", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:init.py",
+      "type": "file",
+      "name": "init.py",
+      "filePath": "init.py",
+      "summary": "One-time initialization script for the FusionAL project that checks Docker and Python prerequisites, verifies dependencies, and sets up the MCP directory structure on first run.",
+      "tags": ["entry-point", "utility", "setup", "initialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:init.py:check_docker",
+      "type": "function",
+      "name": "check_docker",
+      "filePath": "init.py",
+      "lineRange": [15, 27],
+      "summary": "Verifies Docker is installed and running by executing a version check subprocess, reporting success or failure to stdout.",
+      "tags": ["utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:check_python",
+      "type": "function",
+      "name": "check_python",
+      "filePath": "init.py",
+      "lineRange": [30, 39],
+      "summary": "Checks that the Python version meets the minimum requirement for running FusionAL and reports the result.",
+      "tags": ["utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:check_dependencies",
+      "type": "function",
+      "name": "check_dependencies",
+      "filePath": "init.py",
+      "lineRange": [42, 53],
+      "summary": "Verifies that required Python packages are importable and reports which are missing or available.",
+      "tags": ["utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:setup_docker_mcp",
+      "type": "function",
+      "name": "setup_docker_mcp",
+      "filePath": "init.py",
+      "lineRange": [56, 68],
+      "summary": "Creates the MCP directory structure under the user's home directory, including the catalogs subdirectory, as part of first-time setup.",
+      "tags": ["utility", "setup", "initialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "init.py",
+      "lineRange": [71, 114],
+      "summary": "Orchestrates the full initialization flow: runs all prerequisite checks, reports results, conditionally runs setup steps, and prints next-step instructions.",
+      "tags": ["entry-point", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:logs/execution_log.json",
+      "type": "config",
+      "name": "execution_log.json",
+      "filePath": "logs/execution_log.json",
+      "summary": "Execution log capturing Docker command runs from the think-tank or watchdog automation, including step plans, commands issued, return codes, and dry-run stdout for MCP container management operations.",
+      "tags": ["monitoring", "logging", "configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:mcp-builder-prompt/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "mcp-builder-prompt/README.md",
+      "summary": "Author guidelines for building FusionAL-compatible MCP servers, specifying required conventions (tool structure, Docker configuration, single-line docstrings) and anti-patterns to avoid.",
+      "tags": ["documentation", "mcp-server", "guidelines", "development"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:notion_poller.py",
+      "type": "file",
+      "name": "notion_poller.py",
+      "filePath": "notion_poller.py",
+      "summary": "Long-running daemon that polls a Notion database for pending MCP server build requests, forwards them to FusionAL's /generate endpoint, performs fleet health checks across registered servers, and auto-resolves stale incidents.",
+      "tags": ["service", "event-handler", "monitoring", "notion-integration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:notion_poller.py:notion_call",
+      "type": "function",
+      "name": "notion_call",
+      "filePath": "notion_poller.py",
+      "lineRange": [101, 119],
+      "summary": "Retry wrapper for Notion API calls with configurable max retries, sleeping between attempts on API exceptions and logging failures.",
+      "tags": ["utility", "api-handler", "resilience"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:poll_build_queue",
+      "type": "function",
+      "name": "poll_build_queue",
+      "filePath": "notion_poller.py",
+      "lineRange": [124, 145],
+      "summary": "Queries the Notion build queue database for pages in 'Queued' status and dispatches each to _process_build for execution.",
+      "tags": ["service", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_process_build",
+      "type": "function",
+      "name": "_process_build",
+      "filePath": "notion_poller.py",
+      "lineRange": [148, 248],
+      "summary": "Processes a single Notion build page: extracts server metadata, posts the generation request to FusionAL, updates the Notion page with build results or failure reason, and registers the new server.",
+      "tags": ["service", "api-handler", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:notion_poller.py:_fail_build",
+      "type": "function",
+      "name": "_fail_build",
+      "filePath": "notion_poller.py",
+      "lineRange": [251, 265],
+      "summary": "Marks a Notion build page as failed by updating its status and writing a truncated error message to the page properties.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:health_check_fleet",
+      "type": "function",
+      "name": "health_check_fleet",
+      "filePath": "notion_poller.py",
+      "lineRange": [270, 293],
+      "summary": "Iterates all registered MCP servers from a Notion database and checks each one's health endpoint, delegating per-server logic to _check_server.",
+      "tags": ["monitoring", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_check_server",
+      "type": "function",
+      "name": "_check_server",
+      "filePath": "notion_poller.py",
+      "lineRange": [296, 417],
+      "summary": "Performs a health check HTTP request against a single MCP server, tracks consecutive failure counts, updates the server's Notion status page, creates incidents on repeated failures, and auto-resolves them on recovery.",
+      "tags": ["monitoring", "service", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:notion_poller.py:_get_registry_page_id",
+      "type": "function",
+      "name": "_get_registry_page_id",
+      "filePath": "notion_poller.py",
+      "lineRange": [420, 438],
+      "summary": "Looks up a server's Notion registry page ID by name, using a warm cache when available to reduce API calls.",
+      "tags": ["utility", "api-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_warm_registry_cache",
+      "type": "function",
+      "name": "_warm_registry_cache",
+      "filePath": "notion_poller.py",
+      "lineRange": [441, 455],
+      "summary": "Pre-populates the in-memory registry page ID cache by fetching all pages from the Notion server registry database at startup.",
+      "tags": ["utility", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_auto_resolve_incidents",
+      "type": "function",
+      "name": "_auto_resolve_incidents",
+      "filePath": "notion_poller.py",
+      "lineRange": [458, 493],
+      "summary": "Scans open Notion incident pages for a given server and marks them resolved with a timestamp when the server has recovered.",
+      "tags": ["monitoring", "service", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:notion_poller.py:recover_interrupted_builds",
+      "type": "function",
+      "name": "recover_interrupted_builds",
+      "filePath": "notion_poller.py",
+      "lineRange": [498, 520],
+      "summary": "Finds Notion build pages stuck in 'In Progress' status (from a previous crashed run) and marks them failed so they can be retried.",
+      "tags": ["service", "utility", "resilience"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:notion_poller.py:check_fusional_health",
+      "type": "function",
+      "name": "check_fusional_health",
+      "filePath": "notion_poller.py",
+      "lineRange": [525, 546],
+      "summary": "Calls the FusionAL gateway's /health endpoint and logs whether the gateway is reachable and which policy profile is active.",
+      "tags": ["monitoring", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "notion_poller.py",
+      "lineRange": [576, 612],
+      "summary": "Entry point for the notion_poller daemon: validates environment variables, prints a startup banner, initializes Notion and HTTP clients, runs startup tasks (health check, cache warm, interrupted-build recovery), then enters a continuous polling loop.",
+      "tags": ["entry-point", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:quick-start/setup-guide.md",
+      "type": "document",
+      "name": "setup-guide.md",
+      "filePath": "quick-start/setup-guide.md",
+      "summary": "Five-minute quick-start guide for FusionAL covering prerequisites, server startup, building the weather example, configuring Claude Desktop, testing, and common troubleshooting scenarios across 18 sections.",
+      "tags": ["documentation", "setup", "quick-start", "onboarding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/think_tank.py",
+      "type": "file",
+      "name": "think_tank.py",
+      "filePath": "scripts/think_tank.py",
+      "summary": "Multi-agent Claude collaboration script triggered by watchdog failures, where three specialized agents (InfraAgent, LogicAgent, and a reviewer) analyze MCP infrastructure problems and produce a structured action plan.",
+      "tags": ["service", "ai-agent", "monitoring", "automation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:scripts/think_tank.py:TTAgent",
+      "type": "class",
+      "name": "TTAgent",
+      "filePath": "scripts/think_tank.py",
+      "lineRange": [30, 34],
+      "summary": "Dataclass representing a single think-tank Claude agent configuration with name, role, system prompt, and model identifier.",
+      "tags": ["data-model", "ai-agent"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:well-known/mcp/server-card.json",
+      "type": "config",
+      "name": "server-card.json",
+      "filePath": "well-known/mcp/server-card.json",
+      "summary": "Well-known MCP server discovery card declaring FusionAL's server identity, authentication requirements (API key), and the three exposed MCP tools: execute_code, generate_and_execute, and generate_mcp_project.",
+      "tags": ["configuration", "mcp-server", "api-schema", "discovery"],
+      "complexity": "simple",
+      "languageNotes": "Served at /.well-known/mcp/server-card.json to enable MCP client auto-discovery per the emerging MCP server card spec."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_weather",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_forecast",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:parse_weather",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_weather",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_forecast",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:parse_weather",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:examples/weather-api/README.md",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:examples/weather-api/README.md",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:check_docker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:check_python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:check_dependencies",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:setup_docker_mcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:notion_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:poll_build_queue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_process_build",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_fail_build",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:health_check_fleet",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_check_server",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_get_registry_page_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_warm_registry_cache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_auto_resolve_incidents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:recover_interrupted_builds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:check_fusional_health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank.py",
+      "target": "class:scripts/think_tank.py:TTAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank.py",
+      "target": "class:scripts/think_tank.py:TTAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:quick-start/setup-guide.md",
+      "target": "file:init.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:quick-start/setup-guide.md",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:well-known/mcp/server-card.json",
+      "target": "file:core/mcp_transport.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:mcp-builder-prompt/README.md",
+      "target": "file:core/mcp_transport.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "file:core/main.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:logs/execution_log.json",
+      "target": "file:scripts/think_tank.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

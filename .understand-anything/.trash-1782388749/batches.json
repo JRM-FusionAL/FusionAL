@@ -1,0 +1,917 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 72,
+  "totalBatches": 13,
+  "exportsByPath": {
+    ".gitattributes": [],
+    ".understand-anything/.understandignore": [],
+    "core/__init__.py": [],
+    "core/.bandit": [],
+    "core/ai_agent.py": [
+      "generate_python_from_claude",
+      "generate_python_from_openai",
+      "generate_and_execute",
+      "_parse_files_from_ai_output",
+      "generate_mcp_project"
+    ],
+    "core/common/audit.py": [
+      "AuditRecord",
+      "AuditStore",
+      "get_audit_store",
+      "record_tool_call",
+      "records_to_json",
+      "records_to_csv",
+      "_parse_utc",
+      "_as_utc"
+    ],
+    "core/common/rate_limit_presets.py": [
+      "RateLimitPreset",
+      "get_active_preset",
+      "ErrorBudgetConfig",
+      "ErrorBudgetTracker",
+      "configure_error_budget_tracking",
+      "_logger"
+    ],
+    "core/common/security.py": [
+      "get_allowed_origins",
+      "_validate_cors_origins",
+      "get_rate_limit",
+      "get_log_level",
+      "get_redis_url",
+      "should_log_health_requests",
+      "_sanitize_request_id",
+      "_get_security_headers",
+      "_is_sensitive_key",
+      "_mask_secret",
+      "redact_sensitive_data",
+      "_resolve_service_name",
+      "_get_or_create_logger",
+      "_get_trace_context",
+      "_build_log_payload",
+      "configure_cors",
+      "configure_observability",
+      "initialize_rate_limit_store",
+      "_create_redis_client",
+      "_load_active_api_keys",
+      "_load_revoked_api_keys",
+      "revoke_api_key",
+      "verify_api_key",
+      "_enforce_rate_limit_with_redis",
+      "enforce_rate_limit"
+    ],
+    "core/common/test_audit.py": [
+      "_make_record",
+      "TestAuditRecord",
+      "TestAuditStore",
+      "TestRecordToolCall",
+      "TestRecordsToJson",
+      "TestRecordsToCsv",
+      "TestDatetimeHelpers",
+      "test_get_audit_store_returns_same_instance"
+    ],
+    "core/common/test_rate_limit_presets.py": [
+      "test_presets_contain_expected_profiles",
+      "test_preset_values",
+      "test_get_active_preset_defaults_to_pilot",
+      "test_get_active_preset_respects_env",
+      "test_get_active_preset_permissive",
+      "test_get_active_preset_unknown_falls_back_to_pilot",
+      "test_preset_description_contains_profile_name",
+      "test_get_rate_limit_uses_explicit_env_vars_over_preset",
+      "test_get_rate_limit_falls_back_to_pilot_preset",
+      "test_get_rate_limit_falls_back_to_production_preset",
+      "test_error_budget_config_defaults",
+      "test_error_budget_config_from_env",
+      "test_tracker_starts_empty",
+      "test_tracker_records_successes",
+      "test_tracker_records_errors",
+      "test_tracker_reset",
+      "test_tracker_emits_warning_at_warn_threshold",
+      "test_tracker_emits_error_at_error_threshold",
+      "test_tracker_no_signal_below_warn_threshold",
+      "test_tracker_prunes_old_events",
+      "test_tracker_stats_keys",
+      "test_configure_error_budget_tracking_attaches_tracker",
+      "test_error_budget_middleware_counts_errors",
+      "test_error_budget_middleware_emits_signal_on_high_error_rate"
+    ],
+    "core/common/test_security_common.py": [
+      "build_request",
+      "FakeRedisClient",
+      "test_get_allowed_origins_from_env",
+      "test_get_allowed_origins_rejects_wildcards",
+      "test_get_allowed_origins_rejects_invalid_schemes",
+      "test_verify_api_key_rejects_missing_config",
+      "test_verify_api_key_rejects_invalid_key",
+      "test_verify_api_key_accepts_valid_key",
+      "test_verify_api_key_accepts_dual_rotation_keys",
+      "test_verify_api_key_rejects_revoked_runtime_key",
+      "test_verify_api_key_rejects_revoked_env_key",
+      "test_enforce_rate_limit_blocks_after_limit",
+      "test_enforce_rate_limit_resets_after_window",
+      "test_enforce_rate_limit_increments_within_window",
+      "test_enforce_rate_limit_uses_redis_when_available",
+      "test_enforce_rate_limit_redis_blocks_after_limit",
+      "test_enforce_rate_limit_falls_back_when_redis_degraded",
+      "test_observability_adds_request_id_header_and_logs",
+      "test_observability_redacts_sensitive_headers",
+      "test_sanitize_request_id_accepts_valid_format",
+      "test_sanitize_request_id_generates_uuid_for_invalid",
+      "test_sanitize_request_id_truncates_long_ids",
+      "test_sanitize_request_id_generates_uuid_for_none",
+      "test_observability_adds_security_headers",
+      "test_enforce_rate_limit_blocks_burst_same_route",
+      "test_enforce_rate_limit_per_route_isolation",
+      "test_enforce_rate_limit_different_paths_tracked_separately",
+      "test_observability_skips_health_logs_by_default",
+      "test_observability_logs_health_when_enabled"
+    ],
+    "core/common/tracing.py": [
+      "_is_tracing_enabled",
+      "configure_tracing",
+      "get_trace_context",
+      "get_tracer",
+      "_NoopTracer",
+      "_NoopSpan"
+    ],
+    "core/main.py": [
+      "_lifespan",
+      "_auth",
+      "_rate",
+      "ExecRequest",
+      "RegisterRequest",
+      "GenerateRequest",
+      "_load_registry",
+      "_save_registry",
+      "_slugify_server_name",
+      "_find_available_port",
+      "_extract_tools_from_code",
+      "_generate_local_server_code",
+      "health",
+      "execute",
+      "register",
+      "catalog",
+      "generate",
+      "audit_export_json",
+      "audit_export_csv",
+      "_parse_export_datetime"
+    ],
+    "core/mcp_registry.json.bak": [],
+    "core/mcp_transport.py": [
+      "set_audit_hook",
+      "execute_code",
+      "generate_and_execute",
+      "generate_mcp_project",
+      "_PassthroughArgModel",
+      "_make_passthrough_tool",
+      "_server_namespace",
+      "_proxy_tool_name",
+      "_make_proxy_fn",
+      "register_downstream_tools"
+    ],
+    "core/quick_test.py": [],
+    "core/runner_docker.py": [
+      "_abs_path_for_docker",
+      "run_in_docker"
+    ],
+    "core/security.py": [
+      "_get_valid_keys",
+      "_get_revoked_keys",
+      "verify_api_key",
+      "initialize_rate_limit_store",
+      "enforce_rate_limit",
+      "configure_cors",
+      "ObservabilityMiddleware",
+      "configure_observability"
+    ],
+    "core/test_fusional.py": [
+      "test_health",
+      "test_execute_simple",
+      "test_execute_docker",
+      "test_catalog",
+      "test_register",
+      "run_all_tests"
+    ],
+    "examples/dice-roller/dice_server.py": [
+      "parse_dice_notation",
+      "roll_dice",
+      "roll_stats",
+      "flip_coin",
+      "roll_check"
+    ],
+    "examples/file-utils/file_utils_server.py": [
+      "count_lines",
+      "get_file_info",
+      "search_text",
+      "list_files"
+    ],
+    "examples/weather-api/weather_server.py": [
+      "get_weather",
+      "get_forecast",
+      "parse_weather"
+    ],
+    "init.py": [
+      "check_docker",
+      "check_python",
+      "check_dependencies",
+      "setup_docker_mcp",
+      "main"
+    ],
+    "notion_poller.py": [
+      "now_iso",
+      "truncate_rich_text",
+      "get_title_text",
+      "get_select_value",
+      "get_number_value",
+      "notion_call",
+      "poll_build_queue",
+      "_process_build",
+      "_fail_build",
+      "health_check_fleet",
+      "_check_server",
+      "_get_registry_page_id",
+      "_warm_registry_cache",
+      "_auto_resolve_incidents",
+      "recover_interrupted_builds",
+      "check_fusional_health",
+      "_banner_line",
+      "print_banner",
+      "main"
+    ],
+    "scripts/action_executor.py": [
+      "StepResult",
+      "map_step_to_command",
+      "is_safe",
+      "run_command",
+      "execute_plan",
+      "_log_execution",
+      "execution_summary"
+    ],
+    "scripts/notion_reporter.py": [
+      "_headers",
+      "_rt",
+      "post_incident",
+      "report_think_tank_result"
+    ],
+    "scripts/test_pipeline.py": [
+      "sep",
+      "mock_think_tank",
+      "run_test"
+    ],
+    "scripts/think_tank_trigger.py": [
+      "ReasoningPreset",
+      "FaultEvent",
+      "ThinkTankResult",
+      "_get_recent_faults",
+      "_call_claude",
+      "run_think_tank",
+      "_log_result",
+      "trigger"
+    ],
+    "scripts/think_tank.py": [
+      "TTAgent"
+    ],
+    "scripts/watchdog.py": [
+      "log_fault",
+      "check_health",
+      "can_restart",
+      "restart_container",
+      "handle_fault",
+      "_fire_think_tank",
+      "run"
+    ]
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "scripts/action_executor.py",
+          "language": "python",
+          "sizeLines": 278,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/notion_reporter.py",
+          "language": "python",
+          "sizeLines": 152,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/test_pipeline.py",
+          "language": "python",
+          "sizeLines": 144,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/think_tank_trigger.py",
+          "language": "python",
+          "sizeLines": 377,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/watchdog.py",
+          "language": "python",
+          "sizeLines": 212,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "scripts/action_executor.py": [],
+        "scripts/notion_reporter.py": [],
+        "scripts/test_pipeline.py": [
+          "scripts/action_executor.py",
+          "scripts/think_tank_trigger.py"
+        ],
+        "scripts/think_tank_trigger.py": [
+          "scripts/action_executor.py",
+          "scripts/notion_reporter.py"
+        ],
+        "scripts/watchdog.py": [
+          "scripts/think_tank_trigger.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "core/ai_agent.py",
+          "language": "python",
+          "sizeLines": 269,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/main.py",
+          "language": "python",
+          "sizeLines": 560,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/mcp_transport.py",
+          "language": "python",
+          "sizeLines": 284,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/quick_test.py",
+          "language": "python",
+          "sizeLines": 28,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "core/ai_agent.py": [],
+        "core/main.py": [
+          "core/ai_agent.py",
+          "core/mcp_transport.py"
+        ],
+        "core/mcp_transport.py": [
+          "core/ai_agent.py"
+        ],
+        "core/quick_test.py": [
+          "core/ai_agent.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "core/common/rate_limit_presets.py",
+          "language": "python",
+          "sizeLines": 280,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/common/security.py",
+          "language": "python",
+          "sizeLines": 319,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/common/test_rate_limit_presets.py",
+          "language": "python",
+          "sizeLines": 312,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/common/test_security_common.py",
+          "language": "python",
+          "sizeLines": 372,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "core/common/rate_limit_presets.py": [],
+        "core/common/security.py": [],
+        "core/common/test_rate_limit_presets.py": [
+          "core/common/rate_limit_presets.py",
+          "core/common/security.py"
+        ],
+        "core/common/test_security_common.py": [
+          "core/common/security.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": ".dockerignore",
+          "language": "unknown",
+          "sizeLines": 27,
+          "fileCategory": "infra"
+        },
+        {
+          "path": "Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 11,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        ".dockerignore": [],
+        "Dockerfile": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": "core/Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 19,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        "core/Dockerfile": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 6,
+      "files": [
+        {
+          "path": "examples/dice-roller/Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 17,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        "examples/dice-roller/Dockerfile": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 7,
+      "files": [
+        {
+          "path": "examples/file-utils/Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 20,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        "examples/file-utils/Dockerfile": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 8,
+      "files": [
+        {
+          "path": "examples/weather-api/Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 20,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        "examples/weather-api/Dockerfile": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 9,
+      "files": [
+        {
+          "path": ".env.example",
+          "language": "config",
+          "sizeLines": 54,
+          "fileCategory": "config"
+        },
+        {
+          "path": "CLAUDE.md",
+          "language": "markdown",
+          "sizeLines": 410,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "language": "markdown",
+          "sizeLines": 47,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "MAINTENANCE.md",
+          "language": "markdown",
+          "sizeLines": 7,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "README.md",
+          "language": "markdown",
+          "sizeLines": 348,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "claude_desktop_config_windows.json",
+          "language": "json",
+          "sizeLines": 8,
+          "fileCategory": "config"
+        },
+        {
+          "path": "compose.debug.yaml",
+          "language": "yaml",
+          "sizeLines": 10,
+          "fileCategory": "config"
+        },
+        {
+          "path": "compose.yaml",
+          "language": "yaml",
+          "sizeLines": 24,
+          "fileCategory": "infra"
+        },
+        {
+          "path": "fusion-stress-test.md",
+          "language": "markdown",
+          "sizeLines": 144,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "requirements.txt",
+          "language": "txt",
+          "sizeLines": 18,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        ".env.example": [],
+        "CLAUDE.md": [],
+        "CONTRIBUTING.md": [],
+        "MAINTENANCE.md": [],
+        "README.md": [],
+        "claude_desktop_config_windows.json": [],
+        "compose.debug.yaml": [],
+        "compose.yaml": [],
+        "fusion-stress-test.md": [],
+        "requirements.txt": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 10,
+      "files": [
+        {
+          "path": "docs/custom-servers.md",
+          "language": "markdown",
+          "sizeLines": 415,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/docker-gateway.md",
+          "language": "markdown",
+          "sizeLines": 20,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/troubleshooting.md",
+          "language": "markdown",
+          "sizeLines": 22,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/custom-servers.md": [],
+        "docs/docker-gateway.md": [],
+        "docs/troubleshooting.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 11,
+      "files": [
+        {
+          "path": "scripts/README.md",
+          "language": "markdown",
+          "sizeLines": 55,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "scripts/build_examples.ps1",
+          "language": "powershell",
+          "sizeLines": 11,
+          "fileCategory": "script"
+        },
+        {
+          "path": "scripts/generate_registry_from_docker.ps1",
+          "language": "powershell",
+          "sizeLines": 90,
+          "fileCategory": "script"
+        },
+        {
+          "path": "scripts/generate_registry_from_docker.sh",
+          "language": "shell",
+          "sizeLines": 83,
+          "fileCategory": "script"
+        },
+        {
+          "path": "scripts/smoke-generate-endpoint.ps1",
+          "language": "powershell",
+          "sizeLines": 95,
+          "fileCategory": "script"
+        }
+      ],
+      "batchImportData": {
+        "scripts/README.md": [],
+        "scripts/build_examples.ps1": [],
+        "scripts/generate_registry_from_docker.ps1": [],
+        "scripts/generate_registry_from_docker.sh": [],
+        "scripts/smoke-generate-endpoint.ps1": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 12,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "language": "unknown",
+          "sizeLines": 10,
+          "fileCategory": "code"
+        },
+        {
+          "path": ".github/FUNDING.yml",
+          "language": "yaml",
+          "sizeLines": 1,
+          "fileCategory": "config"
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/bug_report.md",
+          "language": "markdown",
+          "sizeLines": 38,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/feature_request.md",
+          "language": "markdown",
+          "sizeLines": 26,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".hermes/maintenance-wrapper.sh",
+          "language": "shell",
+          "sizeLines": 2,
+          "fileCategory": "script"
+        },
+        {
+          "path": ".hermes/maintenance.sh",
+          "language": "shell",
+          "sizeLines": 234,
+          "fileCategory": "script"
+        },
+        {
+          "path": ".understand-anything/.understandignore",
+          "language": "unknown",
+          "sizeLines": 58,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/.bandit",
+          "language": "unknown",
+          "sizeLines": 2,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/common/audit.py",
+          "language": "python",
+          "sizeLines": 203,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/common/P2-HARDENING.md",
+          "language": "markdown",
+          "sizeLines": 148,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "core/common/SECURITY-HARDENING.md",
+          "language": "markdown",
+          "sizeLines": 49,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "core/common/test_audit.py",
+          "language": "python",
+          "sizeLines": 341,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/common/tracing.py",
+          "language": "python",
+          "sizeLines": 144,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/mcp_registry.json.bak",
+          "language": "bak",
+          "sizeLines": 101,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/requirements.txt",
+          "language": "txt",
+          "sizeLines": 14,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "core/runner_docker.py",
+          "language": "python",
+          "sizeLines": 94,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/security.py",
+          "language": "python",
+          "sizeLines": 108,
+          "fileCategory": "code"
+        },
+        {
+          "path": "core/test_fusional.py",
+          "language": "python",
+          "sizeLines": 172,
+          "fileCategory": "code"
+        },
+        {
+          "path": "examples/dice-roller/dice_server.py",
+          "language": "python",
+          "sizeLines": 198,
+          "fileCategory": "code"
+        },
+        {
+          "path": "examples/dice-roller/README.md",
+          "language": "markdown",
+          "sizeLines": 28,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "examples/dice-roller/requirements.txt",
+          "language": "txt",
+          "sizeLines": 1,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "examples/file-utils/file_utils_server.py",
+          "language": "python",
+          "sizeLines": 170,
+          "fileCategory": "code"
+        },
+        {
+          "path": "examples/file-utils/README.md",
+          "language": "markdown",
+          "sizeLines": 127,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "examples/file-utils/requirements.txt",
+          "language": "txt",
+          "sizeLines": 1,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        ".gitattributes": [],
+        ".github/FUNDING.yml": [],
+        ".github/ISSUE_TEMPLATE/bug_report.md": [],
+        ".github/ISSUE_TEMPLATE/feature_request.md": [],
+        ".hermes/maintenance-wrapper.sh": [],
+        ".hermes/maintenance.sh": [],
+        ".understand-anything/.understandignore": [],
+        "core/__init__.py": [],
+        "core/.bandit": [],
+        "core/common/audit.py": [],
+        "core/common/P2-HARDENING.md": [],
+        "core/common/SECURITY-HARDENING.md": [],
+        "core/common/test_audit.py": [
+          "core/common/audit.py"
+        ],
+        "core/common/tracing.py": [],
+        "core/mcp_registry.json.bak": [],
+        "core/requirements.txt": [],
+        "core/runner_docker.py": [],
+        "core/security.py": [],
+        "core/test_fusional.py": [],
+        "examples/dice-roller/dice_server.py": [],
+        "examples/dice-roller/README.md": [],
+        "examples/dice-roller/requirements.txt": [],
+        "examples/file-utils/file_utils_server.py": [],
+        "examples/file-utils/README.md": [],
+        "examples/file-utils/requirements.txt": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 13,
+      "files": [
+        {
+          "path": "examples/weather-api/README.md",
+          "language": "markdown",
+          "sizeLines": 106,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "examples/weather-api/requirements.txt",
+          "language": "txt",
+          "sizeLines": 2,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "examples/weather-api/weather_server.py",
+          "language": "python",
+          "sizeLines": 136,
+          "fileCategory": "code"
+        },
+        {
+          "path": "init.py",
+          "language": "python",
+          "sizeLines": 118,
+          "fileCategory": "code"
+        },
+        {
+          "path": "logs/execution_log.json",
+          "language": "json",
+          "sizeLines": 93,
+          "fileCategory": "config"
+        },
+        {
+          "path": "mcp-builder-prompt/README.md",
+          "language": "markdown",
+          "sizeLines": 78,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "notion_poller.py",
+          "language": "python",
+          "sizeLines": 620,
+          "fileCategory": "code"
+        },
+        {
+          "path": "quick-start/setup-guide.md",
+          "language": "markdown",
+          "sizeLines": 193,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "scripts/think_tank.py",
+          "language": "python",
+          "sizeLines": 137,
+          "fileCategory": "code"
+        },
+        {
+          "path": "well-known/mcp/server-card.json",
+          "language": "json",
+          "sizeLines": 67,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        "examples/weather-api/README.md": [],
+        "examples/weather-api/requirements.txt": [],
+        "examples/weather-api/weather_server.py": [],
+        "init.py": [],
+        "logs/execution_log.json": [],
+        "mcp-builder-prompt/README.md": [],
+        "notion_poller.py": [],
+        "quick-start/setup-guide.md": [],
+        "scripts/think_tank.py": [],
+        "well-known/mcp/server-card.json": []
+      },
+      "neighborMap": {}
+    }
+  ]
+}

@@ -1,0 +1,458 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ai_agent.py",
+      "type": "file",
+      "name": "ai_agent.py",
+      "filePath": "core/ai_agent.py",
+      "summary": "Provides AI-powered code generation via Claude and OpenAI APIs, plus MCP project scaffolding — generates Python code from natural-language prompts and can build, containerize, and register new MCP servers.",
+      "tags": ["service", "ai-generation", "mcp", "factory"],
+      "complexity": "complex",
+      "languageNotes": "Uses both the Anthropic REST API directly (via requests.post) and the openai SDK client; falls back gracefully between providers."
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_python_from_claude",
+      "type": "function",
+      "name": "generate_python_from_claude",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [29, 62],
+      "summary": "Calls the Anthropic Messages API to generate Python code from a prompt, returning the raw text content of the first response block.",
+      "tags": ["ai-generation", "utility", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_python_from_openai",
+      "type": "function",
+      "name": "generate_python_from_openai",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [65, 86],
+      "summary": "Calls the OpenAI Chat Completions API to generate Python code from a prompt, serving as the fallback provider when Anthropic is unavailable.",
+      "tags": ["ai-generation", "utility", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_and_execute",
+      "type": "function",
+      "name": "generate_and_execute",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [89, 129],
+      "summary": "Generates Python code from a natural-language prompt using the configured AI provider, then submits it to the FusionAL /execute endpoint for sandboxed execution.",
+      "tags": ["ai-generation", "service", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_mcp_project",
+      "type": "function",
+      "name": "generate_mcp_project",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [155, 245],
+      "summary": "Generates a full MCP server project from a prompt — writes files to a temp directory, optionally builds a Docker image, and returns file paths and discovered tool names.",
+      "tags": ["mcp", "factory", "ai-generation", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/ai_agent.py:_parse_files_from_ai_output",
+      "type": "function",
+      "name": "_parse_files_from_ai_output",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [132, 152],
+      "summary": "Parses a multi-file AI response (delimited by filename markers) into a dict mapping relative paths to file content strings.",
+      "tags": ["utility", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "core/main.py",
+      "summary": "FastAPI gateway entry point for FusionAL — mounts the MCP transport, defines REST endpoints for code execution, server registration, AI generation, and audit export, and initializes auth/rate-limit middleware.",
+      "tags": ["entry-point", "api-handler", "middleware", "service"],
+      "complexity": "complex",
+      "languageNotes": "Uses FastAPI lifespan context manager to wire up the MCP session manager and register downstream tools at startup."
+    },
+    {
+      "id": "class:core/main.py:ExecRequest",
+      "type": "class",
+      "name": "ExecRequest",
+      "filePath": "core/main.py",
+      "lineRange": [155, 160],
+      "summary": "Pydantic model for the /execute endpoint request body, carrying code, language, timeout, docker flag, and memory limit.",
+      "tags": ["data-model", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/main.py:RegisterRequest",
+      "type": "class",
+      "name": "RegisterRequest",
+      "filePath": "core/main.py",
+      "lineRange": [163, 167],
+      "summary": "Pydantic model for the /register endpoint, capturing the server name, description, URL, and optional metadata dict.",
+      "tags": ["data-model", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/main.py:GenerateRequest",
+      "type": "class",
+      "name": "GenerateRequest",
+      "filePath": "core/main.py",
+      "lineRange": [170, 172],
+      "summary": "Pydantic model for the /generate endpoint, holding the natural-language prompt and an optional sandbox flag.",
+      "tags": ["data-model", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/main.py:_lifespan",
+      "type": "function",
+      "name": "_lifespan",
+      "filePath": "core/main.py",
+      "lineRange": [97, 112],
+      "summary": "FastAPI lifespan async context manager that starts the MCP session manager, registers downstream tools from the server registry, and tears down cleanly on shutdown.",
+      "tags": ["middleware", "service", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:execute",
+      "type": "function",
+      "name": "execute",
+      "filePath": "core/main.py",
+      "lineRange": [345, 371],
+      "summary": "POST /execute handler — runs submitted Python code in a Docker sandbox or subprocess, enforcing policy-profile timeout/memory limits and returning stdout/stderr.",
+      "tags": ["api-handler", "middleware", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/main.py:generate",
+      "type": "function",
+      "name": "generate",
+      "filePath": "core/main.py",
+      "lineRange": [389, 490],
+      "summary": "POST /generate handler — uses the AI provider chain to generate MCP server code from a prompt, launches it as a subprocess on a dynamic port, and registers it in the server catalog.",
+      "tags": ["api-handler", "ai-generation", "factory"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/main.py:audit_export_json",
+      "type": "function",
+      "name": "audit_export_json",
+      "filePath": "core/main.py",
+      "lineRange": [496, 520],
+      "summary": "GET /audit/export/json handler — streams audit records within an optional time range as a JSON response, requiring API key auth.",
+      "tags": ["api-handler", "audit", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:audit_export_csv",
+      "type": "function",
+      "name": "audit_export_csv",
+      "filePath": "core/main.py",
+      "lineRange": [524, 548],
+      "summary": "GET /audit/export/csv handler — streams audit records within an optional time range as a CSV response, requiring API key auth.",
+      "tags": ["api-handler", "audit", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:_generate_local_server_code",
+      "type": "function",
+      "name": "_generate_local_server_code",
+      "filePath": "core/main.py",
+      "lineRange": [295, 334],
+      "summary": "Generates a minimal FastMCP server stub from a user request using a local template, used as a last-resort fallback when both AI providers are unavailable.",
+      "tags": ["factory", "utility", "mcp"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:register",
+      "type": "function",
+      "name": "register",
+      "filePath": "core/main.py",
+      "lineRange": [375, 380],
+      "summary": "POST /register handler — adds or updates a named MCP server entry in the in-memory registry and persists it to disk.",
+      "tags": ["api-handler", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/mcp_transport.py",
+      "type": "file",
+      "name": "mcp_transport.py",
+      "filePath": "core/mcp_transport.py",
+      "summary": "Defines the FastMCP server instance and its core tool set — execute_code, generate_and_execute, generate_mcp_project — and implements dynamic proxy registration for downstream MCP servers discovered in the registry.",
+      "tags": ["mcp", "middleware", "service", "api-handler"],
+      "complexity": "complex",
+      "languageNotes": "Uses FastMCP from mcp.server.fastmcp; dynamically creates Pydantic arg models and Tool instances at runtime to proxy downstream MCP servers via streamablehttp_client."
+    },
+    {
+      "id": "function:core/mcp_transport.py:execute_code",
+      "type": "function",
+      "name": "execute_code",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [63, 85],
+      "summary": "MCP tool that runs arbitrary Python code in an isolated subprocess with configurable timeout, cleaning up the temp directory after execution.",
+      "tags": ["mcp", "service", "sandbox"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/mcp_transport.py:register_downstream_tools",
+      "type": "function",
+      "name": "register_downstream_tools",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [217, 284],
+      "summary": "Iterates the server registry and for each reachable MCP server dynamically creates namespaced proxy tools on the FastMCP instance, with retry logic and collision avoidance.",
+      "tags": ["mcp", "service", "middleware", "factory"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/mcp_transport.py:_make_proxy_fn",
+      "type": "function",
+      "name": "_make_proxy_fn",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [182, 214],
+      "summary": "Builds a closed-over async proxy coroutine that forwards tool calls to a downstream MCP server via streamablehttp_client and records them in the audit log.",
+      "tags": ["factory", "mcp", "middleware"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/mcp_transport.py:_make_passthrough_tool",
+      "type": "function",
+      "name": "_make_passthrough_tool",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [129, 147],
+      "summary": "Constructs a FastMCP Tool object from a name, description, JSON input schema, and callable, used to register dynamically generated proxy tools.",
+      "tags": ["factory", "mcp", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/mcp_transport.py:_server_namespace",
+      "type": "function",
+      "name": "_server_namespace",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [150, 173],
+      "summary": "Derives a compact namespace prefix from a server name by stripping common suffixes (-mcp, -safe, -server) and using at most the first two slug segments.",
+      "tags": ["utility", "mcp"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/mcp_transport.py:_PassthroughArgModel",
+      "type": "class",
+      "name": "_PassthroughArgModel",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [109, 126],
+      "summary": "Dynamic Pydantic BaseModel subclass that serializes only its declared fields (no nested model expansion), used as the argument container for proxy tool calls.",
+      "tags": ["data-model", "mcp", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/quick_test.py",
+      "type": "file",
+      "name": "quick_test.py",
+      "filePath": "core/quick_test.py",
+      "summary": "Lightweight smoke-test script that pings the running FusionAL gateway's /health endpoint to verify the server is up and returns a valid response.",
+      "tags": ["test", "utility"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_python_from_claude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_python_from_openai",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_and_execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:_parse_files_from_ai_output",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_mcp_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "class:core/main.py:ExecRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "class:core/main.py:RegisterRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "class:core/main.py:GenerateRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:_lifespan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:generate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:audit_export_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:audit_export_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:_generate_local_server_code",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:register",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:execute_code",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:register_downstream_tools",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:_make_proxy_fn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:_make_passthrough_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:_server_namespace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "class:core/mcp_transport.py:_PassthroughArgModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:core/main.py:generate",
+      "target": "function:core/ai_agent.py:generate_python_from_claude",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/main.py:generate",
+      "target": "function:core/ai_agent.py:generate_python_from_openai",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/main.py:_lifespan",
+      "target": "function:core/mcp_transport.py:register_downstream_tools",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/mcp_transport.py:register_downstream_tools",
+      "target": "function:core/mcp_transport.py:_server_namespace",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/mcp_transport.py:register_downstream_tools",
+      "target": "function:core/mcp_transport.py:_make_proxy_fn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/mcp_transport.py:register_downstream_tools",
+      "target": "function:core/mcp_transport.py:_make_passthrough_tool",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "file:core/mcp_transport.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "file:core/ai_agent.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

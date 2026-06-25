@@ -1,0 +1,41 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'document:MAINTENANCE.md' has no edges (orphan)",
+    "Node 'file:.gitattributes' has no edges (orphan)",
+    "Node 'config:.github/FUNDING.yml' has no edges (orphan)",
+    "Node 'document:.github/ISSUE_TEMPLATE/bug_report.md' has no edges (orphan)",
+    "Node 'document:.github/ISSUE_TEMPLATE/feature_request.md' has no edges (orphan)",
+    "Node 'file:.understand-anything/.understandignore' has no edges (orphan)",
+    "Node 'file:core/__init__.py' has no edges (orphan)",
+    "Node 'file:core/.bandit' has no edges (orphan)",
+    "Node 'file:core/mcp_registry.json.bak' has no edges (orphan)",
+    "Node 'document:examples/weather-api/requirements.txt' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 183,
+    "totalEdges": 242,
+    "totalLayers": 9,
+    "tourSteps": 15,
+    "nodeTypes": {
+      "file": 37,
+      "class": 21,
+      "function": 87,
+      "service": 9,
+      "config": 6,
+      "document": 23
+    },
+    "edgeTypes": {
+      "contains": 110,
+      "tested_by": 8,
+      "depends_on": 10,
+      "calls": 13,
+      "exports": 38,
+      "deploys": 8,
+      "related": 8,
+      "configures": 9,
+      "documents": 25,
+      "imports": 13
+    }
+  }
+}

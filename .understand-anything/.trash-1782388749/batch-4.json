@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "service:.dockerignore",
+      "type": "service",
+      "name": ".dockerignore",
+      "filePath": ".dockerignore",
+      "summary": "Docker build context exclusion list that keeps the image lean by omitting virtual environments, caches, version control metadata, IDE files, and secrets from the build context.",
+      "tags": ["containerization", "infrastructure", "build-system", "deployment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Single-stage Docker image built on python:alpine that installs Python dependencies, copies the application into /app, creates a non-root user for security, and starts the FusionAL FastAPI gateway via uvicorn on port 8009.",
+      "tags": ["containerization", "infrastructure", "deployment", "security"],
+      "complexity": "simple",
+      "languageNotes": "Runs as a non-root appuser (UID 5678) for least-privilege execution; exposes port 8009 matching FusionAL's default gateway port."
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:Dockerfile",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:.dockerignore",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

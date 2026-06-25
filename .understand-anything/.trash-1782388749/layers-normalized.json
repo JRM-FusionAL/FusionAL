@@ -1,0 +1,140 @@
+[
+  {
+    "id": "layer:api-gateway",
+    "name": "API Gateway Layer",
+    "description": "FastAPI entry point and MCP transport that mount REST endpoints for code execution and generation, proxy downstream MCP servers, and manage the server lifecycle via lifespan hooks.",
+    "nodeIds": [
+      "file:core/main.py",
+      "file:core/mcp_transport.py",
+      "file:core/ai_agent.py",
+      "file:core/runner_docker.py",
+      "file:notion_poller.py",
+      "file:init.py"
+    ]
+  },
+  {
+    "id": "layer:security-middleware",
+    "name": "Security & Middleware",
+    "description": "Cross-cutting gateway enforcement layer providing API key authentication, CORS configuration, Redis-backed rate limiting with named presets, audit logging, and OpenTelemetry distributed tracing.",
+    "nodeIds": [
+      "file:core/security.py",
+      "file:core/common/security.py",
+      "file:core/common/rate_limit_presets.py",
+      "file:core/common/audit.py",
+      "file:core/common/tracing.py",
+      "file:core/__init__.py",
+      "file:core/.bandit"
+    ]
+  },
+  {
+    "id": "layer:ops-automation",
+    "name": "Ops Automation Scripts",
+    "description": "Autonomous operations pipeline that monitors MCP server health, triggers multi-agent Claude think-tank analysis on faults, executes remediation action plans, and reports results to Notion.",
+    "nodeIds": [
+      "file:scripts/watchdog.py",
+      "file:scripts/think_tank_trigger.py",
+      "file:scripts/think_tank.py",
+      "file:scripts/action_executor.py",
+      "file:scripts/notion_reporter.py",
+      "file:scripts/generate_registry_from_docker.ps1",
+      "file:scripts/generate_registry_from_docker.sh",
+      "file:scripts/build_examples.ps1",
+      "file:scripts/smoke-generate-endpoint.ps1"
+    ]
+  },
+  {
+    "id": "layer:test",
+    "name": "Test Suite",
+    "description": "Unit, integration, and smoke tests covering the gateway API, security middleware, rate-limit presets, audit store, Docker runner, and the full watchdog-to-action ops pipeline.",
+    "nodeIds": [
+      "file:core/common/test_rate_limit_presets.py",
+      "file:core/common/test_security_common.py",
+      "file:core/common/test_audit.py",
+      "file:core/quick_test.py",
+      "file:core/test_fusional.py",
+      "file:scripts/test_pipeline.py"
+    ]
+  },
+  {
+    "id": "layer:registry-data",
+    "name": "Registry & Runtime Data",
+    "description": "MCP server registry JSON, backup snapshots, the well-known discovery card, and execution logs that record the live fleet of registered downstream servers and automation run history.",
+    "nodeIds": [
+      "file:core/mcp_registry.json",
+      "file:core/mcp_registry.json.bak",
+      "config:well-known/mcp/server-card.json",
+      "config:logs/execution_log.json"
+    ]
+  },
+  {
+    "id": "layer:example-servers",
+    "name": "Example MCP Servers",
+    "description": "Reference implementations of FusionAL-compatible MCP servers (dice-roller, file-utils, weather-api) demonstrating tool conventions, containerization, and integration patterns.",
+    "nodeIds": [
+      "file:examples/dice-roller/dice_server.py",
+      "file:examples/file-utils/file_utils_server.py",
+      "file:examples/weather-api/weather_server.py",
+      "service:examples/dice-roller/Dockerfile",
+      "service:examples/dice-roller/Dockerfile:python",
+      "service:examples/file-utils/Dockerfile",
+      "service:examples/weather-api/Dockerfile",
+      "service:examples/weather-api/Dockerfile:python",
+      "document:examples/dice-roller/README.md",
+      "document:examples/dice-roller/requirements.txt",
+      "document:examples/file-utils/README.md",
+      "document:examples/file-utils/requirements.txt",
+      "document:examples/weather-api/README.md",
+      "document:examples/weather-api/requirements.txt"
+    ]
+  },
+  {
+    "id": "layer:infrastructure",
+    "name": "Infrastructure",
+    "description": "Container build definitions, Docker Compose orchestration, debug overrides, and Hermes maintenance scripts that package and operate the FusionAL gateway in Docker environments.",
+    "nodeIds": [
+      "service:Dockerfile",
+      "service:.dockerignore",
+      "service:core/Dockerfile",
+      "service:compose.yaml",
+      "config:compose.debug.yaml",
+      "file:.hermes/maintenance-wrapper.sh",
+      "file:.hermes/maintenance.sh"
+    ]
+  },
+  {
+    "id": "layer:configuration",
+    "name": "Configuration",
+    "description": "Environment variable templates, client integration configs, Git attributes, and tooling ignore rules that parameterise the gateway and its development toolchain.",
+    "nodeIds": [
+      "config:.env.example",
+      "config:claude_desktop_config_windows.json",
+      "config:.github/FUNDING.yml",
+      "file:.gitattributes",
+      "file:.understand-anything/.understandignore"
+    ]
+  },
+  {
+    "id": "layer:documentation",
+    "name": "Documentation",
+    "description": "Project guides, API references, security hardening runbooks, contributor workflows, troubleshooting docs, and MCP builder guidelines covering every aspect of deploying and extending FusionAL.",
+    "nodeIds": [
+      "document:README.md",
+      "document:CLAUDE.md",
+      "document:CONTRIBUTING.md",
+      "document:MAINTENANCE.md",
+      "document:fusion-stress-test.md",
+      "document:requirements.txt",
+      "document:core/requirements.txt",
+      "document:core/common/P2-HARDENING.md",
+      "document:core/common/SECURITY-HARDENING.md",
+      "document:docs/custom-servers.md",
+      "document:docs/docker-gateway.md",
+      "document:docs/troubleshooting.md",
+      "document:scripts/README.md",
+      "document:mcp-builder-prompt/README.md",
+      "document:quick-start/setup-guide.md",
+      "document:.github/ISSUE_TEMPLATE/bug_report.md",
+      "document:.github/ISSUE_TEMPLATE/feature_request.md"
+    ]
+  }
+]

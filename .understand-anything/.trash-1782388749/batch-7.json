@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    {
+      "id": "service:examples/file-utils/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "examples/file-utils/Dockerfile",
+      "summary": "Single-stage Docker image for the file-utils MCP example server, running file_utils_server.py as a non-root user (mcpuser) on python:3.11-slim.",
+      "tags": ["containerization", "infrastructure", "deployment", "security"],
+      "complexity": "simple",
+      "languageNotes": "Non-root user (UID 1000) is created at build time and activated before the entrypoint, following Docker security best practices."
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:examples/file-utils/Dockerfile",
+      "target": "file:examples/file-utils/file_utils_server.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

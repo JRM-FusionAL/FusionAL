@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "service:examples/weather-api/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "examples/weather-api/Dockerfile",
+      "summary": "Single-stage Docker image for the weather-api example MCP server, running weather_server.py as a non-root user (mcpuser) on python:3.11-slim.",
+      "tags": ["containerization", "infrastructure", "deployment", "security"],
+      "complexity": "simple",
+      "languageNotes": "Runs as a non-root UID 1000 user for security hardening; uses --no-cache-dir to keep the image layer lean."
+    },
+    {
+      "id": "service:examples/weather-api/Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "examples/weather-api/Dockerfile",
+      "summary": "Runtime container stage based on python:3.11-slim that installs dependencies and launches the weather MCP server.",
+      "tags": ["containerization", "infrastructure", "deployment"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:examples/weather-api/Dockerfile",
+      "target": "service:examples/weather-api/Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:examples/weather-api/Dockerfile",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    {
+      "id": "service:core/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "core/Dockerfile",
+      "summary": "Single-stage Docker build that packages the FusionAL FastAPI gateway into a minimal Python 3.11 slim image, running as a non-root user on port 8009 via uvicorn.",
+      "tags": ["containerization", "infrastructure", "deployment", "security"],
+      "complexity": "simple",
+      "languageNotes": "Creates a dedicated non-root user (appuser, UID 5678) and transfers ownership of /app before switching — a security hardening pattern that prevents container privilege escalation."
+    }
+  ],
+  "edges": [
+    {
+      "source": "service:core/Dockerfile",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

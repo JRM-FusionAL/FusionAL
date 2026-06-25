@@ -1,0 +1,570 @@
+{
+  "nodes": [
+    {
+      "id": "file:scripts/action_executor.py",
+      "type": "file",
+      "name": "action_executor.py",
+      "filePath": "scripts/action_executor.py",
+      "summary": "Translates AI-generated action plan steps into safe shell commands, executes them with timeout and safety checks, and logs results to a persistent JSON execution log.",
+      "tags": ["service", "utility", "event-handler", "validation"],
+      "complexity": "complex",
+      "languageNotes": "Uses dataclass-style StepResult for structured return values; employs regex-based command allowlisting (is_safe) to guard against arbitrary shell execution."
+    },
+    {
+      "id": "class:scripts/action_executor.py:StepResult",
+      "type": "class",
+      "name": "StepResult",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [95, 104],
+      "summary": "Data container capturing the outcome of a single executed action step, including command text, stdout/stderr, return code, success flag, and optional skip reason.",
+      "tags": ["data-model", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:map_step_to_command",
+      "type": "function",
+      "name": "map_step_to_command",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [111, 124],
+      "summary": "Maps a natural-language action step string to a concrete shell command string using regex-based pattern matching against a command builder registry.",
+      "tags": ["utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:is_safe",
+      "type": "function",
+      "name": "is_safe",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [127, 132],
+      "summary": "Validates a shell command string against a regex allowlist to prevent execution of dangerous or unexpected commands.",
+      "tags": ["validation", "middleware"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:run_command",
+      "type": "function",
+      "name": "run_command",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [135, 148],
+      "summary": "Executes a shell command via subprocess with a configurable timeout and returns stdout, stderr, and return code.",
+      "tags": ["utility", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:execute_plan",
+      "type": "function",
+      "name": "execute_plan",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [151, 228],
+      "summary": "Iterates an ordered action plan, maps each step to a command, applies safety checks, optionally runs in dry-run mode, executes commands, and aggregates StepResult outcomes with configurable stop-on-failure behavior.",
+      "tags": ["service", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/action_executor.py:_log_execution",
+      "type": "function",
+      "name": "_log_execution",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [231, 264],
+      "summary": "Serializes an action plan's execution results into a JSON log file, appending to existing entries to maintain a persistent audit trail of all plan executions.",
+      "tags": ["utility", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/action_executor.py:execution_summary",
+      "type": "function",
+      "name": "execution_summary",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [267, 277],
+      "summary": "Formats a list of StepResult objects into a human-readable summary string showing per-step status icons and labels.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/notion_reporter.py",
+      "type": "file",
+      "name": "notion_reporter.py",
+      "filePath": "scripts/notion_reporter.py",
+      "summary": "Posts structured incident reports and think-tank diagnostic results to a Notion database page via the Notion REST API, formatting action plans, execution summaries, and escalation details as rich-text blocks.",
+      "tags": ["service", "api-handler", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/notion_reporter.py:post_incident",
+      "type": "function",
+      "name": "post_incident",
+      "filePath": "scripts/notion_reporter.py",
+      "lineRange": [41, 109],
+      "summary": "Constructs a Notion page payload with incident details (server name, fault type, verdict, action plan, execution summary, escalation) and POSTs it to the configured Notion database via the REST API.",
+      "tags": ["api-handler", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "function",
+      "name": "report_think_tank_result",
+      "filePath": "scripts/notion_reporter.py",
+      "lineRange": [112, 151],
+      "summary": "Formats think-tank execution results into a Markdown-style execution summary string and delegates to post_incident to write the full incident page to Notion.",
+      "tags": ["service", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/test_pipeline.py",
+      "type": "file",
+      "name": "test_pipeline.py",
+      "filePath": "scripts/test_pipeline.py",
+      "summary": "End-to-end integration test harness that exercises the full FusionAL watchdog pipeline — fault detection, think-tank reasoning, action plan execution, and Notion reporting — using a mock FaultEvent and a stubbed think-tank response.",
+      "tags": ["test", "service", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/test_pipeline.py:mock_think_tank",
+      "type": "function",
+      "name": "mock_think_tank",
+      "filePath": "scripts/test_pipeline.py",
+      "lineRange": [49, 66],
+      "summary": "Creates a deterministic ThinkTankResult stub for a given fault, providing canned verdict, action plan, issues, and escalation data for use in integration tests without hitting the real Claude API.",
+      "tags": ["test", "utility", "factory"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/test_pipeline.py:run_test",
+      "type": "function",
+      "name": "run_test",
+      "filePath": "scripts/test_pipeline.py",
+      "lineRange": [68, 140],
+      "summary": "Drives the full test sequence: creates a mock FaultEvent, invokes the think-tank (real or mocked), runs the action executor against the result, and calls the Notion reporter — printing detailed status at each stage.",
+      "tags": ["test", "entry-point"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:scripts/think_tank_trigger.py",
+      "type": "file",
+      "name": "think_tank_trigger.py",
+      "filePath": "scripts/think_tank_trigger.py",
+      "summary": "Implements a multi-agent Claude-powered think-tank that analyzes infrastructure faults through role negotiation, parallel diagnosis, and observer synthesis phases to produce a structured remediation verdict and action plan.",
+      "tags": ["service", "api-handler", "event-handler"],
+      "complexity": "complex",
+      "languageNotes": "Uses asyncio.gather for parallel Claude API calls across multiple diagnostic roles; employs extended thinking budgets (ReasoningPreset) for deeper analysis."
+    },
+    {
+      "id": "class:scripts/think_tank_trigger.py:ReasoningPreset",
+      "type": "class",
+      "name": "ReasoningPreset",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [36, 39],
+      "summary": "Enum-like configuration class defining thinking budget tiers (FAST, BALANCED, DEEP) for Claude API extended thinking mode.",
+      "tags": ["config", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:scripts/think_tank_trigger.py:FaultEvent",
+      "type": "class",
+      "name": "FaultEvent",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [134, 139],
+      "summary": "Dataclass representing a detected infrastructure fault event, carrying server name, fault type, detail string, trigger reason, and ISO timestamp.",
+      "tags": ["data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:scripts/think_tank_trigger.py:ThinkTankResult",
+      "type": "class",
+      "name": "ThinkTankResult",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [142, 149],
+      "summary": "Dataclass holding the full output of a think-tank session: verdict, action plan steps, issues list, escalation flag, escalation reason, raw per-role diagnoses, and timestamp.",
+      "tags": ["data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:_call_claude",
+      "type": "function",
+      "name": "_call_claude",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [164, 188],
+      "summary": "Wraps the Anthropic messages.create API call with optional extended thinking support, concatenating text blocks from the response into a single string.",
+      "tags": ["api-handler", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "type": "function",
+      "name": "run_think_tank",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [191, 333],
+      "summary": "Orchestrates the three-phase think-tank pipeline: (1) parallel role negotiation to assign diagnostic perspectives, (2) parallel per-role diagnosis generation, (3) observer synthesis to produce a final ThinkTankResult — then optionally executes the action plan and reports to Notion.",
+      "tags": ["service", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:_log_result",
+      "type": "function",
+      "name": "_log_result",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [336, 354],
+      "summary": "Persists a ThinkTankResult alongside the triggering FaultEvent to a JSON log file, appending to existing entries.",
+      "tags": ["utility", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:trigger",
+      "type": "function",
+      "name": "trigger",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [357, 376],
+      "summary": "Public entry point that wraps a fault event into a FaultEvent dataclass and synchronously runs the full think-tank pipeline via asyncio.run.",
+      "tags": ["entry-point", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/watchdog.py",
+      "type": "file",
+      "name": "watchdog.py",
+      "filePath": "scripts/watchdog.py",
+      "summary": "Continuous health-monitoring daemon that polls configured MCP server HTTP health endpoints, logs faults to a JSON fault log, attempts automatic Docker container restarts within rate limits, and fires the think-tank analysis pipeline asynchronously on unrecoverable failures.",
+      "tags": ["service", "event-handler", "monitoring"],
+      "complexity": "complex",
+      "languageNotes": "Uses threading.Thread to fire think-tank analysis non-blocking alongside the main polling loop; tracks restart timestamps in a defaultdict to enforce per-server cooldown windows."
+    },
+    {
+      "id": "function:scripts/watchdog.py:log_fault",
+      "type": "function",
+      "name": "log_fault",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [80, 97],
+      "summary": "Records a server fault event (type, detail, action taken) with a UTC timestamp to a persistent JSON fault log file.",
+      "tags": ["utility", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:check_health",
+      "type": "function",
+      "name": "check_health",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [100, 112],
+      "summary": "Issues an HTTP GET to a server's health endpoint and returns True if the response is 200 OK within the configured timeout, returning False on any connection error or non-200 status.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:can_restart",
+      "type": "function",
+      "name": "can_restart",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [115, 121],
+      "summary": "Checks whether a server is eligible for an automatic restart by enforcing a maximum restart count within a sliding time window from the restart tracker.",
+      "tags": ["validation", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:restart_container",
+      "type": "function",
+      "name": "restart_container",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [124, 147],
+      "summary": "Executes `docker restart` for a server's container, waits for it to become healthy, records the restart timestamp, and returns success or failure status.",
+      "tags": ["service", "event-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/watchdog.py:handle_fault",
+      "type": "function",
+      "name": "handle_fault",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [150, 169],
+      "summary": "Fault response coordinator that decides whether to restart a container or escalate by logging the fault and firing the think-tank, based on restart eligibility and restart success.",
+      "tags": ["event-handler", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/watchdog.py:_fire_think_tank",
+      "type": "function",
+      "name": "_fire_think_tank",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [172, 191],
+      "summary": "Launches the think-tank trigger in a background daemon thread so fault analysis runs non-blocking alongside the watchdog polling loop.",
+      "tags": ["service", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [194, 208],
+      "summary": "Main watchdog polling loop that iterates over configured servers, checks each one's health, and dispatches handle_fault on unhealthy servers before sleeping for the configured interval.",
+      "tags": ["entry-point", "service"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "class:scripts/action_executor.py:StepResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:map_step_to_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:is_safe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:run_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:execute_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:_log_execution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:execution_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/notion_reporter.py",
+      "target": "function:scripts/notion_reporter.py:post_incident",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/notion_reporter.py",
+      "target": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "function:scripts/test_pipeline.py:mock_think_tank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "function:scripts/test_pipeline.py:run_test",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "class:scripts/think_tank_trigger.py:ReasoningPreset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "class:scripts/think_tank_trigger.py:FaultEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "class:scripts/think_tank_trigger.py:ThinkTankResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:_call_claude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:_log_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:trigger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:log_fault",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:check_health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:can_restart",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:restart_container",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:handle_fault",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:_fire_think_tank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "file:scripts/think_tank_trigger.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "file:scripts/action_executor.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "file:scripts/notion_reporter.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "file:scripts/think_tank_trigger.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/action_executor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/notion_reporter.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "target": "function:scripts/action_executor.py:execute_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "target": "function:scripts/action_executor.py:execution_summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "target": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/test_pipeline.py:run_test",
+      "target": "function:scripts/action_executor.py:execute_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/test_pipeline.py:run_test",
+      "target": "function:scripts/action_executor.py:execution_summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/test_pipeline.py:run_test",
+      "target": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/watchdog.py:_fire_think_tank",
+      "target": "function:scripts/think_tank_trigger.py:trigger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

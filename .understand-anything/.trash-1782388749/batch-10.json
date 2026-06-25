@@ -1,0 +1,76 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/custom-servers.md",
+      "type": "document",
+      "name": "custom-servers.md",
+      "filePath": "docs/custom-servers.md",
+      "summary": "Comprehensive developer guide (23 sections, 415 lines) covering both AI-powered and manual creation of custom MCP servers for FusionAL, including project structure, Dockerfile patterns, server implementation examples, testing workflows, and production deployment with Docker Compose.",
+      "tags": ["documentation", "mcp-server", "containerization", "development", "deployment"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/docker-gateway.md",
+      "type": "document",
+      "name": "docker-gateway.md",
+      "filePath": "docs/docker-gateway.md",
+      "summary": "Brief reference note clarifying FusionAL's two runtime port bindings: port 8009 for direct uvicorn launch and port 8089 for Docker Compose, with quick health-check curl commands for both.",
+      "tags": ["documentation", "infrastructure", "configuration", "deployment"],
+      "complexity": "simple",
+      "languageNotes": "Clarifies port 8009 vs 8089 discrepancy that arises from how compose.yaml maps the host port — critical operational knowledge for connecting clients."
+    },
+    {
+      "id": "document:docs/troubleshooting.md",
+      "type": "document",
+      "name": "troubleshooting.md",
+      "filePath": "docs/troubleshooting.md",
+      "summary": "Concise troubleshooting reference covering three common failure scenarios: server unreachable (uvicorn/compose startup checks), Docker sandbox errors (daemon access and isolation bypass), and MCP tools not appearing in clients (endpoint config and log inspection).",
+      "tags": ["documentation", "troubleshooting", "operations", "debugging"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/custom-servers.md",
+      "target": "file:core/ai_agent.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/custom-servers.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/docker-gateway.md",
+      "target": "file:compose.yaml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/docker-gateway.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/troubleshooting.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/troubleshooting.md",
+      "target": "document:docs/docker-gateway.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

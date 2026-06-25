@@ -1,0 +1,218 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Documents all 17 environment variables used by FusionAL, covering API keys (Anthropic, OpenAI), gateway authentication, CORS, rate limiting, logging, policy profiles, MCP server URL, and Notion poller settings.",
+      "tags": ["configuration", "environment", "security", "documentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Comprehensive AI assistant guide for the FusionAL repo with 29 sections covering architecture, directory structure, environment variables, policy profiles, security model, MCP authoring conventions, and cross-repo relationships — also embeds session-init and recall/auto-log protocols.",
+      "tags": ["documentation", "development", "architecture", "configuration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:CONTRIBUTING.md",
+      "type": "document",
+      "name": "CONTRIBUTING.md",
+      "filePath": "CONTRIBUTING.md",
+      "summary": "Contributor guide covering development setup, branch and PR workflow, coding guidelines, testing, and secret-handling rules for the FusionAL project.",
+      "tags": ["documentation", "development", "contributing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:MAINTENANCE.md",
+      "type": "document",
+      "name": "MAINTENANCE.md",
+      "filePath": "MAINTENANCE.md",
+      "summary": "Minimal maintenance log recording the most recent scheduled maintenance run timestamp for the FusionAL service.",
+      "tags": ["documentation", "maintenance"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary public-facing documentation for FusionAL with 26 sections covering quick-start, Docker deploy, architecture diagram, MCP tools, REST API, security model, Windows fixes, building custom MCP servers, and contributing guidelines.",
+      "tags": ["documentation", "entry-point", "overview", "infrastructure"],
+      "complexity": "complex"
+    },
+    {
+      "id": "config:claude_desktop_config_windows.json",
+      "type": "config",
+      "name": "claude_desktop_config_windows.json",
+      "filePath": "claude_desktop_config_windows.json",
+      "summary": "Claude Desktop configuration snippet for Windows users that registers the FusionAL MCP gateway at the local HTTP endpoint, enabling Claude Desktop to connect to the gateway's /mcp transport.",
+      "tags": ["configuration", "deployment", "windows"],
+      "complexity": "simple",
+      "languageNotes": "Windows-specific path format; mirrors the Linux/macOS config shown in CLAUDE.md."
+    },
+    {
+      "id": "config:compose.debug.yaml",
+      "type": "config",
+      "name": "compose.debug.yaml",
+      "filePath": "compose.debug.yaml",
+      "summary": "Docker Compose debug override that replaces the default start command with a debugpy listener on port 5678, enabling remote Python debugging of the running FusionAL container.",
+      "tags": ["configuration", "development", "containerization"],
+      "complexity": "simple",
+      "languageNotes": "Intended as a compose override (docker compose -f compose.yaml -f compose.debug.yaml); exposes debugpy port 5678 alongside the API port."
+    },
+    {
+      "id": "service:compose.yaml",
+      "type": "service",
+      "name": "compose.yaml",
+      "filePath": "compose.yaml",
+      "summary": "Docker Compose service definition for the FusionAL gateway, building the image from the root Dockerfile and exposing port 8009 locally as 8089, connected to both the default network and the external mcp-consulting-kit network.",
+      "tags": ["orchestration", "infrastructure", "containerization", "deployment"],
+      "complexity": "simple",
+      "languageNotes": "Attaches to mcp-consulting-kit_default external network so FusionAL can reach showcase MCP servers (ports 8101-8103) without host networking."
+    },
+    {
+      "id": "document:fusion-stress-test.md",
+      "type": "document",
+      "name": "fusion-stress-test.md",
+      "filePath": "fusion-stress-test.md",
+      "summary": "OpenRouter fusion stress-test suite with 4 test scenarios (time-sensitive synthesis, adversarial debugging, ethical architecture, formal logic trap) designed to validate reasoning quality and multi-model routing through the FusionAL gateway.",
+      "tags": ["documentation", "testing", "development"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "requirements.txt",
+      "summary": "Root-level Python requirements file listing top-level runtime dependencies including fastapi, uvicorn, pydantic, anthropic, openai, mcp, redis, and opentelemetry packages with pinned versions.",
+      "tags": ["documentation", "configuration", "build-system"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.env.example",
+      "target": "document:CLAUDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:core/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:notion_poller.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/mcp_transport.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/policy_profiles.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/ai_agent.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/runner_docker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "service:compose.yaml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRIBUTING.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:claude_desktop_config_windows.json",
+      "target": "file:core/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:compose.yaml",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:compose.debug.yaml",
+      "target": "service:compose.yaml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:compose.debug.yaml",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "document:requirements.txt",
+      "target": "file:core/main.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:fusion-stress-test.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

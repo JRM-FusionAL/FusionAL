@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "id": "document:scripts/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "scripts/README.md",
+      "summary": "Developer reference for all scripts in the `scripts/` directory, documenting the registry-generator scripts (PowerShell and shell variants), their CLI flags, and the `smoke-generate-endpoint.ps1` smoke test for the `/generate` endpoint.",
+      "tags": ["documentation", "scripts", "developer-guide", "registry", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/build_examples.ps1",
+      "type": "file",
+      "name": "build_examples.ps1",
+      "filePath": "scripts/build_examples.ps1",
+      "summary": "Builds Docker images for all three example MCP servers (dice-roller, weather-api, file-utils) and optionally the FusionAL gateway image in a single PowerShell script.",
+      "tags": ["build-system", "containerization", "infrastructure", "script"],
+      "complexity": "simple",
+      "languageNotes": "Uses PowerShell `docker build` commands directly; no error handling — exits on first Docker failure via implicit PowerShell behavior."
+    },
+    {
+      "id": "file:scripts/generate_registry_from_docker.ps1",
+      "type": "file",
+      "name": "generate_registry_from_docker.ps1",
+      "filePath": "scripts/generate_registry_from_docker.ps1",
+      "summary": "Enumerates running Docker containers (optionally filtered by label or image-name regex) and writes a fresh `core/mcp_registry.json`, backing up the previous file and preserving any `test-server` entry from the backup.",
+      "tags": ["registry", "docker", "infrastructure", "script", "build-system"],
+      "complexity": "moderate",
+      "languageNotes": "Uses `ConvertFrom-Json` / `ConvertTo-Json` for registry serialization; preserves `test-server` from backup via selective key copy; `Set-StrictMode -Version Latest` enforces strict variable use."
+    },
+    {
+      "id": "file:scripts/generate_registry_from_docker.sh",
+      "type": "file",
+      "name": "generate_registry_from_docker.sh",
+      "filePath": "scripts/generate_registry_from_docker.sh",
+      "summary": "Bash equivalent of `generate_registry_from_docker.ps1`: enumerates running Docker containers with optional label or image-regex filtering, then delegates JSON construction to an inline Python heredoc to write `core/mcp_registry.json`.",
+      "tags": ["registry", "docker", "infrastructure", "script", "build-system"],
+      "complexity": "moderate",
+      "languageNotes": "Delegates JSON serialization to an embedded Python heredoc for reliability; uses `set -euo pipefail` for strict error handling; `grep -Ei` applies case-insensitive regex filtering when `--image-regex` is supplied."
+    },
+    {
+      "id": "file:scripts/smoke-generate-endpoint.ps1",
+      "type": "file",
+      "name": "smoke-generate-endpoint.ps1",
+      "filePath": "scripts/smoke-generate-endpoint.ps1",
+      "summary": "End-to-end smoke test for the FusionAL `/generate` REST endpoint: posts a generation prompt, extracts the returned port, and polls the generated server's `/health` endpoint until it responds or a timeout is reached.",
+      "tags": ["smoke-test", "testing", "script", "api-handler", "build-system"],
+      "complexity": "moderate",
+      "languageNotes": "Falls back through `API_KEY` then `FUSIONAL_API_KEY` env vars for API key resolution; uses a polling loop with 500ms sleep increments up to `HealthTimeoutSeconds`; outputs a structured JSON result on success."
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:scripts/README.md",
+      "target": "file:scripts/generate_registry_from_docker.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:scripts/README.md",
+      "target": "file:scripts/generate_registry_from_docker.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:scripts/README.md",
+      "target": "file:scripts/smoke-generate-endpoint.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/build_examples.ps1",
+      "target": "file:examples/dice-roller/Dockerfile",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/generate_registry_from_docker.ps1",
+      "target": "file:core/mcp_registry.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/generate_registry_from_docker.sh",
+      "target": "file:core/mcp_registry.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/smoke-generate-endpoint.ps1",
+      "target": "file:core/main.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,4865 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "FusionAL",
+    "languages": [
+      "Python",
+      "Markdown",
+      "Dockerfile",
+      "YAML",
+      "Shell",
+      "PowerShell"
+    ],
+    "frameworks": [
+      "FastAPI",
+      "uvicorn",
+      "Pydantic",
+      "Anthropic",
+      "OpenAI",
+      "MCP",
+      "Redis",
+      "OpenTelemetry",
+      "Docker"
+    ],
+    "description": "Self-hosted MCP governance gateway sitting between AI clients and MCP tool servers, providing central auth, rate limiting, policy enforcement, audit logging, Docker-sandboxed code execution, and AI-powered MCP server generation.",
+    "analyzedAt": "2026-06-25T11:58:18.382698+00:00",
+    "gitCommitHash": "606777ba0f9ffd4088ac9b807fe523a8a50a938e"
+  },
+  "nodes": [
+    {
+      "id": "file:scripts/action_executor.py",
+      "type": "file",
+      "name": "action_executor.py",
+      "filePath": "scripts/action_executor.py",
+      "summary": "Translates AI-generated action plan steps into safe shell commands, executes them with timeout and safety checks, and logs results to a persistent JSON execution log.",
+      "tags": [
+        "service",
+        "utility",
+        "event-handler",
+        "validation",
+        "tested"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses dataclass-style StepResult for structured return values; employs regex-based command allowlisting (is_safe) to guard against arbitrary shell execution."
+    },
+    {
+      "id": "class:scripts/action_executor.py:StepResult",
+      "type": "class",
+      "name": "StepResult",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        95,
+        104
+      ],
+      "summary": "Data container capturing the outcome of a single executed action step, including command text, stdout/stderr, return code, success flag, and optional skip reason.",
+      "tags": [
+        "data-model",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:map_step_to_command",
+      "type": "function",
+      "name": "map_step_to_command",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        111,
+        124
+      ],
+      "summary": "Maps a natural-language action step string to a concrete shell command string using regex-based pattern matching against a command builder registry.",
+      "tags": [
+        "utility",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:is_safe",
+      "type": "function",
+      "name": "is_safe",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        127,
+        132
+      ],
+      "summary": "Validates a shell command string against a regex allowlist to prevent execution of dangerous or unexpected commands.",
+      "tags": [
+        "validation",
+        "middleware"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:run_command",
+      "type": "function",
+      "name": "run_command",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        135,
+        148
+      ],
+      "summary": "Executes a shell command via subprocess with a configurable timeout and returns stdout, stderr, and return code.",
+      "tags": [
+        "utility",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/action_executor.py:execute_plan",
+      "type": "function",
+      "name": "execute_plan",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        151,
+        228
+      ],
+      "summary": "Iterates an ordered action plan, maps each step to a command, applies safety checks, optionally runs in dry-run mode, executes commands, and aggregates StepResult outcomes with configurable stop-on-failure behavior.",
+      "tags": [
+        "service",
+        "event-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/action_executor.py:_log_execution",
+      "type": "function",
+      "name": "_log_execution",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        231,
+        264
+      ],
+      "summary": "Serializes an action plan's execution results into a JSON log file, appending to existing entries to maintain a persistent audit trail of all plan executions.",
+      "tags": [
+        "utility",
+        "serialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/action_executor.py:execution_summary",
+      "type": "function",
+      "name": "execution_summary",
+      "filePath": "scripts/action_executor.py",
+      "lineRange": [
+        267,
+        277
+      ],
+      "summary": "Formats a list of StepResult objects into a human-readable summary string showing per-step status icons and labels.",
+      "tags": [
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/notion_reporter.py",
+      "type": "file",
+      "name": "notion_reporter.py",
+      "filePath": "scripts/notion_reporter.py",
+      "summary": "Posts structured incident reports and think-tank diagnostic results to a Notion database page via the Notion REST API, formatting action plans, execution summaries, and escalation details as rich-text blocks.",
+      "tags": [
+        "service",
+        "api-handler",
+        "serialization",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/notion_reporter.py:post_incident",
+      "type": "function",
+      "name": "post_incident",
+      "filePath": "scripts/notion_reporter.py",
+      "lineRange": [
+        41,
+        109
+      ],
+      "summary": "Constructs a Notion page payload with incident details (server name, fault type, verdict, action plan, execution summary, escalation) and POSTs it to the configured Notion database via the REST API.",
+      "tags": [
+        "api-handler",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "function",
+      "name": "report_think_tank_result",
+      "filePath": "scripts/notion_reporter.py",
+      "lineRange": [
+        112,
+        151
+      ],
+      "summary": "Formats think-tank execution results into a Markdown-style execution summary string and delegates to post_incident to write the full incident page to Notion.",
+      "tags": [
+        "service",
+        "serialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/test_pipeline.py",
+      "type": "file",
+      "name": "test_pipeline.py",
+      "filePath": "scripts/test_pipeline.py",
+      "summary": "End-to-end integration test harness that exercises the full FusionAL watchdog pipeline \u2014 fault detection, think-tank reasoning, action plan execution, and Notion reporting \u2014 using a mock FaultEvent and a stubbed think-tank response.",
+      "tags": [
+        "test",
+        "service",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/test_pipeline.py:mock_think_tank",
+      "type": "function",
+      "name": "mock_think_tank",
+      "filePath": "scripts/test_pipeline.py",
+      "lineRange": [
+        49,
+        66
+      ],
+      "summary": "Creates a deterministic ThinkTankResult stub for a given fault, providing canned verdict, action plan, issues, and escalation data for use in integration tests without hitting the real Claude API.",
+      "tags": [
+        "test",
+        "utility",
+        "factory"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/test_pipeline.py:run_test",
+      "type": "function",
+      "name": "run_test",
+      "filePath": "scripts/test_pipeline.py",
+      "lineRange": [
+        68,
+        140
+      ],
+      "summary": "Drives the full test sequence: creates a mock FaultEvent, invokes the think-tank (real or mocked), runs the action executor against the result, and calls the Notion reporter \u2014 printing detailed status at each stage.",
+      "tags": [
+        "test",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:scripts/think_tank_trigger.py",
+      "type": "file",
+      "name": "think_tank_trigger.py",
+      "filePath": "scripts/think_tank_trigger.py",
+      "summary": "Implements a multi-agent Claude-powered think-tank that analyzes infrastructure faults through role negotiation, parallel diagnosis, and observer synthesis phases to produce a structured remediation verdict and action plan.",
+      "tags": [
+        "service",
+        "api-handler",
+        "event-handler",
+        "tested"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses asyncio.gather for parallel Claude API calls across multiple diagnostic roles; employs extended thinking budgets (ReasoningPreset) for deeper analysis."
+    },
+    {
+      "id": "class:scripts/think_tank_trigger.py:ReasoningPreset",
+      "type": "class",
+      "name": "ReasoningPreset",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        36,
+        39
+      ],
+      "summary": "Enum-like configuration class defining thinking budget tiers (FAST, BALANCED, DEEP) for Claude API extended thinking mode.",
+      "tags": [
+        "config",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:scripts/think_tank_trigger.py:FaultEvent",
+      "type": "class",
+      "name": "FaultEvent",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        134,
+        139
+      ],
+      "summary": "Dataclass representing a detected infrastructure fault event, carrying server name, fault type, detail string, trigger reason, and ISO timestamp.",
+      "tags": [
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:scripts/think_tank_trigger.py:ThinkTankResult",
+      "type": "class",
+      "name": "ThinkTankResult",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        142,
+        149
+      ],
+      "summary": "Dataclass holding the full output of a think-tank session: verdict, action plan steps, issues list, escalation flag, escalation reason, raw per-role diagnoses, and timestamp.",
+      "tags": [
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:_call_claude",
+      "type": "function",
+      "name": "_call_claude",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        164,
+        188
+      ],
+      "summary": "Wraps the Anthropic messages.create API call with optional extended thinking support, concatenating text blocks from the response into a single string.",
+      "tags": [
+        "api-handler",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "type": "function",
+      "name": "run_think_tank",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        191,
+        333
+      ],
+      "summary": "Orchestrates the three-phase think-tank pipeline: (1) parallel role negotiation to assign diagnostic perspectives, (2) parallel per-role diagnosis generation, (3) observer synthesis to produce a final ThinkTankResult \u2014 then optionally executes the action plan and reports to Notion.",
+      "tags": [
+        "service",
+        "event-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:_log_result",
+      "type": "function",
+      "name": "_log_result",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        336,
+        354
+      ],
+      "summary": "Persists a ThinkTankResult alongside the triggering FaultEvent to a JSON log file, appending to existing entries.",
+      "tags": [
+        "utility",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/think_tank_trigger.py:trigger",
+      "type": "function",
+      "name": "trigger",
+      "filePath": "scripts/think_tank_trigger.py",
+      "lineRange": [
+        357,
+        376
+      ],
+      "summary": "Public entry point that wraps a fault event into a FaultEvent dataclass and synchronously runs the full think-tank pipeline via asyncio.run.",
+      "tags": [
+        "entry-point",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/watchdog.py",
+      "type": "file",
+      "name": "watchdog.py",
+      "filePath": "scripts/watchdog.py",
+      "summary": "Continuous health-monitoring daemon that polls configured MCP server HTTP health endpoints, logs faults to a JSON fault log, attempts automatic Docker container restarts within rate limits, and fires the think-tank analysis pipeline asynchronously on unrecoverable failures.",
+      "tags": [
+        "service",
+        "event-handler",
+        "monitoring"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses threading.Thread to fire think-tank analysis non-blocking alongside the main polling loop; tracks restart timestamps in a defaultdict to enforce per-server cooldown windows."
+    },
+    {
+      "id": "function:scripts/watchdog.py:log_fault",
+      "type": "function",
+      "name": "log_fault",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        80,
+        97
+      ],
+      "summary": "Records a server fault event (type, detail, action taken) with a UTC timestamp to a persistent JSON fault log file.",
+      "tags": [
+        "utility",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:check_health",
+      "type": "function",
+      "name": "check_health",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        100,
+        112
+      ],
+      "summary": "Issues an HTTP GET to a server's health endpoint and returns True if the response is 200 OK within the configured timeout, returning False on any connection error or non-200 status.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:can_restart",
+      "type": "function",
+      "name": "can_restart",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        115,
+        121
+      ],
+      "summary": "Checks whether a server is eligible for an automatic restart by enforcing a maximum restart count within a sliding time window from the restart tracker.",
+      "tags": [
+        "validation",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:restart_container",
+      "type": "function",
+      "name": "restart_container",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        124,
+        147
+      ],
+      "summary": "Executes `docker restart` for a server's container, waits for it to become healthy, records the restart timestamp, and returns success or failure status.",
+      "tags": [
+        "service",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/watchdog.py:handle_fault",
+      "type": "function",
+      "name": "handle_fault",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        150,
+        169
+      ],
+      "summary": "Fault response coordinator that decides whether to restart a container or escalate by logging the fault and firing the think-tank, based on restart eligibility and restart success.",
+      "tags": [
+        "event-handler",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/watchdog.py:_fire_think_tank",
+      "type": "function",
+      "name": "_fire_think_tank",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        172,
+        191
+      ],
+      "summary": "Launches the think-tank trigger in a background daemon thread so fault analysis runs non-blocking alongside the watchdog polling loop.",
+      "tags": [
+        "service",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/watchdog.py:run",
+      "type": "function",
+      "name": "run",
+      "filePath": "scripts/watchdog.py",
+      "lineRange": [
+        194,
+        208
+      ],
+      "summary": "Main watchdog polling loop that iterates over configured servers, checks each one's health, and dispatches handle_fault on unhealthy servers before sleeping for the configured interval.",
+      "tags": [
+        "entry-point",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ai_agent.py",
+      "type": "file",
+      "name": "ai_agent.py",
+      "filePath": "core/ai_agent.py",
+      "summary": "Provides AI-powered code generation via Claude and OpenAI APIs, plus MCP project scaffolding \u2014 generates Python code from natural-language prompts and can build, containerize, and register new MCP servers.",
+      "tags": [
+        "service",
+        "ai-generation",
+        "mcp",
+        "factory"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses both the Anthropic REST API directly (via requests.post) and the openai SDK client; falls back gracefully between providers."
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_python_from_claude",
+      "type": "function",
+      "name": "generate_python_from_claude",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [
+        29,
+        62
+      ],
+      "summary": "Calls the Anthropic Messages API to generate Python code from a prompt, returning the raw text content of the first response block.",
+      "tags": [
+        "ai-generation",
+        "utility",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_python_from_openai",
+      "type": "function",
+      "name": "generate_python_from_openai",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [
+        65,
+        86
+      ],
+      "summary": "Calls the OpenAI Chat Completions API to generate Python code from a prompt, serving as the fallback provider when Anthropic is unavailable.",
+      "tags": [
+        "ai-generation",
+        "utility",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_and_execute",
+      "type": "function",
+      "name": "generate_and_execute",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [
+        89,
+        129
+      ],
+      "summary": "Generates Python code from a natural-language prompt using the configured AI provider, then submits it to the FusionAL /execute endpoint for sandboxed execution.",
+      "tags": [
+        "ai-generation",
+        "service",
+        "api-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/ai_agent.py:generate_mcp_project",
+      "type": "function",
+      "name": "generate_mcp_project",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [
+        155,
+        245
+      ],
+      "summary": "Generates a full MCP server project from a prompt \u2014 writes files to a temp directory, optionally builds a Docker image, and returns file paths and discovered tool names.",
+      "tags": [
+        "mcp",
+        "factory",
+        "ai-generation",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/ai_agent.py:_parse_files_from_ai_output",
+      "type": "function",
+      "name": "_parse_files_from_ai_output",
+      "filePath": "core/ai_agent.py",
+      "lineRange": [
+        132,
+        152
+      ],
+      "summary": "Parses a multi-file AI response (delimited by filename markers) into a dict mapping relative paths to file content strings.",
+      "tags": [
+        "utility",
+        "serialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "core/main.py",
+      "summary": "FastAPI gateway entry point for FusionAL \u2014 mounts the MCP transport, defines REST endpoints for code execution, server registration, AI generation, and audit export, and initializes auth/rate-limit middleware.",
+      "tags": [
+        "entry-point",
+        "api-handler",
+        "middleware",
+        "service"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses FastAPI lifespan context manager to wire up the MCP session manager and register downstream tools at startup."
+    },
+    {
+      "id": "class:core/main.py:ExecRequest",
+      "type": "class",
+      "name": "ExecRequest",
+      "filePath": "core/main.py",
+      "lineRange": [
+        155,
+        160
+      ],
+      "summary": "Pydantic model for the /execute endpoint request body, carrying code, language, timeout, docker flag, and memory limit.",
+      "tags": [
+        "data-model",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/main.py:RegisterRequest",
+      "type": "class",
+      "name": "RegisterRequest",
+      "filePath": "core/main.py",
+      "lineRange": [
+        163,
+        167
+      ],
+      "summary": "Pydantic model for the /register endpoint, capturing the server name, description, URL, and optional metadata dict.",
+      "tags": [
+        "data-model",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/main.py:GenerateRequest",
+      "type": "class",
+      "name": "GenerateRequest",
+      "filePath": "core/main.py",
+      "lineRange": [
+        170,
+        172
+      ],
+      "summary": "Pydantic model for the /generate endpoint, holding the natural-language prompt and an optional sandbox flag.",
+      "tags": [
+        "data-model",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/main.py:_lifespan",
+      "type": "function",
+      "name": "_lifespan",
+      "filePath": "core/main.py",
+      "lineRange": [
+        97,
+        112
+      ],
+      "summary": "FastAPI lifespan async context manager that starts the MCP session manager, registers downstream tools from the server registry, and tears down cleanly on shutdown.",
+      "tags": [
+        "middleware",
+        "service",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:execute",
+      "type": "function",
+      "name": "execute",
+      "filePath": "core/main.py",
+      "lineRange": [
+        345,
+        371
+      ],
+      "summary": "POST /execute handler \u2014 runs submitted Python code in a Docker sandbox or subprocess, enforcing policy-profile timeout/memory limits and returning stdout/stderr.",
+      "tags": [
+        "api-handler",
+        "middleware",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/main.py:generate",
+      "type": "function",
+      "name": "generate",
+      "filePath": "core/main.py",
+      "lineRange": [
+        389,
+        490
+      ],
+      "summary": "POST /generate handler \u2014 uses the AI provider chain to generate MCP server code from a prompt, launches it as a subprocess on a dynamic port, and registers it in the server catalog.",
+      "tags": [
+        "api-handler",
+        "ai-generation",
+        "factory"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/main.py:audit_export_json",
+      "type": "function",
+      "name": "audit_export_json",
+      "filePath": "core/main.py",
+      "lineRange": [
+        496,
+        520
+      ],
+      "summary": "GET /audit/export/json handler \u2014 streams audit records within an optional time range as a JSON response, requiring API key auth.",
+      "tags": [
+        "api-handler",
+        "audit",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:audit_export_csv",
+      "type": "function",
+      "name": "audit_export_csv",
+      "filePath": "core/main.py",
+      "lineRange": [
+        524,
+        548
+      ],
+      "summary": "GET /audit/export/csv handler \u2014 streams audit records within an optional time range as a CSV response, requiring API key auth.",
+      "tags": [
+        "api-handler",
+        "audit",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:_generate_local_server_code",
+      "type": "function",
+      "name": "_generate_local_server_code",
+      "filePath": "core/main.py",
+      "lineRange": [
+        295,
+        334
+      ],
+      "summary": "Generates a minimal FastMCP server stub from a user request using a local template, used as a last-resort fallback when both AI providers are unavailable.",
+      "tags": [
+        "factory",
+        "utility",
+        "mcp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/main.py:register",
+      "type": "function",
+      "name": "register",
+      "filePath": "core/main.py",
+      "lineRange": [
+        375,
+        380
+      ],
+      "summary": "POST /register handler \u2014 adds or updates a named MCP server entry in the in-memory registry and persists it to disk.",
+      "tags": [
+        "api-handler",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/mcp_transport.py",
+      "type": "file",
+      "name": "mcp_transport.py",
+      "filePath": "core/mcp_transport.py",
+      "summary": "Defines the FastMCP server instance and its core tool set \u2014 execute_code, generate_and_execute, generate_mcp_project \u2014 and implements dynamic proxy registration for downstream MCP servers discovered in the registry.",
+      "tags": [
+        "mcp",
+        "middleware",
+        "service",
+        "api-handler"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses FastMCP from mcp.server.fastmcp; dynamically creates Pydantic arg models and Tool instances at runtime to proxy downstream MCP servers via streamablehttp_client."
+    },
+    {
+      "id": "function:core/mcp_transport.py:execute_code",
+      "type": "function",
+      "name": "execute_code",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [
+        63,
+        85
+      ],
+      "summary": "MCP tool that runs arbitrary Python code in an isolated subprocess with configurable timeout, cleaning up the temp directory after execution.",
+      "tags": [
+        "mcp",
+        "service",
+        "sandbox"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/mcp_transport.py:register_downstream_tools",
+      "type": "function",
+      "name": "register_downstream_tools",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [
+        217,
+        284
+      ],
+      "summary": "Iterates the server registry and for each reachable MCP server dynamically creates namespaced proxy tools on the FastMCP instance, with retry logic and collision avoidance.",
+      "tags": [
+        "mcp",
+        "service",
+        "middleware",
+        "factory"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/mcp_transport.py:_make_proxy_fn",
+      "type": "function",
+      "name": "_make_proxy_fn",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [
+        182,
+        214
+      ],
+      "summary": "Builds a closed-over async proxy coroutine that forwards tool calls to a downstream MCP server via streamablehttp_client and records them in the audit log.",
+      "tags": [
+        "factory",
+        "mcp",
+        "middleware"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/mcp_transport.py:_make_passthrough_tool",
+      "type": "function",
+      "name": "_make_passthrough_tool",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [
+        129,
+        147
+      ],
+      "summary": "Constructs a FastMCP Tool object from a name, description, JSON input schema, and callable, used to register dynamically generated proxy tools.",
+      "tags": [
+        "factory",
+        "mcp",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/mcp_transport.py:_server_namespace",
+      "type": "function",
+      "name": "_server_namespace",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [
+        150,
+        173
+      ],
+      "summary": "Derives a compact namespace prefix from a server name by stripping common suffixes (-mcp, -safe, -server) and using at most the first two slug segments.",
+      "tags": [
+        "utility",
+        "mcp"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/mcp_transport.py:_PassthroughArgModel",
+      "type": "class",
+      "name": "_PassthroughArgModel",
+      "filePath": "core/mcp_transport.py",
+      "lineRange": [
+        109,
+        126
+      ],
+      "summary": "Dynamic Pydantic BaseModel subclass that serializes only its declared fields (no nested model expansion), used as the argument container for proxy tool calls.",
+      "tags": [
+        "data-model",
+        "mcp",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/quick_test.py",
+      "type": "file",
+      "name": "quick_test.py",
+      "filePath": "core/quick_test.py",
+      "summary": "Lightweight smoke-test script that pings the running FusionAL gateway's /health endpoint to verify the server is up and returns a valid response.",
+      "tags": [
+        "test",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/common/rate_limit_presets.py",
+      "type": "file",
+      "name": "rate_limit_presets.py",
+      "filePath": "core/common/rate_limit_presets.py",
+      "summary": "Defines named rate-limit profiles (pilot, production, permissive) and an error-budget tracking subsystem that monitors API error rates and emits log warnings/errors when configurable thresholds are breached. Exports preset lookup, ErrorBudgetTracker, and a FastAPI middleware factory.",
+      "tags": [
+        "middleware",
+        "rate-limiting",
+        "utility",
+        "service",
+        "validation",
+        "tested"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses dataclasses for RateLimitPreset and a classmethod factory on ErrorBudgetConfig for environment-driven construction; ErrorBudgetTracker maintains a monotonic-clock event ring for sliding-window error rate calculation."
+    },
+    {
+      "id": "class:core/common/rate_limit_presets.py:RateLimitPreset",
+      "type": "class",
+      "name": "RateLimitPreset",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [
+        54,
+        64
+      ],
+      "summary": "Dataclass holding a named rate-limit profile with requests-per-window, window duration, and profile name; provides a description string for logging.",
+      "tags": [
+        "data-model",
+        "rate-limiting",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/rate_limit_presets.py:ErrorBudgetConfig",
+      "type": "class",
+      "name": "ErrorBudgetConfig",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [
+        108,
+        133
+      ],
+      "summary": "Configuration dataclass for error-budget thresholds (warn/error) and observation window, loadable from environment variables via the from_env classmethod.",
+      "tags": [
+        "data-model",
+        "configuration",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/rate_limit_presets.py:ErrorBudgetTracker",
+      "type": "class",
+      "name": "ErrorBudgetTracker",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [
+        136,
+        240
+      ],
+      "summary": "Sliding-window error-budget tracker that records request outcomes, prunes expired events, calculates current error rate, and emits log warnings or errors when warn/error thresholds are crossed.",
+      "tags": [
+        "service",
+        "middleware",
+        "monitoring",
+        "rate-limiting"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/common/rate_limit_presets.py:get_active_preset",
+      "type": "function",
+      "name": "get_active_preset",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [
+        82,
+        99
+      ],
+      "summary": "Reads the RATE_LIMIT_PROFILE environment variable, looks up the corresponding RateLimitPreset, and falls back to the pilot preset with a warning if the value is unrecognized.",
+      "tags": [
+        "utility",
+        "configuration",
+        "rate-limiting"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/rate_limit_presets.py:configure_error_budget_tracking",
+      "type": "function",
+      "name": "configure_error_budget_tracking",
+      "filePath": "core/common/rate_limit_presets.py",
+      "lineRange": [
+        248,
+        271
+      ],
+      "summary": "Attaches an ErrorBudgetTracker to a FastAPI app's state and registers an HTTP middleware that records each response's success/error status into the tracker.",
+      "tags": [
+        "middleware",
+        "service",
+        "monitoring"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/security.py",
+      "type": "file",
+      "name": "security.py",
+      "filePath": "core/common/security.py",
+      "summary": "Core security and observability module for the FusionAL gateway providing CORS configuration, API key verification with revocation support, sliding-window rate limiting with optional Redis backend, request ID sanitization, sensitive-data redaction, and JSON structured request logging middleware.",
+      "tags": [
+        "security",
+        "middleware",
+        "api-handler",
+        "validation",
+        "service",
+        "tested"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Implements in-process rate limiting with a dict-of-lists store as Redis fallback; uses FastAPI dependency injection for verify_api_key and enforce_rate_limit; all config reads from environment variables at call time rather than module load."
+    },
+    {
+      "id": "function:core/common/security.py:configure_cors",
+      "type": "function",
+      "name": "configure_cors",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        177,
+        183
+      ],
+      "summary": "Adds FastAPI CORSMiddleware using the validated origin list from get_allowed_origins.",
+      "tags": [
+        "middleware",
+        "security",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/security.py:configure_observability",
+      "type": "function",
+      "name": "configure_observability",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        186,
+        219
+      ],
+      "summary": "Registers a FastAPI middleware that injects request IDs, attaches security headers to responses, logs structured JSON request/response data, and conditionally skips health-check endpoint logging.",
+      "tags": [
+        "middleware",
+        "service",
+        "security"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/common/security.py:initialize_rate_limit_store",
+      "type": "function",
+      "name": "initialize_rate_limit_store",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        222,
+        226
+      ],
+      "summary": "Initializes the app-state rate-limit store by attempting to connect a Redis client and falling back to an empty in-process dict.",
+      "tags": [
+        "service",
+        "rate-limiting",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/security.py:verify_api_key",
+      "type": "function",
+      "name": "verify_api_key",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        261,
+        271
+      ],
+      "summary": "FastAPI dependency that checks the X-API-Key header against active keys from environment config, then rejects the request if the key is absent or appears in the runtime or env-var revocation lists.",
+      "tags": [
+        "security",
+        "validation",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:enforce_rate_limit",
+      "type": "function",
+      "name": "enforce_rate_limit",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        301,
+        319
+      ],
+      "summary": "FastAPI dependency that enforces per-client-IP rate limits, delegating to Redis-backed counting when available and falling back to in-process window tracking, raising HTTP 429 when the limit is exceeded.",
+      "tags": [
+        "security",
+        "rate-limiting",
+        "middleware"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:redact_sensitive_data",
+      "type": "function",
+      "name": "redact_sensitive_data",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        115,
+        128
+      ],
+      "summary": "Recursively walks dicts, lists, and tuples to mask values whose key names match known sensitive patterns (api_key, token, secret, password, authorization, etc.).",
+      "tags": [
+        "security",
+        "utility",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:_enforce_rate_limit_with_redis",
+      "type": "function",
+      "name": "_enforce_rate_limit_with_redis",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        274,
+        298
+      ],
+      "summary": "Implements Redis-backed sliding-window rate limiting using INCR and EXPIRE commands, logging warnings and raising HTTP 429 when the per-key counter exceeds the configured limit.",
+      "tags": [
+        "rate-limiting",
+        "security",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/security.py:_build_log_payload",
+      "type": "function",
+      "name": "_build_log_payload",
+      "filePath": "core/common/security.py",
+      "lineRange": [
+        151,
+        174
+      ],
+      "summary": "Constructs the structured JSON log payload for a completed request, including method, path, status, duration, redacted headers, client IP, and optional OpenTelemetry trace context.",
+      "tags": [
+        "utility",
+        "service",
+        "middleware"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/test_rate_limit_presets.py",
+      "type": "file",
+      "name": "test_rate_limit_presets.py",
+      "filePath": "core/common/test_rate_limit_presets.py",
+      "summary": "Pytest test suite for rate_limit_presets.py, covering preset lookup by env var, fallback behavior for unknown profiles, ErrorBudgetConfig env loading, ErrorBudgetTracker recording/pruning/reset/threshold signals, and the configure_error_budget_tracking FastAPI middleware integration.",
+      "tags": [
+        "test",
+        "rate-limiting",
+        "middleware"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/common/test_security_common.py",
+      "type": "file",
+      "name": "test_security_common.py",
+      "filePath": "core/common/test_security_common.py",
+      "summary": "Pytest test suite for security.py, verifying CORS origin validation, API key acceptance/rejection/revocation, in-process and Redis-backed rate limiting, observability middleware request-ID injection, security header attachment, sensitive-header redaction, and health-log toggling.",
+      "tags": [
+        "test",
+        "security",
+        "middleware"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/test_security_common.py:FakeRedisClient",
+      "type": "class",
+      "name": "FakeRedisClient",
+      "filePath": "core/common/test_security_common.py",
+      "lineRange": [
+        28,
+        45
+      ],
+      "summary": "In-memory test double for a Redis client with configurable failure injection, implementing incr and expire methods used by the rate-limit path under test.",
+      "tags": [
+        "test",
+        "utility",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:.dockerignore",
+      "type": "service",
+      "name": ".dockerignore",
+      "filePath": ".dockerignore",
+      "summary": "Docker build context exclusion list that keeps the image lean by omitting virtual environments, caches, version control metadata, IDE files, and secrets from the build context.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "build-system",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "Dockerfile",
+      "summary": "Single-stage Docker image built on python:alpine that installs Python dependencies, copies the application into /app, creates a non-root user for security, and starts the FusionAL FastAPI gateway via uvicorn on port 8009.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment",
+        "security"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Runs as a non-root appuser (UID 5678) for least-privilege execution; exposes port 8009 matching FusionAL's default gateway port."
+    },
+    {
+      "id": "service:core/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "core/Dockerfile",
+      "summary": "Single-stage Docker build that packages the FusionAL FastAPI gateway into a minimal Python 3.11 slim image, running as a non-root user on port 8009 via uvicorn.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment",
+        "security"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Creates a dedicated non-root user (appuser, UID 5678) and transfers ownership of /app before switching \u2014 a security hardening pattern that prevents container privilege escalation."
+    },
+    {
+      "id": "service:examples/dice-roller/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "examples/dice-roller/Dockerfile",
+      "summary": "Single-stage Docker image for the dice-roller MCP example server, running dice_server.py as a non-root user (mcpuser) on python:3.11-slim with unbuffered output.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment",
+        "mcp-server"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Non-root user (mcpuser, UID 1000) created at build time for security hardening \u2014 a best practice for containerized MCP servers."
+    },
+    {
+      "id": "service:examples/dice-roller/Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "examples/dice-roller/Dockerfile",
+      "summary": "Single runtime stage based on python:3.11-slim that installs dependencies and launches the dice MCP server.",
+      "tags": [
+        "containerization",
+        "runtime",
+        "python"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:examples/file-utils/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "examples/file-utils/Dockerfile",
+      "summary": "Single-stage Docker image for the file-utils MCP example server, running file_utils_server.py as a non-root user (mcpuser) on python:3.11-slim.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment",
+        "security"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Non-root user (UID 1000) is created at build time and activated before the entrypoint, following Docker security best practices."
+    },
+    {
+      "id": "service:examples/weather-api/Dockerfile",
+      "type": "service",
+      "name": "Dockerfile",
+      "filePath": "examples/weather-api/Dockerfile",
+      "summary": "Single-stage Docker image for the weather-api example MCP server, running weather_server.py as a non-root user (mcpuser) on python:3.11-slim.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment",
+        "security"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Runs as a non-root UID 1000 user for security hardening; uses --no-cache-dir to keep the image layer lean."
+    },
+    {
+      "id": "service:examples/weather-api/Dockerfile:python",
+      "type": "service",
+      "name": "python",
+      "filePath": "examples/weather-api/Dockerfile",
+      "summary": "Runtime container stage based on python:3.11-slim that installs dependencies and launches the weather MCP server.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Documents all 17 environment variables used by FusionAL, covering API keys (Anthropic, OpenAI), gateway authentication, CORS, rate limiting, logging, policy profiles, MCP server URL, and Notion poller settings.",
+      "tags": [
+        "configuration",
+        "environment",
+        "security",
+        "documentation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Comprehensive AI assistant guide for the FusionAL repo with 29 sections covering architecture, directory structure, environment variables, policy profiles, security model, MCP authoring conventions, and cross-repo relationships \u2014 also embeds session-init and recall/auto-log protocols.",
+      "tags": [
+        "documentation",
+        "development",
+        "architecture",
+        "configuration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:CONTRIBUTING.md",
+      "type": "document",
+      "name": "CONTRIBUTING.md",
+      "filePath": "CONTRIBUTING.md",
+      "summary": "Contributor guide covering development setup, branch and PR workflow, coding guidelines, testing, and secret-handling rules for the FusionAL project.",
+      "tags": [
+        "documentation",
+        "development",
+        "contributing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:MAINTENANCE.md",
+      "type": "document",
+      "name": "MAINTENANCE.md",
+      "filePath": "MAINTENANCE.md",
+      "summary": "Minimal maintenance log recording the most recent scheduled maintenance run timestamp for the FusionAL service.",
+      "tags": [
+        "documentation",
+        "maintenance"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary public-facing documentation for FusionAL with 26 sections covering quick-start, Docker deploy, architecture diagram, MCP tools, REST API, security model, Windows fixes, building custom MCP servers, and contributing guidelines.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview",
+        "infrastructure"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "config:claude_desktop_config_windows.json",
+      "type": "config",
+      "name": "claude_desktop_config_windows.json",
+      "filePath": "claude_desktop_config_windows.json",
+      "summary": "Claude Desktop configuration snippet for Windows users that registers the FusionAL MCP gateway at the local HTTP endpoint, enabling Claude Desktop to connect to the gateway's /mcp transport.",
+      "tags": [
+        "configuration",
+        "deployment",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Windows-specific path format; mirrors the Linux/macOS config shown in CLAUDE.md."
+    },
+    {
+      "id": "config:compose.debug.yaml",
+      "type": "config",
+      "name": "compose.debug.yaml",
+      "filePath": "compose.debug.yaml",
+      "summary": "Docker Compose debug override that replaces the default start command with a debugpy listener on port 5678, enabling remote Python debugging of the running FusionAL container.",
+      "tags": [
+        "configuration",
+        "development",
+        "containerization"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Intended as a compose override (docker compose -f compose.yaml -f compose.debug.yaml); exposes debugpy port 5678 alongside the API port."
+    },
+    {
+      "id": "service:compose.yaml",
+      "type": "service",
+      "name": "compose.yaml",
+      "filePath": "compose.yaml",
+      "summary": "Docker Compose service definition for the FusionAL gateway, building the image from the root Dockerfile and exposing port 8009 locally as 8089, connected to both the default network and the external mcp-consulting-kit network.",
+      "tags": [
+        "orchestration",
+        "infrastructure",
+        "containerization",
+        "deployment"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Attaches to mcp-consulting-kit_default external network so FusionAL can reach showcase MCP servers (ports 8101-8103) without host networking."
+    },
+    {
+      "id": "document:fusion-stress-test.md",
+      "type": "document",
+      "name": "fusion-stress-test.md",
+      "filePath": "fusion-stress-test.md",
+      "summary": "OpenRouter fusion stress-test suite with 4 test scenarios (time-sensitive synthesis, adversarial debugging, ethical architecture, formal logic trap) designed to validate reasoning quality and multi-model routing through the FusionAL gateway.",
+      "tags": [
+        "documentation",
+        "testing",
+        "development"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "requirements.txt",
+      "summary": "Root-level Python requirements file listing top-level runtime dependencies including fastapi, uvicorn, pydantic, anthropic, openai, mcp, redis, and opentelemetry packages with pinned versions.",
+      "tags": [
+        "documentation",
+        "configuration",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/custom-servers.md",
+      "type": "document",
+      "name": "custom-servers.md",
+      "filePath": "docs/custom-servers.md",
+      "summary": "Comprehensive developer guide (23 sections, 415 lines) covering both AI-powered and manual creation of custom MCP servers for FusionAL, including project structure, Dockerfile patterns, server implementation examples, testing workflows, and production deployment with Docker Compose.",
+      "tags": [
+        "documentation",
+        "mcp-server",
+        "containerization",
+        "development",
+        "deployment"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/docker-gateway.md",
+      "type": "document",
+      "name": "docker-gateway.md",
+      "filePath": "docs/docker-gateway.md",
+      "summary": "Brief reference note clarifying FusionAL's two runtime port bindings: port 8009 for direct uvicorn launch and port 8089 for Docker Compose, with quick health-check curl commands for both.",
+      "tags": [
+        "documentation",
+        "infrastructure",
+        "configuration",
+        "deployment"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Clarifies port 8009 vs 8089 discrepancy that arises from how compose.yaml maps the host port \u2014 critical operational knowledge for connecting clients."
+    },
+    {
+      "id": "document:docs/troubleshooting.md",
+      "type": "document",
+      "name": "troubleshooting.md",
+      "filePath": "docs/troubleshooting.md",
+      "summary": "Concise troubleshooting reference covering three common failure scenarios: server unreachable (uvicorn/compose startup checks), Docker sandbox errors (daemon access and isolation bypass), and MCP tools not appearing in clients (endpoint config and log inspection).",
+      "tags": [
+        "documentation",
+        "troubleshooting",
+        "operations",
+        "debugging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:scripts/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "scripts/README.md",
+      "summary": "Developer reference for all scripts in the `scripts/` directory, documenting the registry-generator scripts (PowerShell and shell variants), their CLI flags, and the `smoke-generate-endpoint.ps1` smoke test for the `/generate` endpoint.",
+      "tags": [
+        "documentation",
+        "scripts",
+        "developer-guide",
+        "registry",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/build_examples.ps1",
+      "type": "file",
+      "name": "build_examples.ps1",
+      "filePath": "scripts/build_examples.ps1",
+      "summary": "Builds Docker images for all three example MCP servers (dice-roller, weather-api, file-utils) and optionally the FusionAL gateway image in a single PowerShell script.",
+      "tags": [
+        "build-system",
+        "containerization",
+        "infrastructure",
+        "script"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses PowerShell `docker build` commands directly; no error handling \u2014 exits on first Docker failure via implicit PowerShell behavior."
+    },
+    {
+      "id": "file:scripts/generate_registry_from_docker.ps1",
+      "type": "file",
+      "name": "generate_registry_from_docker.ps1",
+      "filePath": "scripts/generate_registry_from_docker.ps1",
+      "summary": "Enumerates running Docker containers (optionally filtered by label or image-name regex) and writes a fresh `core/mcp_registry.json`, backing up the previous file and preserving any `test-server` entry from the backup.",
+      "tags": [
+        "registry",
+        "docker",
+        "infrastructure",
+        "script",
+        "build-system"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses `ConvertFrom-Json` / `ConvertTo-Json` for registry serialization; preserves `test-server` from backup via selective key copy; `Set-StrictMode -Version Latest` enforces strict variable use."
+    },
+    {
+      "id": "file:scripts/generate_registry_from_docker.sh",
+      "type": "file",
+      "name": "generate_registry_from_docker.sh",
+      "filePath": "scripts/generate_registry_from_docker.sh",
+      "summary": "Bash equivalent of `generate_registry_from_docker.ps1`: enumerates running Docker containers with optional label or image-regex filtering, then delegates JSON construction to an inline Python heredoc to write `core/mcp_registry.json`.",
+      "tags": [
+        "registry",
+        "docker",
+        "infrastructure",
+        "script",
+        "build-system"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Delegates JSON serialization to an embedded Python heredoc for reliability; uses `set -euo pipefail` for strict error handling; `grep -Ei` applies case-insensitive regex filtering when `--image-regex` is supplied."
+    },
+    {
+      "id": "file:scripts/smoke-generate-endpoint.ps1",
+      "type": "file",
+      "name": "smoke-generate-endpoint.ps1",
+      "filePath": "scripts/smoke-generate-endpoint.ps1",
+      "summary": "End-to-end smoke test for the FusionAL `/generate` REST endpoint: posts a generation prompt, extracts the returned port, and polls the generated server's `/health` endpoint until it responds or a timeout is reached.",
+      "tags": [
+        "smoke-test",
+        "testing",
+        "script",
+        "api-handler",
+        "build-system"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Falls back through `API_KEY` then `FUSIONAL_API_KEY` env vars for API key resolution; uses a polling loop with 500ms sleep increments up to `HealthTimeoutSeconds`; outputs a structured JSON result on success."
+    },
+    {
+      "id": "file:.gitattributes",
+      "type": "file",
+      "name": ".gitattributes",
+      "filePath": ".gitattributes",
+      "summary": "Git attributes configuration that controls line-ending normalization and diff behavior for text and binary files in the repository.",
+      "tags": [
+        "configuration",
+        "git",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.github/FUNDING.yml",
+      "type": "config",
+      "name": "FUNDING.yml",
+      "filePath": ".github/FUNDING.yml",
+      "summary": "GitHub Sponsors funding configuration that declares the project's sponsorship channels (GitHub sponsors).",
+      "tags": [
+        "configuration",
+        "community",
+        "github"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/ISSUE_TEMPLATE/bug_report.md",
+      "type": "document",
+      "name": "bug_report.md",
+      "filePath": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "summary": "GitHub issue template for bug reports with seven structured sections covering summary, environment, reproduction steps, expected vs actual behavior, logs, and additional context.",
+      "tags": [
+        "documentation",
+        "community",
+        "github",
+        "issue-template"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/ISSUE_TEMPLATE/feature_request.md",
+      "type": "document",
+      "name": "feature_request.md",
+      "filePath": ".github/ISSUE_TEMPLATE/feature_request.md",
+      "summary": "GitHub issue template for feature requests with five sections covering problem statement, proposed solution, alternatives, scope and impact, and additional context.",
+      "tags": [
+        "documentation",
+        "community",
+        "github",
+        "issue-template"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.hermes/maintenance-wrapper.sh",
+      "type": "file",
+      "name": "maintenance-wrapper.sh",
+      "filePath": ".hermes/maintenance-wrapper.sh",
+      "summary": "Thin shell wrapper that invokes the main maintenance script from the FusionAL project root and appends all output to the maintenance log file.",
+      "tags": [
+        "script",
+        "utility",
+        "automation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.hermes/maintenance.sh",
+      "type": "file",
+      "name": "maintenance.sh",
+      "filePath": ".hermes/maintenance.sh",
+      "summary": "Automated maintenance script for FusionAL that checks for outdated Python dependencies, opens a dependency-update PR, waits for CI to pass, merges the PR, labels new GitHub issues with 'triage', and appends a weekly summary to MAINTENANCE.md.",
+      "tags": [
+        "script",
+        "automation",
+        "ci-cd",
+        "dependency-management"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Pattern ignore file for the understand-anything knowledge graph tool, listing files and directories to exclude from codebase analysis such as build artifacts, virtual environments, and generated files.",
+      "tags": [
+        "configuration",
+        "tooling",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "core/__init__.py",
+      "summary": "Empty Python package initializer that marks the core directory as a Python package.",
+      "tags": [
+        "entry-point",
+        "barrel"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/.bandit",
+      "type": "file",
+      "name": ".bandit",
+      "filePath": "core/.bandit",
+      "summary": "Bandit static security analysis configuration that skips specific test IDs (B404, B603) for the core module, suppressing known acceptable subprocess import and usage warnings.",
+      "tags": [
+        "configuration",
+        "security",
+        "static-analysis"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/common/audit.py",
+      "type": "file",
+      "name": "audit.py",
+      "filePath": "core/common/audit.py",
+      "summary": "Provides the AuditStore (in-memory, thread-safe, optionally file-persisted) and AuditRecord Pydantic model for recording MCP tool call events, plus serialization helpers for JSON and CSV export with UTC timestamp filtering.",
+      "tags": [
+        "audit",
+        "logging",
+        "utility",
+        "middleware",
+        "tested"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/audit.py:AuditRecord",
+      "type": "class",
+      "name": "AuditRecord",
+      "filePath": "core/common/audit.py",
+      "lineRange": [
+        41,
+        51
+      ],
+      "summary": "Pydantic data model representing a single MCP tool call audit record with fields for timestamp, tool name, status, duration, request/trace/span IDs, and error message.",
+      "tags": [
+        "data-model",
+        "audit",
+        "pydantic"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/audit.py:AuditStore",
+      "type": "class",
+      "name": "AuditStore",
+      "filePath": "core/common/audit.py",
+      "lineRange": [
+        54,
+        124
+      ],
+      "summary": "Thread-safe in-memory ring buffer for AuditRecord entries with optional JSONL file persistence, configurable maximum capacity, and time-range query support using UTC-aware inclusive bounds.",
+      "tags": [
+        "service",
+        "audit",
+        "thread-safety",
+        "singleton"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:core/common/audit.py:get_audit_store",
+      "type": "function",
+      "name": "get_audit_store",
+      "filePath": "core/common/audit.py",
+      "lineRange": [
+        134,
+        136
+      ],
+      "summary": "Returns the module-level singleton AuditStore instance, initializing it on first call.",
+      "tags": [
+        "factory",
+        "singleton",
+        "audit"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/audit.py:record_tool_call",
+      "type": "function",
+      "name": "record_tool_call",
+      "filePath": "core/common/audit.py",
+      "lineRange": [
+        139,
+        167
+      ],
+      "summary": "Convenience function that constructs an AuditRecord from tool call metadata and appends it to the global AuditStore, computing duration and attaching trace context.",
+      "tags": [
+        "audit",
+        "utility",
+        "middleware"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/audit.py:records_to_json",
+      "type": "function",
+      "name": "records_to_json",
+      "filePath": "core/common/audit.py",
+      "lineRange": [
+        175,
+        177
+      ],
+      "summary": "Serializes a list of AuditRecord objects to a JSON string array.",
+      "tags": [
+        "serialization",
+        "utility",
+        "audit"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/audit.py:records_to_csv",
+      "type": "function",
+      "name": "records_to_csv",
+      "filePath": "core/common/audit.py",
+      "lineRange": [
+        180,
+        187
+      ],
+      "summary": "Serializes a list of AuditRecord objects to a CSV string with a header row matching the Pydantic model fields.",
+      "tags": [
+        "serialization",
+        "utility",
+        "audit"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:core/common/P2-HARDENING.md",
+      "type": "document",
+      "name": "P2-HARDENING.md",
+      "filePath": "core/common/P2-HARDENING.md",
+      "summary": "P2 security hardening runbook covering CORS allowlist enforcement, request ID validation, security response headers, rate-limit abuse testing, managed secrets best practices, and a phased JWT authentication migration plan (SEC-04 through SEC-10).",
+      "tags": [
+        "documentation",
+        "security",
+        "hardening",
+        "runbook"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:core/common/SECURITY-HARDENING.md",
+      "type": "document",
+      "name": "SECURITY-HARDENING.md",
+      "filePath": "core/common/SECURITY-HARDENING.md",
+      "summary": "Security hardening runbook for FusionAL covering API key lifecycle management (SEC-02), Redis-backed rate limiting (SEC-01), structured log redaction (SEC-05), and CI vulnerability triage workflows (SEC-08).",
+      "tags": [
+        "documentation",
+        "security",
+        "hardening",
+        "runbook"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/test_audit.py",
+      "type": "file",
+      "name": "test_audit.py",
+      "filePath": "core/common/test_audit.py",
+      "summary": "Comprehensive pytest test suite for audit.py covering AuditRecord validation, AuditStore append/eviction/query/persistence/thread-safety, record_tool_call recording, and JSON/CSV serialization helpers.",
+      "tags": [
+        "test",
+        "audit",
+        "pytest"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestAuditRecord",
+      "type": "class",
+      "name": "TestAuditRecord",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [
+        41,
+        64
+      ],
+      "summary": "Tests for the AuditRecord Pydantic model verifying required fields, optional field defaults, error status handling, and model_dump completeness.",
+      "tags": [
+        "test",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestAuditStore",
+      "type": "class",
+      "name": "TestAuditStore",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [
+        71,
+        196
+      ],
+      "summary": "Tests for AuditStore covering append, eviction, time-range queries with start/end filters, inclusive bounds, file persistence, and concurrent write thread-safety.",
+      "tags": [
+        "test",
+        "audit",
+        "thread-safety"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestRecordToolCall",
+      "type": "class",
+      "name": "TestRecordToolCall",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [
+        203,
+        235
+      ],
+      "summary": "Tests for the record_tool_call convenience function verifying success/error recording and UTC ISO timestamp generation.",
+      "tags": [
+        "test",
+        "audit"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/test_audit.py:TestRecordsToCsv",
+      "type": "class",
+      "name": "TestRecordsToCsv",
+      "filePath": "core/common/test_audit.py",
+      "lineRange": [
+        268,
+        306
+      ],
+      "summary": "Tests for records_to_csv verifying CSV header, single and multiple record serialization, and complete column coverage.",
+      "tags": [
+        "test",
+        "serialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/common/tracing.py",
+      "type": "file",
+      "name": "tracing.py",
+      "filePath": "core/common/tracing.py",
+      "summary": "Provides OpenTelemetry distributed tracing setup for FastAPI with OTLP exporter support, environment-flag-controlled enable/disable, trace context extraction, and no-op tracer/span fallbacks when tracing is disabled.",
+      "tags": [
+        "middleware",
+        "observability",
+        "tracing",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/tracing.py:configure_tracing",
+      "type": "function",
+      "name": "configure_tracing",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [
+        47,
+        87
+      ],
+      "summary": "Configures the OpenTelemetry TracerProvider for a FastAPI app, reading OTLP endpoint and service name from environment, adding OTLP or console exporters, and instrumenting FastAPI with FastAPIInstrumentor.",
+      "tags": [
+        "observability",
+        "tracing",
+        "middleware",
+        "configuration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/common/tracing.py:get_trace_context",
+      "type": "function",
+      "name": "get_trace_context",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [
+        90,
+        108
+      ],
+      "summary": "Extracts the current OpenTelemetry span context and returns trace ID and span ID as zero-padded hex strings, returning empty strings when no active span exists.",
+      "tags": [
+        "observability",
+        "tracing",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/common/tracing.py:get_tracer",
+      "type": "function",
+      "name": "get_tracer",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [
+        111,
+        120
+      ],
+      "summary": "Returns a real OpenTelemetry tracer when tracing is enabled, or a _NoopTracer instance when disabled, providing a consistent interface regardless of tracing state.",
+      "tags": [
+        "factory",
+        "observability",
+        "tracing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/common/tracing.py:_NoopTracer",
+      "type": "class",
+      "name": "_NoopTracer",
+      "filePath": "core/common/tracing.py",
+      "lineRange": [
+        123,
+        133
+      ],
+      "summary": "No-op tracer context manager that yields a _NoopSpan, used when OpenTelemetry tracing is disabled to avoid conditional tracing code at call sites.",
+      "tags": [
+        "utility",
+        "observability",
+        "tracing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/mcp_registry.json.bak",
+      "type": "file",
+      "name": "mcp_registry.json.bak",
+      "filePath": "core/mcp_registry.json.bak",
+      "summary": "Backup snapshot of the MCP server registry JSON containing registered server entries with their descriptions, URLs, metadata, and registration timestamps.",
+      "tags": [
+        "data",
+        "configuration",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:core/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "core/requirements.txt",
+      "summary": "Pinned Python dependency manifest for the FusionAL core module specifying FastAPI, uvicorn, Pydantic, Anthropic, OpenAI, MCP, Redis, OpenTelemetry, and security-patched transitive dependencies.",
+      "tags": [
+        "configuration",
+        "dependencies",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/runner_docker.py",
+      "type": "file",
+      "name": "runner_docker.py",
+      "filePath": "core/runner_docker.py",
+      "summary": "Implements Docker sandbox execution for Python code snippets, writing code to a temp directory and running it in a network-isolated, memory-capped container via subprocess with configurable timeout and cleanup.",
+      "tags": [
+        "service",
+        "sandbox",
+        "infrastructure",
+        "security",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/runner_docker.py:run_in_docker",
+      "type": "function",
+      "name": "run_in_docker",
+      "filePath": "core/runner_docker.py",
+      "lineRange": [
+        29,
+        94
+      ],
+      "summary": "Executes a Python code string inside a Docker container with network isolation, memory limits, PID limits, read-only filesystem, and automatic temp directory cleanup after execution.",
+      "tags": [
+        "sandbox",
+        "security",
+        "service",
+        "infrastructure"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/security.py",
+      "type": "file",
+      "name": "security.py",
+      "filePath": "core/security.py",
+      "summary": "FastAPI security module providing API key authentication with support for single and multi-key configs and revocation lists, Redis-backed in-memory rate limiting, CORS middleware configuration, and an ObservabilityMiddleware that logs request timing.",
+      "tags": [
+        "security",
+        "middleware",
+        "api-handler",
+        "authentication",
+        "tested"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/security.py:ObservabilityMiddleware",
+      "type": "class",
+      "name": "ObservabilityMiddleware",
+      "filePath": "core/security.py",
+      "lineRange": [
+        86,
+        101
+      ],
+      "summary": "Starlette BaseHTTPMiddleware that measures request processing time and logs method, path, status code, and duration for non-health requests based on LOG_HEALTH_REQUESTS env config.",
+      "tags": [
+        "middleware",
+        "observability",
+        "logging"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/security.py:verify_api_key",
+      "type": "function",
+      "name": "verify_api_key",
+      "filePath": "core/security.py",
+      "lineRange": [
+        38,
+        48
+      ],
+      "summary": "FastAPI security dependency that validates the X-API-Key header against the configured valid key set and revocation list, raising 401/403 HTTP exceptions on failure.",
+      "tags": [
+        "security",
+        "authentication",
+        "api-handler",
+        "middleware"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/security.py:enforce_rate_limit",
+      "type": "function",
+      "name": "enforce_rate_limit",
+      "filePath": "core/security.py",
+      "lineRange": [
+        57,
+        69
+      ],
+      "summary": "FastAPI dependency that enforces per-client rate limiting using an in-memory sliding window store (keyed by client host), raising 429 when the request count exceeds the configured limit.",
+      "tags": [
+        "security",
+        "rate-limiting",
+        "middleware",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/security.py:configure_cors",
+      "type": "function",
+      "name": "configure_cors",
+      "filePath": "core/security.py",
+      "lineRange": [
+        73,
+        82
+      ],
+      "summary": "Adds CORSMiddleware to the FastAPI app using the ALLOWED_ORIGINS environment variable as the allowlist, enabling credentials and all methods and headers.",
+      "tags": [
+        "security",
+        "middleware",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/test_fusional.py",
+      "type": "file",
+      "name": "test_fusional.py",
+      "filePath": "core/test_fusional.py",
+      "summary": "Integration test script for the FusionAL gateway that exercises health check, code execution (local and Docker), catalog listing, and server registration endpoints against a running server instance.",
+      "tags": [
+        "test",
+        "integration",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/test_fusional.py:run_all_tests",
+      "type": "function",
+      "name": "run_all_tests",
+      "filePath": "core/test_fusional.py",
+      "lineRange": [
+        136,
+        168
+      ],
+      "summary": "Orchestrates all integration tests, collects pass/fail results, prints a summary report, and exits with a non-zero status code if any test fails.",
+      "tags": [
+        "test",
+        "integration",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:examples/dice-roller/dice_server.py",
+      "type": "file",
+      "name": "dice_server.py",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "summary": "Reference MCP server implementation providing five dice-rolling tools (roll_dice, roll_stats, flip_coin, roll_check, parse_dice_notation) for D&D-style tabletop gaming scenarios using FastMCP.",
+      "tags": [
+        "service",
+        "mcp-server",
+        "example"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/dice-roller/dice_server.py:parse_dice_notation",
+      "type": "function",
+      "name": "parse_dice_notation",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "lineRange": [
+        28,
+        49
+      ],
+      "summary": "Parses dice notation strings (e.g., '2d6+3', '1d20') into a tuple of (count, sides, modifier) supporting both 'NdS+M' format and advantage/disadvantage keywords.",
+      "tags": [
+        "utility",
+        "parsing"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/dice-roller/dice_server.py:roll_dice",
+      "type": "function",
+      "name": "roll_dice",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "lineRange": [
+        55,
+        86
+      ],
+      "summary": "MCP tool that rolls dice using standard notation (e.g., '2d6+3') and returns individual roll results, total, and modifier breakdown as a formatted string.",
+      "tags": [
+        "mcp-server",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/dice-roller/dice_server.py:roll_check",
+      "type": "function",
+      "name": "roll_check",
+      "filePath": "examples/dice-roller/dice_server.py",
+      "lineRange": [
+        151,
+        187
+      ],
+      "summary": "MCP tool that performs a D20 skill check against a difficulty class (DC) with optional modifier, determining success/failure and margin, with special handling for critical hits and fumbles.",
+      "tags": [
+        "mcp-server",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/dice-roller/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "examples/dice-roller/README.md",
+      "summary": "Quick-start guide for the dice-roller MCP server example covering its five tools, installation steps, and usage examples for connecting to Claude Desktop.",
+      "tags": [
+        "documentation",
+        "example",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:examples/dice-roller/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "examples/dice-roller/requirements.txt",
+      "summary": "Single-dependency requirements file specifying the mcp package for the dice-roller example MCP server.",
+      "tags": [
+        "configuration",
+        "dependencies"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:examples/file-utils/file_utils_server.py",
+      "type": "file",
+      "name": "file_utils_server.py",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "summary": "MCP server providing four safe filesystem utility tools (count_lines, get_file_info, search_text, list_files) with proper error handling and path validation for integration with FusionAL.",
+      "tags": [
+        "service",
+        "mcp-server",
+        "example",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:count_lines",
+      "type": "function",
+      "name": "count_lines",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [
+        35,
+        56
+      ],
+      "summary": "MCP tool that counts lines in a text file, distinguishing between total lines, non-empty lines, and comment lines, with existence and type validation.",
+      "tags": [
+        "mcp-server",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:get_file_info",
+      "type": "function",
+      "name": "get_file_info",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [
+        60,
+        86
+      ],
+      "summary": "MCP tool that returns metadata for a file or directory including size, modification time, type, and read/write permissions.",
+      "tags": [
+        "mcp-server",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:search_text",
+      "type": "function",
+      "name": "search_text",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [
+        90,
+        124
+      ],
+      "summary": "MCP tool that performs case-insensitive text pattern search in a file, returning matching line numbers, content, and a summary of total matches.",
+      "tags": [
+        "mcp-server",
+        "utility",
+        "search"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/file-utils/file_utils_server.py:list_files",
+      "type": "function",
+      "name": "list_files",
+      "filePath": "examples/file-utils/file_utils_server.py",
+      "lineRange": [
+        128,
+        165
+      ],
+      "summary": "MCP tool that lists files in a directory with optional extension filtering, returning filenames, sizes, and a count summary.",
+      "tags": [
+        "mcp-server",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/file-utils/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "examples/file-utils/README.md",
+      "summary": "Comprehensive guide for the file-utils MCP server example covering Docker and local setup, FusionAL integration instructions, tool usage examples for all four tools, implementation notes, security considerations, and extension guidance.",
+      "tags": [
+        "documentation",
+        "example",
+        "entry-point",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/file-utils/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "examples/file-utils/requirements.txt",
+      "summary": "Single-dependency requirements file specifying the mcp package for the file-utils example MCP server.",
+      "tags": [
+        "configuration",
+        "dependencies"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:examples/weather-api/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "examples/weather-api/README.md",
+      "summary": "Documentation for the Weather API MCP server example, covering features, Docker and local run instructions, FusionAL integration steps, tool usage examples, and notes for extending the implementation.",
+      "tags": [
+        "documentation",
+        "example",
+        "mcp-server",
+        "weather-api"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:examples/weather-api/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "examples/weather-api/requirements.txt",
+      "summary": "Minimal Python dependency manifest for the weather API example server, specifying only the packages needed to run the weather MCP tool.",
+      "tags": [
+        "documentation",
+        "configuration",
+        "dependencies"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:examples/weather-api/weather_server.py",
+      "type": "file",
+      "name": "weather_server.py",
+      "filePath": "examples/weather-api/weather_server.py",
+      "summary": "Example MCP server that exposes three tools for fetching current weather, multi-day forecasts, and parsing raw weather JSON responses via an external weather API.",
+      "tags": [
+        "mcp-server",
+        "api-handler",
+        "example",
+        "weather-api"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/weather-api/weather_server.py:get_weather",
+      "type": "function",
+      "name": "get_weather",
+      "filePath": "examples/weather-api/weather_server.py",
+      "lineRange": [
+        32,
+        61
+      ],
+      "summary": "Fetches current weather conditions for a given location from an external weather API and returns structured data including temperature, humidity, and conditions.",
+      "tags": [
+        "api-handler",
+        "utility",
+        "weather-api"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/weather-api/weather_server.py:get_forecast",
+      "type": "function",
+      "name": "get_forecast",
+      "filePath": "examples/weather-api/weather_server.py",
+      "lineRange": [
+        65,
+        105
+      ],
+      "summary": "Fetches a multi-day weather forecast for a location, capping the number of days, and returning daily temperature and condition data.",
+      "tags": [
+        "api-handler",
+        "utility",
+        "weather-api"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:examples/weather-api/weather_server.py:parse_weather",
+      "type": "function",
+      "name": "parse_weather",
+      "filePath": "examples/weather-api/weather_server.py",
+      "lineRange": [
+        109,
+        131
+      ],
+      "summary": "Parses raw weather JSON data into a structured summary with temperature, humidity, and conditions, validating the input type before extraction.",
+      "tags": [
+        "utility",
+        "serialization",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:init.py",
+      "type": "file",
+      "name": "init.py",
+      "filePath": "init.py",
+      "summary": "One-time initialization script for the FusionAL project that checks Docker and Python prerequisites, verifies dependencies, and sets up the MCP directory structure on first run.",
+      "tags": [
+        "entry-point",
+        "utility",
+        "setup",
+        "initialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:init.py:check_docker",
+      "type": "function",
+      "name": "check_docker",
+      "filePath": "init.py",
+      "lineRange": [
+        15,
+        27
+      ],
+      "summary": "Verifies Docker is installed and running by executing a version check subprocess, reporting success or failure to stdout.",
+      "tags": [
+        "utility",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:check_python",
+      "type": "function",
+      "name": "check_python",
+      "filePath": "init.py",
+      "lineRange": [
+        30,
+        39
+      ],
+      "summary": "Checks that the Python version meets the minimum requirement for running FusionAL and reports the result.",
+      "tags": [
+        "utility",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:check_dependencies",
+      "type": "function",
+      "name": "check_dependencies",
+      "filePath": "init.py",
+      "lineRange": [
+        42,
+        53
+      ],
+      "summary": "Verifies that required Python packages are importable and reports which are missing or available.",
+      "tags": [
+        "utility",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:setup_docker_mcp",
+      "type": "function",
+      "name": "setup_docker_mcp",
+      "filePath": "init.py",
+      "lineRange": [
+        56,
+        68
+      ],
+      "summary": "Creates the MCP directory structure under the user's home directory, including the catalogs subdirectory, as part of first-time setup.",
+      "tags": [
+        "utility",
+        "setup",
+        "initialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:init.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "init.py",
+      "lineRange": [
+        71,
+        114
+      ],
+      "summary": "Orchestrates the full initialization flow: runs all prerequisite checks, reports results, conditionally runs setup steps, and prints next-step instructions.",
+      "tags": [
+        "entry-point",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:logs/execution_log.json",
+      "type": "config",
+      "name": "execution_log.json",
+      "filePath": "logs/execution_log.json",
+      "summary": "Execution log capturing Docker command runs from the think-tank or watchdog automation, including step plans, commands issued, return codes, and dry-run stdout for MCP container management operations.",
+      "tags": [
+        "monitoring",
+        "logging",
+        "configuration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:mcp-builder-prompt/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "mcp-builder-prompt/README.md",
+      "summary": "Author guidelines for building FusionAL-compatible MCP servers, specifying required conventions (tool structure, Docker configuration, single-line docstrings) and anti-patterns to avoid.",
+      "tags": [
+        "documentation",
+        "mcp-server",
+        "guidelines",
+        "development"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:notion_poller.py",
+      "type": "file",
+      "name": "notion_poller.py",
+      "filePath": "notion_poller.py",
+      "summary": "Long-running daemon that polls a Notion database for pending MCP server build requests, forwards them to FusionAL's /generate endpoint, performs fleet health checks across registered servers, and auto-resolves stale incidents.",
+      "tags": [
+        "service",
+        "event-handler",
+        "monitoring",
+        "notion-integration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:notion_poller.py:notion_call",
+      "type": "function",
+      "name": "notion_call",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        101,
+        119
+      ],
+      "summary": "Retry wrapper for Notion API calls with configurable max retries, sleeping between attempts on API exceptions and logging failures.",
+      "tags": [
+        "utility",
+        "api-handler",
+        "resilience"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:poll_build_queue",
+      "type": "function",
+      "name": "poll_build_queue",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        124,
+        145
+      ],
+      "summary": "Queries the Notion build queue database for pages in 'Queued' status and dispatches each to _process_build for execution.",
+      "tags": [
+        "service",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_process_build",
+      "type": "function",
+      "name": "_process_build",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        148,
+        248
+      ],
+      "summary": "Processes a single Notion build page: extracts server metadata, posts the generation request to FusionAL, updates the Notion page with build results or failure reason, and registers the new server.",
+      "tags": [
+        "service",
+        "api-handler",
+        "event-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:notion_poller.py:_fail_build",
+      "type": "function",
+      "name": "_fail_build",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        251,
+        265
+      ],
+      "summary": "Marks a Notion build page as failed by updating its status and writing a truncated error message to the page properties.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:health_check_fleet",
+      "type": "function",
+      "name": "health_check_fleet",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        270,
+        293
+      ],
+      "summary": "Iterates all registered MCP servers from a Notion database and checks each one's health endpoint, delegating per-server logic to _check_server.",
+      "tags": [
+        "monitoring",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_check_server",
+      "type": "function",
+      "name": "_check_server",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        296,
+        417
+      ],
+      "summary": "Performs a health check HTTP request against a single MCP server, tracks consecutive failure counts, updates the server's Notion status page, creates incidents on repeated failures, and auto-resolves them on recovery.",
+      "tags": [
+        "monitoring",
+        "service",
+        "event-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:notion_poller.py:_get_registry_page_id",
+      "type": "function",
+      "name": "_get_registry_page_id",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        420,
+        438
+      ],
+      "summary": "Looks up a server's Notion registry page ID by name, using a warm cache when available to reduce API calls.",
+      "tags": [
+        "utility",
+        "api-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_warm_registry_cache",
+      "type": "function",
+      "name": "_warm_registry_cache",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        441,
+        455
+      ],
+      "summary": "Pre-populates the in-memory registry page ID cache by fetching all pages from the Notion server registry database at startup.",
+      "tags": [
+        "utility",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:_auto_resolve_incidents",
+      "type": "function",
+      "name": "_auto_resolve_incidents",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        458,
+        493
+      ],
+      "summary": "Scans open Notion incident pages for a given server and marks them resolved with a timestamp when the server has recovered.",
+      "tags": [
+        "monitoring",
+        "service",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:notion_poller.py:recover_interrupted_builds",
+      "type": "function",
+      "name": "recover_interrupted_builds",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        498,
+        520
+      ],
+      "summary": "Finds Notion build pages stuck in 'In Progress' status (from a previous crashed run) and marks them failed so they can be retried.",
+      "tags": [
+        "service",
+        "utility",
+        "resilience"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:notion_poller.py:check_fusional_health",
+      "type": "function",
+      "name": "check_fusional_health",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        525,
+        546
+      ],
+      "summary": "Calls the FusionAL gateway's /health endpoint and logs whether the gateway is reachable and which policy profile is active.",
+      "tags": [
+        "monitoring",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:notion_poller.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "notion_poller.py",
+      "lineRange": [
+        576,
+        612
+      ],
+      "summary": "Entry point for the notion_poller daemon: validates environment variables, prints a startup banner, initializes Notion and HTTP clients, runs startup tasks (health check, cache warm, interrupted-build recovery), then enters a continuous polling loop.",
+      "tags": [
+        "entry-point",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:quick-start/setup-guide.md",
+      "type": "document",
+      "name": "setup-guide.md",
+      "filePath": "quick-start/setup-guide.md",
+      "summary": "Five-minute quick-start guide for FusionAL covering prerequisites, server startup, building the weather example, configuring Claude Desktop, testing, and common troubleshooting scenarios across 18 sections.",
+      "tags": [
+        "documentation",
+        "setup",
+        "quick-start",
+        "onboarding"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/think_tank.py",
+      "type": "file",
+      "name": "think_tank.py",
+      "filePath": "scripts/think_tank.py",
+      "summary": "Multi-agent Claude collaboration script triggered by watchdog failures, where three specialized agents (InfraAgent, LogicAgent, and a reviewer) analyze MCP infrastructure problems and produce a structured action plan.",
+      "tags": [
+        "service",
+        "ai-agent",
+        "monitoring",
+        "automation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:scripts/think_tank.py:TTAgent",
+      "type": "class",
+      "name": "TTAgent",
+      "filePath": "scripts/think_tank.py",
+      "lineRange": [
+        30,
+        34
+      ],
+      "summary": "Dataclass representing a single think-tank Claude agent configuration with name, role, system prompt, and model identifier.",
+      "tags": [
+        "data-model",
+        "ai-agent"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:well-known/mcp/server-card.json",
+      "type": "config",
+      "name": "server-card.json",
+      "filePath": "well-known/mcp/server-card.json",
+      "summary": "Well-known MCP server discovery card declaring FusionAL's server identity, authentication requirements (API key), and the three exposed MCP tools: execute_code, generate_and_execute, and generate_mcp_project.",
+      "tags": [
+        "configuration",
+        "mcp-server",
+        "api-schema",
+        "discovery"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Served at /.well-known/mcp/server-card.json to enable MCP client auto-discovery per the emerging MCP server card spec."
+    },
+    {
+      "id": "file:core/mcp_registry.json",
+      "type": "file",
+      "name": "mcp_registry.json",
+      "filePath": "core/mcp_registry.json",
+      "summary": "Registry of registered MCP servers including generated and showcase servers, persisted as JSON with server names, descriptions, URLs, metadata, and registration timestamps.",
+      "tags": [
+        "data",
+        "configuration",
+        "registry"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "class:scripts/action_executor.py:StepResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:map_step_to_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:is_safe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:run_command",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:execute_plan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:_log_execution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "function:scripts/action_executor.py:execution_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/notion_reporter.py",
+      "target": "function:scripts/notion_reporter.py:post_incident",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/notion_reporter.py",
+      "target": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "function:scripts/test_pipeline.py:mock_think_tank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "function:scripts/test_pipeline.py:run_test",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "class:scripts/think_tank_trigger.py:ReasoningPreset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "class:scripts/think_tank_trigger.py:FaultEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "class:scripts/think_tank_trigger.py:ThinkTankResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:_call_claude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:_log_result",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "function:scripts/think_tank_trigger.py:trigger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:log_fault",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:check_health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:can_restart",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:restart_container",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:handle_fault",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:_fire_think_tank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "function:scripts/watchdog.py:run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/test_pipeline.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "Direction corrected (was test \u2192 production)"
+    },
+    {
+      "source": "file:scripts/action_executor.py",
+      "target": "file:scripts/test_pipeline.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "Direction corrected (was test \u2192 production)"
+    },
+    {
+      "source": "file:scripts/notion_reporter.py",
+      "target": "file:scripts/test_pipeline.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "Direction corrected (was test \u2192 production)"
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "file:scripts/think_tank_trigger.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/action_executor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/notion_reporter.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "target": "function:scripts/action_executor.py:execute_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "target": "function:scripts/action_executor.py:execution_summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/think_tank_trigger.py:run_think_tank",
+      "target": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/test_pipeline.py:run_test",
+      "target": "function:scripts/action_executor.py:execute_plan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/test_pipeline.py:run_test",
+      "target": "function:scripts/action_executor.py:execution_summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/test_pipeline.py:run_test",
+      "target": "function:scripts/notion_reporter.py:report_think_tank_result",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/watchdog.py:_fire_think_tank",
+      "target": "function:scripts/think_tank_trigger.py:trigger",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_python_from_claude",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_python_from_openai",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_and_execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:_parse_files_from_ai_output",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ai_agent.py",
+      "target": "function:core/ai_agent.py:generate_mcp_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "class:core/main.py:ExecRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "class:core/main.py:RegisterRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "class:core/main.py:GenerateRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:_lifespan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:generate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:audit_export_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:audit_export_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:_generate_local_server_code",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "function:core/main.py:register",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:execute_code",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:register_downstream_tools",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:_make_proxy_fn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:_make_passthrough_tool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "function:core/mcp_transport.py:_server_namespace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "class:core/mcp_transport.py:_PassthroughArgModel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:core/main.py:generate",
+      "target": "function:core/ai_agent.py:generate_python_from_claude",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/main.py:generate",
+      "target": "function:core/ai_agent.py:generate_python_from_openai",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/main.py:_lifespan",
+      "target": "function:core/mcp_transport.py:register_downstream_tools",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/mcp_transport.py:register_downstream_tools",
+      "target": "function:core/mcp_transport.py:_server_namespace",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/mcp_transport.py:register_downstream_tools",
+      "target": "function:core/mcp_transport.py:_make_proxy_fn",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:core/mcp_transport.py:register_downstream_tools",
+      "target": "function:core/mcp_transport.py:_make_passthrough_tool",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "file:core/mcp_transport.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "file:core/ai_agent.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:RateLimitPreset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetTracker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:get_active_preset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:configure_error_budget_tracking",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:RateLimitPreset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "class:core/common/rate_limit_presets.py:ErrorBudgetTracker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:get_active_preset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "function:core/common/rate_limit_presets.py:configure_error_budget_tracking",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_cors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_observability",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:initialize_rate_limit_store",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:verify_api_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:enforce_rate_limit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:redact_sensitive_data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:_enforce_rate_limit_with_redis",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:_build_log_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_cors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:configure_observability",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:initialize_rate_limit_store",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:verify_api_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:enforce_rate_limit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:redact_sensitive_data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "function:core/common/security.py:_enforce_rate_limit_with_redis",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/test_security_common.py",
+      "target": "class:core/common/test_security_common.py:FakeRedisClient",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/rate_limit_presets.py",
+      "target": "file:core/common/test_rate_limit_presets.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/security.py",
+      "target": "file:core/common/test_security_common.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:Dockerfile",
+      "target": "service:.dockerignore",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:core/Dockerfile",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:examples/dice-roller/Dockerfile",
+      "target": "service:examples/dice-roller/Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:examples/dice-roller/Dockerfile",
+      "target": "file:examples/dice-roller/dice_server.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:examples/file-utils/Dockerfile",
+      "target": "file:examples/file-utils/file_utils_server.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:examples/weather-api/Dockerfile",
+      "target": "service:examples/weather-api/Dockerfile:python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "service:examples/weather-api/Dockerfile",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:.env.example",
+      "target": "document:CLAUDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:core/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "file:notion_poller.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/mcp_transport.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/ai_agent.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:core/runner_docker.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "service:compose.yaml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CONTRIBUTING.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:claude_desktop_config_windows.json",
+      "target": "file:core/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:compose.yaml",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:compose.debug.yaml",
+      "target": "service:compose.yaml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:compose.debug.yaml",
+      "target": "file:core/main.py",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "document:requirements.txt",
+      "target": "file:core/main.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:fusion-stress-test.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/custom-servers.md",
+      "target": "file:core/ai_agent.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/custom-servers.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/docker-gateway.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/troubleshooting.md",
+      "target": "file:core/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/troubleshooting.md",
+      "target": "document:docs/docker-gateway.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:scripts/README.md",
+      "target": "file:scripts/generate_registry_from_docker.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:scripts/README.md",
+      "target": "file:scripts/generate_registry_from_docker.sh",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:scripts/README.md",
+      "target": "file:scripts/smoke-generate-endpoint.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/smoke-generate-endpoint.ps1",
+      "target": "file:core/main.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:.hermes/maintenance-wrapper.sh",
+      "target": "file:.hermes/maintenance.sh",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditRecord",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:get_audit_store",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:record_tool_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditRecord",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "class:core/common/audit.py:AuditStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:get_audit_store",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:record_tool_call",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "function:core/common/audit.py:records_to_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:core/common/P2-HARDENING.md",
+      "target": "file:core/security.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:core/common/SECURITY-HARDENING.md",
+      "target": "file:core/security.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:core/common/SECURITY-HARDENING.md",
+      "target": "file:core/common/audit.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestAuditRecord",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestAuditStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestRecordToolCall",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "class:core/common/test_audit.py:TestRecordsToCsv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/audit.py",
+      "target": "file:core/common/test_audit.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:configure_tracing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_trace_context",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_tracer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "class:core/common/tracing.py:_NoopTracer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:configure_tracing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_trace_context",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/common/tracing.py",
+      "target": "function:core/common/tracing.py:get_tracer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:core/requirements.txt",
+      "target": "file:core/common/audit.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:core/requirements.txt",
+      "target": "file:core/common/tracing.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:core/requirements.txt",
+      "target": "file:core/security.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/runner_docker.py",
+      "target": "function:core/runner_docker.py:run_in_docker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/runner_docker.py",
+      "target": "function:core/runner_docker.py:run_in_docker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "class:core/security.py:ObservabilityMiddleware",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:verify_api_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:enforce_rate_limit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:configure_cors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "class:core/security.py:ObservabilityMiddleware",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:verify_api_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:enforce_rate_limit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "function:core/security.py:configure_cors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "file:core/common/tracing.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/test_fusional.py",
+      "target": "function:core/test_fusional.py:run_all_tests",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/test_fusional.py",
+      "target": "function:core/test_fusional.py:run_all_tests",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/runner_docker.py",
+      "target": "file:core/test_fusional.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/security.py",
+      "target": "file:core/test_fusional.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:parse_dice_notation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_dice",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:parse_dice_notation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_dice",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/dice-roller/dice_server.py",
+      "target": "function:examples/dice-roller/dice_server.py:roll_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:examples/dice-roller/README.md",
+      "target": "file:examples/dice-roller/dice_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:examples/dice-roller/requirements.txt",
+      "target": "file:examples/dice-roller/dice_server.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:count_lines",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:get_file_info",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:search_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:list_files",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:count_lines",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:get_file_info",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:search_text",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/file-utils/file_utils_server.py",
+      "target": "function:examples/file-utils/file_utils_server.py:list_files",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:examples/file-utils/README.md",
+      "target": "file:examples/file-utils/file_utils_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:examples/file-utils/requirements.txt",
+      "target": "file:examples/file-utils/file_utils_server.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_weather",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_forecast",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:parse_weather",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_weather",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:get_forecast",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:examples/weather-api/weather_server.py",
+      "target": "function:examples/weather-api/weather_server.py:parse_weather",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:examples/weather-api/README.md",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:examples/weather-api/README.md",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:check_docker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:check_python",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:check_dependencies",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:setup_docker_mcp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:init.py",
+      "target": "function:init.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:notion_call",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:poll_build_queue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_process_build",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_fail_build",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:health_check_fleet",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_check_server",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_get_registry_page_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_warm_registry_cache",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:_auto_resolve_incidents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:recover_interrupted_builds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:check_fusional_health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "function:notion_poller.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank.py",
+      "target": "class:scripts/think_tank.py:TTAgent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/think_tank.py",
+      "target": "class:scripts/think_tank.py:TTAgent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:quick-start/setup-guide.md",
+      "target": "file:init.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:quick-start/setup-guide.md",
+      "target": "file:examples/weather-api/weather_server.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:well-known/mcp/server-card.json",
+      "target": "file:core/mcp_transport.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:mcp-builder-prompt/README.md",
+      "target": "file:core/mcp_transport.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:notion_poller.py",
+      "target": "file:core/main.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:logs/execution_log.json",
+      "target": "file:scripts/think_tank.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/common/test_audit.py",
+      "target": "file:core/common/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/common/test_rate_limit_presets.py",
+      "target": "file:core/common/rate_limit_presets.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/common/test_rate_limit_presets.py",
+      "target": "file:core/common/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/common/test_security_common.py",
+      "target": "file:core/common/security.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "file:core/ai_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/main.py",
+      "target": "file:core/mcp_transport.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/mcp_transport.py",
+      "target": "file:core/ai_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:core/quick_test.py",
+      "target": "file:core/ai_agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "file:scripts/action_executor.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:scripts/test_pipeline.py",
+      "target": "file:scripts/think_tank_trigger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/action_executor.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:scripts/think_tank_trigger.py",
+      "target": "file:scripts/notion_reporter.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "file:scripts/watchdog.py",
+      "target": "file:scripts/think_tank_trigger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "recoveredFromImportMap": true
+    },
+    {
+      "source": "document:docs/docker-gateway.md",
+      "target": "service:compose.yaml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/build_examples.ps1",
+      "target": "service:examples/dice-roller/Dockerfile",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/generate_registry_from_docker.ps1",
+      "target": "file:core/mcp_registry.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:scripts/generate_registry_from_docker.sh",
+      "target": "file:core/mcp_registry.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:api-gateway",
+      "name": "API Gateway Layer",
+      "description": "FastAPI entry point and MCP transport that mount REST endpoints for code execution and generation, proxy downstream MCP servers, and manage the server lifecycle via lifespan hooks.",
+      "nodeIds": [
+        "file:core/main.py",
+        "file:core/mcp_transport.py",
+        "file:core/ai_agent.py",
+        "file:core/runner_docker.py",
+        "file:notion_poller.py",
+        "file:init.py"
+      ]
+    },
+    {
+      "id": "layer:security-middleware",
+      "name": "Security & Middleware",
+      "description": "Cross-cutting gateway enforcement layer providing API key authentication, CORS configuration, Redis-backed rate limiting with named presets, audit logging, and OpenTelemetry distributed tracing.",
+      "nodeIds": [
+        "file:core/security.py",
+        "file:core/common/security.py",
+        "file:core/common/rate_limit_presets.py",
+        "file:core/common/audit.py",
+        "file:core/common/tracing.py",
+        "file:core/__init__.py",
+        "file:core/.bandit"
+      ]
+    },
+    {
+      "id": "layer:ops-automation",
+      "name": "Ops Automation Scripts",
+      "description": "Autonomous operations pipeline that monitors MCP server health, triggers multi-agent Claude think-tank analysis on faults, executes remediation action plans, and reports results to Notion.",
+      "nodeIds": [
+        "file:scripts/watchdog.py",
+        "file:scripts/think_tank_trigger.py",
+        "file:scripts/think_tank.py",
+        "file:scripts/action_executor.py",
+        "file:scripts/notion_reporter.py",
+        "file:scripts/generate_registry_from_docker.ps1",
+        "file:scripts/generate_registry_from_docker.sh",
+        "file:scripts/build_examples.ps1",
+        "file:scripts/smoke-generate-endpoint.ps1"
+      ]
+    },
+    {
+      "id": "layer:test",
+      "name": "Test Suite",
+      "description": "Unit, integration, and smoke tests covering the gateway API, security middleware, rate-limit presets, audit store, Docker runner, and the full watchdog-to-action ops pipeline.",
+      "nodeIds": [
+        "file:core/common/test_rate_limit_presets.py",
+        "file:core/common/test_security_common.py",
+        "file:core/common/test_audit.py",
+        "file:core/quick_test.py",
+        "file:core/test_fusional.py",
+        "file:scripts/test_pipeline.py"
+      ]
+    },
+    {
+      "id": "layer:registry-data",
+      "name": "Registry & Runtime Data",
+      "description": "MCP server registry JSON, backup snapshots, the well-known discovery card, and execution logs that record the live fleet of registered downstream servers and automation run history.",
+      "nodeIds": [
+        "file:core/mcp_registry.json",
+        "file:core/mcp_registry.json.bak",
+        "config:well-known/mcp/server-card.json",
+        "config:logs/execution_log.json"
+      ]
+    },
+    {
+      "id": "layer:example-servers",
+      "name": "Example MCP Servers",
+      "description": "Reference implementations of FusionAL-compatible MCP servers (dice-roller, file-utils, weather-api) demonstrating tool conventions, containerization, and integration patterns.",
+      "nodeIds": [
+        "file:examples/dice-roller/dice_server.py",
+        "file:examples/file-utils/file_utils_server.py",
+        "file:examples/weather-api/weather_server.py",
+        "service:examples/dice-roller/Dockerfile",
+        "service:examples/dice-roller/Dockerfile:python",
+        "service:examples/file-utils/Dockerfile",
+        "service:examples/weather-api/Dockerfile",
+        "service:examples/weather-api/Dockerfile:python",
+        "document:examples/dice-roller/README.md",
+        "document:examples/dice-roller/requirements.txt",
+        "document:examples/file-utils/README.md",
+        "document:examples/file-utils/requirements.txt",
+        "document:examples/weather-api/README.md",
+        "document:examples/weather-api/requirements.txt"
+      ]
+    },
+    {
+      "id": "layer:infrastructure",
+      "name": "Infrastructure",
+      "description": "Container build definitions, Docker Compose orchestration, debug overrides, and Hermes maintenance scripts that package and operate the FusionAL gateway in Docker environments.",
+      "nodeIds": [
+        "service:Dockerfile",
+        "service:.dockerignore",
+        "service:core/Dockerfile",
+        "service:compose.yaml",
+        "config:compose.debug.yaml",
+        "file:.hermes/maintenance-wrapper.sh",
+        "file:.hermes/maintenance.sh"
+      ]
+    },
+    {
+      "id": "layer:configuration",
+      "name": "Configuration",
+      "description": "Environment variable templates, client integration configs, Git attributes, and tooling ignore rules that parameterise the gateway and its development toolchain.",
+      "nodeIds": [
+        "config:.env.example",
+        "config:claude_desktop_config_windows.json",
+        "config:.github/FUNDING.yml",
+        "file:.gitattributes",
+        "file:.understand-anything/.understandignore"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Documentation",
+      "description": "Project guides, API references, security hardening runbooks, contributor workflows, troubleshooting docs, and MCP builder guidelines covering every aspect of deploying and extending FusionAL.",
+      "nodeIds": [
+        "document:README.md",
+        "document:CLAUDE.md",
+        "document:CONTRIBUTING.md",
+        "document:MAINTENANCE.md",
+        "document:fusion-stress-test.md",
+        "document:requirements.txt",
+        "document:core/requirements.txt",
+        "document:core/common/P2-HARDENING.md",
+        "document:core/common/SECURITY-HARDENING.md",
+        "document:docs/custom-servers.md",
+        "document:docs/docker-gateway.md",
+        "document:docs/troubleshooting.md",
+        "document:scripts/README.md",
+        "document:mcp-builder-prompt/README.md",
+        "document:quick-start/setup-guide.md",
+        "document:.github/ISSUE_TEMPLATE/bug_report.md",
+        "document:.github/ISSUE_TEMPLATE/feature_request.md"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Overview",
+      "description": "Start with README.md to understand FusionAL's purpose: a self-hosted MCP governance gateway that sits between AI clients (Claude Desktop, custom agents) and MCP tool servers. It provides central authentication, rate limiting, tool-level policy enforcement, a full audit trail, Docker-sandboxed code execution, and AI-powered MCP server generation. Reading this first gives you the mental map for everything else in the codebase.",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Gateway Entry Point",
+      "description": "core/main.py is the FastAPI application entry point and the most-referenced file in the entire codebase (fan-in of 16). It mounts the MCP transport, defines REST endpoints for code execution, AI-powered generation, server registration, and audit export, and wires together all governance middleware during startup. Understanding this file is essential because every other layer either serves it or is called by it.",
+      "nodeIds": [
+        "file:core/main.py"
+      ],
+      "languageLesson": "FastAPI's lifespan context manager (the `_lifespan` async generator decorated with `@asynccontextmanager`) is the modern replacement for startup/shutdown event handlers. Code before `yield` runs at startup; code after `yield` runs at shutdown. This is where FusionAL registers downstream MCP tools into the gateway."
+    },
+    {
+      "order": 3,
+      "title": "Security & Auth Layer",
+      "description": "core/security.py provides API key authentication, CORS enforcement, and the ObservabilityMiddleware that logs every request. core/common/security.py extends this with Redis-backed rate limiting, configurable CORS allowlists, and request-level data redaction. Together they form the governance wall that every inbound request must pass before reaching a tool \u2014 this is FusionAL's core value proposition for regulated environments.",
+      "nodeIds": [
+        "file:core/security.py",
+        "file:core/common/security.py"
+      ],
+      "languageLesson": "FastAPI dependency injection (`Depends(verify_api_key)`) lets you attach security checks as function parameters on any route. The check runs before the handler body, and raising `HTTPException` short-circuits the request cleanly \u2014 no need for guard clauses inside business logic."
+    },
+    {
+      "order": 4,
+      "title": "Rate Limiting & Error Budgets",
+      "description": "core/common/rate_limit_presets.py defines named rate-limit profiles (pilot, production, permissive) and an error-budget tracking subsystem. The active profile is selected by environment variable at startup, so you can tune aggressiveness without redeploying code. This design means the same gateway binary can serve a cautious pilot rollout or a high-throughput production fleet just by changing a single env var.",
+      "nodeIds": [
+        "file:core/common/rate_limit_presets.py"
+      ],
+      "languageLesson": "Python dataclasses and Pydantic models both appear in this module. Pydantic models (like `RateLimitPreset`) enforce field types at runtime and can be serialized to JSON, making them a better choice than plain dataclasses for configuration objects that must cross process or API boundaries."
+    },
+    {
+      "order": 5,
+      "title": "Audit Trail",
+      "description": "core/common/audit.py provides AuditStore \u2014 an in-memory, thread-safe, optionally file-persisted ring buffer of AuditRecords. Every tool call that passes through the gateway is recorded here with its request ID, caller, tool name, result, and timestamp. The main gateway exposes /audit/export endpoints (JSON and CSV) that read from this store, giving compliance teams a durable record of all MCP activity.",
+      "nodeIds": [
+        "file:core/common/audit.py"
+      ],
+      "languageLesson": "Python's `threading.Lock` combined with a bounded deque makes a simple but effective thread-safe ring buffer. The `maxlen` parameter on `collections.deque` automatically evicts oldest entries, bounding memory usage without explicit cleanup code."
+    },
+    {
+      "order": 6,
+      "title": "MCP Transport Layer",
+      "description": "core/mcp_transport.py is where FusionAL becomes an MCP server. It defines the FastMCP server instance and its built-in tools (execute_code, generate_and_execute, generate_mcp_project), and the register_downstream_tools function that dynamically proxies tools from registered downstream MCP servers into the gateway's own tool namespace. This proxy pattern is what lets a single FusionAL endpoint expose dozens of backend tools to any MCP client.",
+      "nodeIds": [
+        "file:core/mcp_transport.py",
+        "config:well-known/mcp/server-card.json"
+      ],
+      "languageLesson": "The `_make_proxy_fn` closure pattern captures a reference to the downstream tool at registration time. Each proxy function closes over the server URL and tool name so the gateway can forward calls to the right backend without a lookup at call time \u2014 an efficient way to generate many similar forwarding functions dynamically."
+    },
+    {
+      "order": 7,
+      "title": "AI Code Generation",
+      "description": "core/ai_agent.py is FusionAL's AI tier. It calls Claude or OpenAI APIs to generate Python code from a natural-language prompt, parses the multi-file output, and can scaffold an entire MCP server project including Dockerfile and requirements.txt. The main gateway's /generate endpoint delegates to this module, enabling users to describe a tool in plain English and get a deployable MCP server back in seconds.",
+      "nodeIds": [
+        "file:core/ai_agent.py",
+        "document:docs/custom-servers.md"
+      ],
+      "languageLesson": "Parsing structured output from LLMs using delimiter-based extraction (looking for markdown fences or sentinel tags like `# FILE:`) is a common pattern when you need multiple named outputs from a single prompt. It avoids JSON parsing fragility while still letting the model produce multiple files in one response."
+    },
+    {
+      "order": 8,
+      "title": "Docker Sandbox Execution",
+      "description": "core/runner_docker.py implements the security boundary for code execution. When a user submits Python to the /execute endpoint, this module writes it to a temp directory, spins up a fresh ephemeral Docker container, runs the code inside it with resource constraints and a timeout, and returns stdout/stderr. The container is torn down afterward, ensuring untrusted code never touches the host filesystem.",
+      "nodeIds": [
+        "file:core/runner_docker.py",
+        "service:core/Dockerfile"
+      ],
+      "languageLesson": "Python's `subprocess.run` with `timeout=` raises `subprocess.TimeoutExpired` if the process doesn't finish in time. Combining this with `docker run --rm` (auto-remove) means cleanup is guaranteed even if the timeout fires \u2014 the container is gone regardless of how the process terminates."
+    },
+    {
+      "order": 9,
+      "title": "Configuration & Environment",
+      "description": "config/.env.example documents all 17 environment variables FusionAL reads \u2014 API keys (Anthropic, OpenAI), gateway auth tokens, CORS origins, Redis URL, rate-limit preset selection, and Docker image names. Reading this file alongside core/main.py reveals the full operational surface of the gateway: every tuneable parameter is driven by environment, which is what makes FusionAL deployable identically on a developer laptop or a production server.",
+      "nodeIds": [
+        "config:.env.example",
+        "service:compose.yaml"
+      ],
+      "languageLesson": "Docker Compose's `env_file` directive loads a .env file into container environment at runtime, keeping secrets out of the image layer. Combined with `depends_on` and health checks, compose.yaml defines the full boot sequence including any Redis sidecar the rate limiter needs."
+    },
+    {
+      "order": 10,
+      "title": "Watchdog & Think Tank",
+      "description": "scripts/watchdog.py is a continuous health-monitoring daemon that polls configured MCP server HTTP health endpoints. When it detects a fault it calls scripts/think_tank_trigger.py, which spawns a multi-agent Claude-powered analysis: three specialized roles (diagnostician, remediator, reviewer) debate the failure and produce an action plan. scripts/action_executor.py then translates that plan into safe shell commands and executes them with timeout guards.",
+      "nodeIds": [
+        "file:scripts/watchdog.py",
+        "file:scripts/think_tank_trigger.py",
+        "file:scripts/action_executor.py"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Incident Reporting",
+      "description": "scripts/notion_reporter.py closes the watchdog loop by posting structured incident reports and think-tank diagnostic results to a Notion database page via the Notion API. This gives operations teams a searchable, persistent record of every detected fault, the AI's diagnosis, the remediation steps taken, and whether they succeeded \u2014 all without requiring manual log triage.",
+      "nodeIds": [
+        "file:scripts/notion_reporter.py",
+        "config:logs/execution_log.json"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Notion-Driven Build Queue",
+      "description": "notion_poller.py is a long-running daemon that polls a Notion database for pending MCP server build requests, forwards them to the FusionAL /generate endpoint, and writes the results back to Notion. It also performs fleet health checks and auto-resolves incidents. This closes the loop on the AI server-generation feature: a non-technical user can create a Notion row describing a tool, and get a deployed MCP server without touching code.",
+      "nodeIds": [
+        "file:notion_poller.py"
+      ]
+    },
+    {
+      "order": 13,
+      "title": "Tracing & Observability",
+      "description": "core/common/tracing.py provides OpenTelemetry distributed tracing setup with an OTLP exporter. It wraps FastAPI with trace context propagation so every gateway request gets a trace ID that flows into the audit log, downstream tool calls, and any external observability platform (Jaeger, Tempo, etc.). The no-op fallback ensures the gateway runs cleanly even when no collector is configured.",
+      "nodeIds": [
+        "file:core/common/tracing.py",
+        "document:core/common/SECURITY-HARDENING.md"
+      ]
+    },
+    {
+      "order": 14,
+      "title": "Example MCP Servers",
+      "description": "The examples/ directory contains three reference MCP server implementations (dice-roller, weather-api, file-utils), each with its own FastMCP server, Dockerfile, and README. These serve a dual purpose: they demonstrate how to build a FusionAL-compatible MCP server from scratch, and they are the default downstream servers used in the quick-start guide. Studying one of them reveals the exact interface FusionAL's proxy layer expects from any registered backend.",
+      "nodeIds": [
+        "file:examples/dice-roller/dice_server.py",
+        "file:examples/weather-api/weather_server.py",
+        "file:examples/file-utils/file_utils_server.py"
+      ]
+    },
+    {
+      "order": 15,
+      "title": "Registry & Build Scripts",
+      "description": "core/mcp_registry.json is the runtime registry of all MCP servers FusionAL knows about. scripts/generate_registry_from_docker.sh (and its PowerShell twin) auto-populate it by inspecting running Docker containers. scripts/build_examples.ps1 builds and tags all three example server images. Together these scripts operationalize the deploy story: build images, register them in the registry, and FusionAL's proxy layer picks them up at the next startup.",
+      "nodeIds": [
+        "file:core/mcp_registry.json",
+        "file:scripts/generate_registry_from_docker.sh",
+        "file:init.py"
+      ]
+    }
+  ]
+}
