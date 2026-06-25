@@ -1,40 +1,8 @@
-
-## Maintenance Run: 2026-06-07 02:53:33
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-08 02:15:42
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-10 02:08:32
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-10 09:44:46
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-11 02:13:54
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-17 02:05:48
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-19 02:04:42
-No outdated dependencies found.
-Labeled new issues with 'triage'.
----
-
-## Maintenance Run: 2026-06-21 02:05:08
-No outdated dependencies found.
-Labeled new issues with 'triage'.
+## Maintenance Run: 2026-06-25 02:10:16
+No outdated dependencies found via uv check.
+PRs closed: #30 (mcp — already in core/reqs), #41 (stale previous run, CI failed)
+PRs merged: #35 (uvicorn 0.45.0→0.48.0), #36 (anthropic 0.88.0→0.104.1), #37 (otel 1.40.0→1.42.1), #42 (mcp 1.26.0→1.27.1)
+Issues labeled: none (no open unlabeled issues)
+Deps updated in core/requirements.txt: uvicorn, anthropic, mcp[cli], opentelemetry-sdk/instrumentation/exporter
+Pending: requests (2.33.1), pydantic (2.13.4) — not covered by Dependabot yet
 ---
