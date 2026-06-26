@@ -6,3 +6,7 @@ Issues labeled: none (no open unlabeled issues)
 Deps updated in core/requirements.txt: uvicorn, anthropic, mcp[cli], opentelemetry-sdk/instrumentation/exporter
 Pending: requests (2.33.1), pydantic (2.13.4) — not covered by Dependabot yet
 ---
+## Maintenance Run: 2026-06-26 02:08:30
+No outdated dependencies found.
+Labeled new issues with 'triage'.
+---
