@@ -48,8 +48,8 @@ if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     exit 1
 fi
 
-# Get repository full name for API calls
-REPO_FULLNAME=$(git remote get-url origin | sed -e 's/.*[:/]//' -e 's/\\.git$//')
+# Get repository full name for API calls (works for both SSH and HTTPS remotes)
+REPO_FULLNAME=$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null || git remote get-url origin | sed -e 's|https://github.com/||;s|git@github.com:||;s|\.git$||')
 log "Repository: $REPO_FULLNAME"
 
 # Fetch latest from default branch
