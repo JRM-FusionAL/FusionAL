@@ -1,11 +1,19 @@
-FROM python:alpine
-EXPOSE 8009
+FROM python:3.12-slim
+
+WORKDIR /app
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-COPY requirements.txt .
-RUN python -m pip install -r requirements.txt
-WORKDIR /app
-COPY . /app
+ENV PORT=8009
+
+COPY core/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8009
+
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
+
 CMD ["uvicorn", "core.main:app", "--host", "0.0.0.0", "--port", "8009", "--forwarded-allow-ips", "*"]
