@@ -57,14 +57,51 @@ DEFAULT_BRANCH=$(git remote show origin | awk '/HEAD branch/ {print $NF}')
 log "Fetching latest from $DEFAULT_BRANCH"
 git fetch origin "$DEFAULT_BRANCH"
 
-# Check for outdated dependencies with timeout
-log "Checking for outdated dependencies..."
-OUTDATED_JSON=$(timeout 30 pip list --outdated --format=json 2>/dev/null || echo '[]')
-if [ "$OUTDATED_JSON" = "[]" ]; then
+# Check for outdated dependencies using PyPI JSON API (no venv/internet installs needed)
+log "Checking for outdated dependencies via PyPI API..."
+OUTDATED_COUNT=$(python3 -c "
+import json, re, ssl, urllib.request, sys
+pkgs = {}
+for req_file in ['requirements.txt', 'core/requirements.txt']:
+    try:
+        with open(req_file) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#') or line.startswith('-'):
+                    continue
+                m = re.match(r'^([a-zA-Z0-9_.\-\[\]]+)([><=!]+)(.+)$', line)
+                if m:
+                    name = m.group(1).lower().split('[')[0]
+                    version = m.group(3).strip()
+                    if name not in pkgs:
+                        pkgs[name] = version
+    except FileNotFoundError:
+        pass
+
+ctx = ssl.create_default_context()
+outdated = []
+for name, ver in sorted(pkgs.items()):
+    try:
+        url = f'https://pypi.org/pypi/{name}/json'
+        req = urllib.request.Request(url, headers={'User-Agent': 'fusional-maint/1.0'})
+        resp = urllib.request.urlopen(req, timeout=10, context=ctx)
+        latest = json.loads(resp.read())['info']['version']
+        cv = tuple(int(x) for x in re.findall(r'\d+', ver))
+        lv = tuple(int(x) for x in re.findall(r'\d+', latest))
+        if cv < lv:
+            outdated.append(f'{name}=={latest}')
+    except:
+        pass
+
+for pkg in outdated:
+    print(pkg)
+" 2>/dev/null | wc -l)
+
+if [ "$OUTDATED_COUNT" -eq 0 ]; then
     log "No outdated dependencies found."
     UPDATES_AVAILABLE=0
 else
-    log "Outdated dependencies found."
+    log "Outdated dependencies found: $OUTDATED_COUNT packages."
     UPDATES_AVAILABLE=1
 fi
 
