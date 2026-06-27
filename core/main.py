@@ -184,6 +184,7 @@ _SHOWCASE_SERVERS = {
         "description": "Natural language → SQL queries against PostgreSQL/MySQL/SQLite",
         "url": "http://localhost:8101",
         "internal_url": "http://business-intelligence-mcp:8101",
+        "native_url": "http://127.0.0.1:8101",
         "metadata": {"version": "0.3.0", "tools": ["nl_query"], "port": 8101, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
@@ -191,6 +192,7 @@ _SHOWCASE_SERVERS = {
         "description": "Slack, GitHub, and Stripe integrations via natural language",
         "url": "http://localhost:8102",
         "internal_url": "http://api-integration-hub:8102",
+        "native_url": "http://127.0.0.1:8102",
         "metadata": {"version": "0.3.0", "tools": ["slack/send", "github/create-issue", "stripe/customer"], "port": 8102, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
@@ -198,6 +200,7 @@ _SHOWCASE_SERVERS = {
         "description": "Web scraping, link extraction, table parsing, and RSS feeds",
         "url": "http://localhost:8103",
         "internal_url": "http://content-automation-mcp:8103",
+        "native_url": "http://127.0.0.1:8103",
         "metadata": {"version": "0.3.0", "tools": ["scrape/article", "scrape/links", "scrape/tables", "rss/parse"], "port": 8103, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
@@ -205,6 +208,7 @@ _SHOWCASE_SERVERS = {
         "description": "Safe GitHub API operations (list issues, create issue, search code)",
         "url": "http://localhost:8105",
         "internal_url": "http://github-mcp-safe:8105",
+        "native_url": "http://127.0.0.1:8105",
         "metadata": {"version": "0.3.0", "tools": ["github_list_issues", "github_create_issue"], "port": 8105, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
@@ -212,6 +216,7 @@ _SHOWCASE_SERVERS = {
         "description": "Intelligence and research tools",
         "url": "http://localhost:8104",
         "internal_url": "http://intelligence-mcp:8104",
+        "native_url": "http://127.0.0.1:8104",
         "metadata": {"version": "0.3.0", "tools": [], "port": 8104, "source": "mcp-consulting-kit"},
         "registered_at": "2026-02-23T00:00:00"
     },
