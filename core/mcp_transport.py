@@ -1,15 +1,13 @@
 """
 Streamable HTTP MCP transport layer for FusionAL.
 
-Exposes FusionAL's built-in tools plus an aggregating proxy that surfaces
-every registered downstream MCP server as namespaced tools on this server.
+Exposes an aggregating proxy that surfaces every registered downstream MCP
+server as namespaced tools on this server.
 
-Built-in tools (always present):
-  generate_mcp_project  - scaffold a new MCP server project
-
-NOTE: execute_code and generate_and_execute are intentionally NOT registered
-as MCP tools (Phase 0 security gate — raw subprocess must not reach brain).
-They remain available as internal functions for the REST /execute endpoint only.
+Built-in tools (disabled for Phase 0 — available via REST only):
+  execute_code          - run Python in a subprocess (REST /execute only)
+  generate_and_execute  - prompt → Claude writes Python → runs it (REST only)
+  generate_mcp_project  - scaffold a new MCP server project (REST only)
 
 Proxied tools (registered at startup from REGISTRY):
   <namespace>_<tool>    e.g. bi_nl_query, github_create_issue
@@ -90,13 +88,8 @@ def generate_and_execute(prompt: str, timeout: int = 10) -> dict:
     return _generate_and_execute(prompt, provider="claude", timeout=timeout, use_docker=False)
 
 
-@mcp.tool(
-    name="generate_mcp_project",
-    description=(
-        "Generate a complete MCP server project from a description using Claude. "
-        "Returns the output directory path and list of generated files. Requires ANTHROPIC_API_KEY."
-    ),
-)
+# NOT registered as MCP tool — Phase 0 security gate.
+# Available to REST /generate endpoint only.
 def generate_mcp_project(description: str) -> dict:
     result = _gen_mcp_project(description, provider="claude", build=False)
     return {"out_dir": result["out_dir"], "files": result["files"]}
@@ -225,8 +218,13 @@ async def register_downstream_tools(registry: dict) -> None:
     existing_names = {t.name for t in (await mcp.list_tools())}
 
     for server_name, server_info in registry.items():
+        # Prefer native_url (host networking) when running outside Docker,
+        # then internal_url (Docker bridge), then url as fallback.
+        import os as _os
+        _in_docker = _os.path.exists("/.dockerenv")
         base_url = (
-            server_info.get("internal_url")
+            (server_info.get("native_url") if not _in_docker else None)
+            or server_info.get("internal_url")
             or server_info.get("url", "")
         ).rstrip("/")
         if not base_url:

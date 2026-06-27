@@ -216,17 +216,20 @@ _SHOWCASE_SERVERS = {
         "registered_at": "2026-02-23T00:00:00"
     },
     # Host-network services (systemd, not Docker) — reachable via host.docker.internal
+    # when FusionAL runs in Docker, or 127.0.0.1 when running natively.
     "fusional-recall": {
         "description": "Semantic recall and solved-issues memory search",
         "url": "http://localhost:8107",
         "internal_url": "http://host.docker.internal:8107",
+        "native_url": "http://127.0.0.1:8107",
         "metadata": {"version": "0.1.0", "tools": ["recall"], "port": 8107, "source": "fusional"},
         "registered_at": "2026-05-31T00:00:00"
     },
     "kb-server": {
         "description": "FusionAL knowledge base search",
         "url": "http://localhost:8106",
-        "internal_url": "http://host.docker.internal:8108",
+        "internal_url": "http://host.docker.internal:8106",
+        "native_url": "http://127.0.0.1:8106",
         "metadata": {"version": "0.1.0", "tools": ["search"], "port": 8106, "source": "fusional"},
         "registered_at": "2026-05-31T00:00:00"
     },
