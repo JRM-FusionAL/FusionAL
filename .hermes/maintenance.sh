@@ -59,7 +59,7 @@ git fetch origin "$DEFAULT_BRANCH"
 
 # Check for outdated dependencies using PyPI JSON API (no venv/internet installs needed)
 log "Checking for outdated dependencies via PyPI API..."
-OUTDATED_COUNT=$(python3 -c "
+OUTDATED_JSON=$(python3 -c "
 import json, re, ssl, urllib.request, sys
 pkgs = {}
 for req_file in ['requirements.txt', 'core/requirements.txt']:
@@ -89,13 +89,14 @@ for name, ver in sorted(pkgs.items()):
         cv = tuple(int(x) for x in re.findall(r'\d+', ver))
         lv = tuple(int(x) for x in re.findall(r'\d+', latest))
         if cv < lv:
-            outdated.append(f'{name}=={latest}')
+            outdated.append({'name': name, 'current': ver, 'latest': latest})
     except:
         pass
 
-for pkg in outdated:
-    print(pkg)
-" 2>/dev/null | wc -l)
+print(json.dumps(outdated))
+" 2>/dev/null || echo "[]")
+
+OUTDATED_COUNT=$(echo "$OUTDATED_JSON" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
 
 if [ "$OUTDATED_COUNT" -eq 0 ]; then
     log "No outdated dependencies found."
