@@ -166,22 +166,23 @@ for item in data:
     WAIT_TIME=0
     if [ "$DRY_RUN" -eq 0 ] && [ -n "${PR_NUMBER:-}" ]; then
         log "Waiting for CI to pass on PR #$PR_NUMBER..."
-        while [ $WAIT_TIME -lt $MAX_WAIT ]; do
-            # Get the latest check runs for the PR
-            CHECK_OUTPUT=$(gh api "/repos/$REPO_FULLNAME/pulls/$PR_NUMBER/check-runs" --jq '.check_runs[] | select(.status=="completed") | .conclusion' 2>/dev/null || echo "")
-            # If all checks are completed and successful, break
-            if echo "$CHECK_OUTPUT" | grep -qv "action_required\|cancelled\|failure\|timed_out"; then
-                # Actually, we want to see if there are any incomplete checks or failed ones.
-                # Let's check for any failed or cancelled checks.
-                FAILED_CHECKS=$(gh api "/repos/$REPO_FULLNAME/pulls/$PR_NUMBER/check-runs" --jq '[.check_runs[] | select(.status=="completed" and (.conclusion=="failure" or .conclusion=="cancelled"))] | length' 2>/dev/null || echo "0")
-                if [ "$FAILED_CHECKS" -eq 0 ]; then
-                    # Also check if there are any queued or in_progress checks
-                    IN_PROGRESS=$(gh api "/repos/$REPO_FULLNAME/pulls/$PR_NUMBER/check-runs" --jq '[.check_runs[] | select(.status!="completed")] | length' 2>/dev/null || echo "0")
-                    if [ "$IN_PROGRESS" -eq 0 ]; then
-                        log "All checks passed and completed."
-                        break
-                    fi
-                fi
+        # Get the HEAD commit SHA for the PR (correct API endpoint requires commit SHA, not PR number)
+        PR_HEAD_SHA=$(gh pr view "$PR_NUMBER" --repo "$REPO_FULLNAME" --json headRefOid --jq '.headRefOid' 2>/dev/null || echo "")
+        if [ -z "$PR_HEAD_SHA" ]; then
+            log "WARNING: Could not get PR HEAD SHA. Skipping CI wait."
+        else
+            log "PR HEAD commit: $PR_HEAD_SHA"
+        fi
+        while [ $WAIT_TIME -lt $MAX_WAIT ] && [ -n "$PR_HEAD_SHA" ]; do
+            # Get check runs for the PR HEAD commit (correct endpoint)
+            CHECK_RUNS=$(gh api "/repos/$REPO_FULLNAME/commits/$PR_HEAD_SHA/check-runs" --jq '.check_runs' 2>/dev/null || echo "{}")
+            TOTAL_CHECKS=$(echo "$CHECK_RUNS" | python3.12 -c "import sys,json; d=json.load(sys.stdin); print(len(d.get('check_runs',[])))" 2>/dev/null || echo "0")
+            COMPLETED_CHECKS=$(echo "$CHECK_RUNS" | python3.12 -c "import sys,json; d=json.load(sys.stdin); print(len([c for c in d.get('check_runs',[]) if c.get('status')=='completed']))" 2>/dev/null || echo "0")
+            FAILED_CHECKS=$(echo "$CHECK_RUNS" | python3.12 -c "import sys,json; d=json.load(sys.stdin); print(len([c for c in d.get('check_runs',[]) if c.get('status')=='completed' and c.get('conclusion') in ['failure','cancelled','timed_out','action_required']]))" 2>/dev/null || echo "0")
+            log "CI status: $COMPLETED_CHECKS/$TOTAL_CHECKS completed, $FAILED_CHECKS failed"
+            if [ "$TOTAL_CHECKS" -gt 0 ] && [ "$COMPLETED_CHECKS" -eq "$TOTAL_CHECKS" ] && [ "$FAILED_CHECKS" -eq 0 ]; then
+                log "All checks passed and completed."
+                break
             fi
             sleep 60
             WAIT_TIME=$((WAIT_TIME+1))
