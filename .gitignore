@@ -44,3 +44,8 @@ temp/
 
 # Visual Studio
 .vs/
+
+# Tool artifacts
+.obsidian/
+.understand-anything/
+bandit-report.json

@@ -10,13 +10,39 @@ Pending: requests (2.33.1), pydantic (2.13.4) — not covered by Dependabot yet
 No outdated dependencies found.
 Labeled new issues with 'triage'.
 ---
-
 ## Maintenance Run: 2026-06-27 02:06:42
 No outdated dependencies found.
 Labeled new issues with 'triage'.
 ---
-
 ## Maintenance Run: 2026-06-28 02:10:00
 Deps updated: 12 packages
 Commit: 6bb7cdc
 ---
+## Maintenance Run: 2026-07-01 02:47:28
+Outdated dependencies found: 6 packages (anthropic 0.111.0→0.115.0, fastapi 0.138.0→0.138.2, mcp 1.28.0→1.28.1, mypy 1.20.2→2.1.0, openai 2.43.0→2.44.0, redis 8.0.0→8.0.1)
+Created branch: dependency-update-20260701024755
+Updated requirements.txt and core/requirements.txt
+Opened PR #45
+Fixed pydantic-core version conflict (2.47.0 → 2.46.4 to match pydantic 2.13.4)
+CI passed: CodeQL analysis, Automatic Dependency Submission
+Merged PR #45 (squash merge, branch deleted)
+Issues labeled: none (no open unlabeled issues)
+---
+## Maintenance Run: 2026-07-04 02:14:17
+Outdated dependencies found: 7 packages (including anthropic, fastapi, filelock, pydantic-core, typing_extensions, uvicorn).
+Created branch: dependency-update-20260704021443
+Updated requirements.txt
+Opened PR #46
+CI passed: CodeQL analysis (Analyze (python) and CodeQL) and CodeRabbit
+Merged PR #46 (squash merge, branch deleted)
+Issues labeled: none (no open unlabeled issues)
+---
+
+## Maintenance Run: 2026-07-05 02:22:55
+Outdated dependencies found: 2 packages (stevedore 5.8.0→5.9.0 and one other?)
+Created branch: dependency-update-20260705021220
+Updated requirements.txt
+Opened PR #47
+PR merged after CI passed.
+Labeled new issues with 'triage' (none found).
+---\n
