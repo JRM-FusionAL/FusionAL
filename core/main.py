@@ -1,4 +1,4 @@
-"""
+"\"\"\"
 FusionAL - FastAPI MCP Execution Server
 
 Core execution engine for MCP servers with Docker sandboxing support.
@@ -6,7 +6,7 @@ Provides REST APIs for code execution, MCP server registration, and catalog mana
 
 Security: API key auth + rate limiting via shared common/security.py
          (sourced from mcp-consulting-kit/showcase-servers/common/)
-"""
+\"\"\"
 
 import os
 import sys
@@ -26,9 +26,6 @@ from typing import List, Optional
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
-PORT = int(os.getenv("PORT", "8009"))
-LOGGER = logging.getLogger("fusional.main")
 
 # --- Security module: cross-platform path resolution ---
 _this_file = Path(__file__).resolve()
@@ -78,46 +75,28 @@ try:
 except ImportError:
     _AUDIT_ENABLED = False
 
+# --- MCP transport + aggregating proxy ---
+
 # --- Docker runner ---
 try:
     from runner_docker import run_in_docker
 except Exception:
     run_in_docker = None
 
-# --- MCP transport + aggregating proxy ---
-from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
-from .ai_agent import generate_python_from_claude, generate_python_from_openai
-
 # Wire the audit hook so proxied tool calls are recorded
 if _AUDIT_ENABLED:
     set_audit_hook(record_tool_call)
 
-
-@asynccontextmanager
-async def _lifespan(app):
-    # Start MCP session manager
-    app.state._mcp_session_context = mcp.session_manager.run()
-    await app.state._mcp_session_context.__aenter__()
-
-    # Register downstream tools (failures are logged but non-fatal)
-    try:
-        await register_downstream_tools(REGISTRY)
-    except Exception as exc:
-        LOGGER.warning("proxy.register_failed error=%s", exc)
-
-    yield
-
-    ctx = getattr(app.state, "_mcp_session_context", None)
-    if ctx is not None:
-        await ctx.__aexit__(None, None, None)
-
+from .ai_agent import generate_python_from_claude, generate_python_from_openai
+from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
+PORT = int(os.getenv("PORT", "8009"))
+LOGGER = logging.getLogger("fusional.main")
 
 # --- App ---
 app = FastAPI(
     title="FusionAL - MCP Execution Server",
     description="AI-powered MCP server builder and executor with Docker sandboxing",
     version="1.0.0",
-    lifespan=_lifespan,
 )
 
 if _SECURITY_ENABLED:
@@ -150,7 +129,7 @@ if _SECURITY_ENABLED:
     _rate = enforce_rate_limit
 
 
-# ── Models ──────────────────────────────────────────────────────────────────
+# ── Models ────────────────────────────────────────────────────────────────
 
 class ExecRequest(BaseModel):
     language: str = "python"
@@ -281,8 +260,8 @@ def _find_available_port(start: int = 8200, end: int = 8299) -> int:
     raise RuntimeError(f"No available ports in range {start}-{end}")
 
 
-def _extract_tools_from_code(code: str) -> List[str]:
-    tools: List[str] = []
+def _extract_tools_from_code(code: str) -> list[str]:
+    tools: list[str] = []
     for match in re.finditer(r"@mcp\\.tool\\((.*?)\\)", code, flags=re.DOTALL):
         args_text = match.group(1)
         name_match = re.search(r"name\\s*=\\s*[\"']([^\"']+)[\"']", args_text)
@@ -303,7 +282,9 @@ def _extract_tools_from_code(code: str) -> List[str]:
 def _generate_local_server_code(server_name: str, user_request: str) -> str:
     safe_name = re.sub(r"[^a-zA-Z0-9_]", "_", server_name)[:48] or "generated_mcp"
     escaped_request = user_request.replace('"', '\\"')
-    return f'''"""Auto-generated local MCP server fallback for {server_name}."""
+    template = f'''\"\"\"
+Auto-generated local MCP server fallback for {server_name}.
+\"\"\"
 
 import os
 from datetime import datetime
@@ -340,9 +321,11 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", "8200"))
     uvicorn.run(app, host="0.0.0.0", port=port)
 '''
+    return template
 
 
-# ── Endpoints ────────────────────────────────────────────────────────────────
+# ── Endpoints ──────────────────────────────────────────────────────────────
+
 
 @app.get("/health")
 async def health():
@@ -411,7 +394,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
 
         generated_code = None
         provider_used = "local"
-        provider_errors: List[str] = []
+        provider_errors: list[str] = []
 
         if os.getenv("ANTHROPIC_API_KEY"):
             try:
@@ -465,7 +448,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         startup_logs = ""
         if proc.poll() is not None:
             out, err = proc.communicate(timeout=2)
-            startup_logs = (out or "") + ("\n" + err if err else "")
+            startup_logs = (out or "") + ("\\n" + err if err else "")
             raise RuntimeError(f"Generated server exited early with code {proc.returncode}. {startup_logs}")
 
         startup_logs = f"Generated server started with PID {proc.pid} on port {port}"
@@ -500,18 +483,19 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
 
 # ── Audit Export Endpoints ───────────────────────────────────────────────────
 
+
 @app.get("/audit/export/json")
 async def audit_export_json(
-    start: Optional[str] = None,
-    end: Optional[str] = None,
+    start: str | None = None,
+    end: str | None = None,
     _auth_dep=Depends(_auth),
 ):
-    """Export tool-call audit records as JSON.
+    """"""Export tool-call audit records as JSON.
 
     Query parameters:
         start: ISO 8601 UTC datetime (inclusive lower bound, optional)
         end:   ISO 8601 UTC datetime (inclusive upper bound, optional)
-    """
+    """"""
     if not _AUDIT_ENABLED:
         raise HTTPException(status_code=503, detail="Audit module not available")
 
@@ -530,21 +514,25 @@ async def audit_export_json(
 
 @app.get("/audit/export/csv")
 async def audit_export_csv(
-    start: Optional[str] = None,
-    end: Optional[str] = None,
+    start: str | None = None,
+    end: str | None = None,
     _auth_dep=Depends(_auth),
 ):
-    """Export tool-call audit records as CSV.
+    """"""Export tool-call audit records as CSV.
 
     Query parameters:
         start: ISO 8601 UTC datetime (inclusive lower bound, optional)
         end:   ISO 8601 UTC datetime (inclusive upper bound, optional)
-    """
+    """"""
     if not _AUDIT_ENABLED:
         raise HTTPException(status_code=503, detail="Audit module not available")
 
     start_dt = _parse_export_datetime(start, "start")
-    end_dt = _parse_export_datetime(end, "end")
+    end_dt = _parse_export_datetime(end, "end, records = store.query(start=start_dt, end=end_dt)
+    body = records_to_csv(records)
+    return StreamingResponse(
+        iter([body]),
+        media_type=") end_dt = _parse_export_datetime(end, "end")
 
     store = get_audit_store()
     records = store.query(start=start_dt, end=end_dt)
@@ -556,7 +544,7 @@ async def audit_export_csv(
     )
 
 
-def _parse_export_datetime(value: Optional[str], param_name: str) -> Optional[datetime]:
+def _parse_export_datetime(value: str | None, param_name: str) -> datetime | None:
     if value is None:
         return None
     try:
