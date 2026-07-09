@@ -3,9 +3,8 @@
 import csv
 import io
 import json
-from datetime import datetime, timezone, timedelta
-
-import pytest
+from datetime import datetime, timezone
+from datetime import datetime, timezone
 
 from audit import (
     AuditRecord,

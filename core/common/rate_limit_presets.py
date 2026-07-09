@@ -31,7 +31,7 @@ from __future__ import annotations
 import logging
 import os
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -261,7 +261,7 @@ def configure_error_budget_tracking(
 
     @app.middleware("http")
     async def _error_budget_middleware(request: "Request", call_next: object):
-        from fastapi import Response  # local import to avoid circular deps
+        from fastapi import Response  # noqa: F401
 
         response: Response = await call_next(request)  # type: ignore[misc]
         is_error = response.status_code >= 500
