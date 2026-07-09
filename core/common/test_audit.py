@@ -4,7 +4,6 @@ import csv
 import io
 import json
 from datetime import datetime, timezone
-from datetime import datetime, timezone
 
 from audit import (
     AuditRecord,

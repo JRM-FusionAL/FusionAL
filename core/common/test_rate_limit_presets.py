@@ -10,12 +10,9 @@ Covers:
 """
 
 import logging
-import time
-
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-
 import rate_limit_presets as rlp
 import security
 
