@@ -1,4 +1,4 @@
-"\"\"\"
+"""
 FusionAL - FastAPI MCP Execution Server
 
 Core execution engine for MCP servers with Docker sandboxing support.
@@ -6,7 +6,7 @@ Provides REST APIs for code execution, MCP server registration, and catalog mana
 
 Security: API key auth + rate limiting via shared common/security.py
          (sourced from mcp-consulting-kit/showcase-servers/common/)
-\"\"\"
+"""
 
 import os
 import sys
@@ -490,12 +490,12 @@ async def audit_export_json(
     end: str | None = None,
     _auth_dep=Depends(_auth),
 ):
-    """"""Export tool-call audit records as JSON.
+    """Export tool-call audit records as JSON.
 
     Query parameters:
         start: ISO 8601 UTC datetime (inclusive lower bound, optional)
         end:   ISO 8601 UTC datetime (inclusive upper bound, optional)
-    """"""
+    """
     if not _AUDIT_ENABLED:
         raise HTTPException(status_code=503, detail="Audit module not available")
 
@@ -518,21 +518,17 @@ async def audit_export_csv(
     end: str | None = None,
     _auth_dep=Depends(_auth),
 ):
-    """"""Export tool-call audit records as CSV.
+    """Export tool-call audit records as CSV.
 
     Query parameters:
         start: ISO 8601 UTC datetime (inclusive lower bound, optional)
         end:   ISO 8601 UTC datetime (inclusive upper bound, optional)
-    """"""
+    """
     if not _AUDIT_ENABLED:
         raise HTTPException(status_code=503, detail="Audit module not available")
 
     start_dt = _parse_export_datetime(start, "start")
-    end_dt = _parse_export_datetime(end, "end, records = store.query(start=start_dt, end=end_dt)
-    body = records_to_csv(records)
-    return StreamingResponse(
-        iter([body]),
-        media_type=") end_dt = _parse_export_datetime(end, "end")
+    end_dt = _parse_export_datetime(end, "end")
 
     store = get_audit_store()
     records = store.query(start=start_dt, end=end_dt)
