@@ -76,6 +76,11 @@ except ImportError:
     _AUDIT_ENABLED = False
 
 # --- MCP transport + aggregating proxy ---
+from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
+
+# Wire the audit hook so proxied tool calls are recorded
+if _AUDIT_ENABLED:
+    set_audit_hook(record_tool_call)
 
 # --- Docker runner ---
 try:
@@ -83,12 +88,7 @@ try:
 except Exception:
     run_in_docker = None
 
-# Wire the audit hook so proxied tool calls are recorded
-if _AUDIT_ENABLED:
-    set_audit_hook(record_tool_call)
-
 from .ai_agent import generate_python_from_claude, generate_python_from_openai
-from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
 
