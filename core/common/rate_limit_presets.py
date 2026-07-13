@@ -261,6 +261,7 @@ def configure_error_budget_tracking(
 
     @app.middleware("http")
     async def _error_budget_middleware(request: "Request", call_next: object):
+        from fastapi import Response  # local import to avoid circular deps
 
         response: Response = await call_next(request)  # type: ignore[misc]
         is_error = response.status_code >= 500
