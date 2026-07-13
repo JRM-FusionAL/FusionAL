@@ -10,7 +10,6 @@ Covers:
 """
 
 import logging
-import time
 
 import pytest
 from fastapi import FastAPI

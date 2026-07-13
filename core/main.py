@@ -7,6 +7,8 @@ Provides REST APIs for code execution, MCP server registration, and catalog mana
 Security: API key auth + rate limiting via shared common/security.py
          (sourced from mcp-consulting-kit/showcase-servers/common/)
 """
+from .ai_agent import generate_python_from_claude, generate_python_from_openai
+from fastapi.staticfiles import StaticFiles
 
 import os
 import sys
@@ -20,12 +22,12 @@ import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
-from contextlib import asynccontextmanager
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from .mcp_transport import mcp, set_audit_hook
 
 # --- Security module: cross-platform path resolution ---
 _this_file = Path(__file__).resolve()
@@ -76,7 +78,6 @@ except ImportError:
     _AUDIT_ENABLED = False
 
 # --- MCP transport + aggregating proxy ---
-from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
 
 # Wire the audit hook so proxied tool calls are recorded
 if _AUDIT_ENABLED:
@@ -88,7 +89,6 @@ try:
 except Exception:
     run_in_docker = None
 
-from .ai_agent import generate_python_from_claude, generate_python_from_openai
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
 
@@ -110,7 +110,6 @@ if _TRACING_IMPORTABLE:
 mcp.settings.streamable_http_path = "/"
 mcp_app = mcp.streamable_http_app()
 app.mount("/mcp", mcp_app)
-from fastapi.staticfiles import StaticFiles
 _wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))
 if os.path.isdir(_wk_dir):
     app.mount("/.well-known", StaticFiles(directory=_wk_dir), name="well-known")
@@ -476,7 +475,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             "provider": provider_used,
             "logs": startup_logs,
         }
-    except Exception as exc:
+    except Exception:
         LOGGER.exception("Unexpected error in /generate endpoint")
         return {"status": "error", "error": "Internal server error"}
 
