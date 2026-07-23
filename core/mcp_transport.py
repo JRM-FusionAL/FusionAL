@@ -18,7 +18,7 @@ import logging
 import time
 from typing import Any
 
-from pydantic import ConfigDict, create_model
+from pydantic import ConfigDict
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.tools.base import Tool

@@ -1,6 +1,5 @@
 """Quick test of FusionAL AI generation"""
 from ai_agent import generate_mcp_project
-import json
 
 print("🚀 Testing FusionAL AI Generation...\n")
 
@@ -14,7 +13,7 @@ try:
     
     print("✅ Generation successful!")
     print(f"\n📁 Output directory: {result['out_dir']}")
-    print(f"\n📝 Generated files:")
+    print("\n📝 Generated files:")
     for file in result['files']:
         print(f"  - {file}")
     
