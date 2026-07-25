@@ -3,10 +3,10 @@ Shared security module for MCP Consulting Kit servers.
 Provides API key authentication, rate limiting, CORS, and observability.
 """
 
+import logging
 import os
 import time
-import logging
-from typing import Optional
+
 from fastapi import FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security.api_key import APIKeyHeader
@@ -35,7 +35,7 @@ def _get_revoked_keys() -> set:
         return set()
     return {k.strip() for k in revoked.split(",") if k.strip()}
 
-async def verify_api_key(api_key: Optional[str] = Security(API_KEY_HEADER)):
+async def verify_api_key(api_key: str | None = Security(API_KEY_HEADER)):
     valid_keys = _get_valid_keys()
     if not valid_keys:
         return  # No keys configured — open access (dev mode)

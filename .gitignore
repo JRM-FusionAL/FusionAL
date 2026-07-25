@@ -49,3 +49,7 @@ temp/
 .obsidian/
 .understand-anything/
 bandit-report.json
+
+# Secrets
+OpenRouter_CC
+.bak
