@@ -7,7 +7,7 @@ python-dotenv==1.2.2
 requests==2.34.2
 anthropic==0.111.0
 redis==8.0.0
-mcp[cli]==1.28.0
+mcp[cli]==1.28.1
 
 # Tracing (OpenTelemetry)
 opentelemetry-sdk>=1.42.1
