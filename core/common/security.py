@@ -53,8 +53,14 @@ def _validate_cors_origins(origins: list[str]) -> list[str]:
 
 
 def get_rate_limit() -> tuple[int, int]:
-    requests = int(os.getenv("RATE_LIMIT_REQUESTS", "60"))
-    window_seconds = int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60"))
+    import rate_limit_presets as rlp
+
+    requests_env = os.getenv("RATE_LIMIT_REQUESTS")
+    window_env = os.getenv("RATE_LIMIT_WINDOW_SECONDS")
+    preset = rlp.get_active_preset()
+
+    requests = int(requests_env) if requests_env is not None else preset.requests_per_window
+    window_seconds = int(window_env) if window_env is not None else preset.window_seconds
     return requests, window_seconds
 
 
