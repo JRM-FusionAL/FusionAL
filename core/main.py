@@ -87,6 +87,7 @@ except Exception:
     run_in_docker = None
 
 from .ai_agent import generate_python_from_claude, generate_python_from_openai
+from .policy_profiles import ACTIVE_PROFILE_NAME, enforce_execute_limits
 
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
@@ -334,7 +335,7 @@ if __name__ == "__main__":
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "FusionAL MCP Server", "security_enabled": _SECURITY_ENABLED, "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "ok", "service": "FusionAL MCP Server", "security_enabled": _SECURITY_ENABLED, "policy_profile": ACTIVE_PROFILE_NAME, "timestamp": datetime.utcnow().isoformat()}
 
 
 @app.post("/execute")
@@ -342,11 +343,15 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
     if req.language != "python":
         raise HTTPException(status_code=400, detail="Only 'python' language supported")
 
-    if req.use_docker:
+    use_docker, timeout, memory_mb = enforce_execute_limits(
+        bool(req.use_docker), req.timeout, req.memory_mb or 128
+    )
+
+    if use_docker:
         if run_in_docker is None:
             raise HTTPException(status_code=500, detail="Docker runner not available on server")
         try:
-            return run_in_docker(req.code, timeout=req.timeout, memory_mb=req.memory_mb)
+            return run_in_docker(req.code, timeout=timeout, memory_mb=memory_mb)
         except subprocess.TimeoutExpired:
             raise HTTPException(status_code=504, detail="Execution timed out")
         except subprocess.CalledProcessError as e:
@@ -359,7 +364,7 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
     with open(script_path, "w", encoding="utf-8") as f:
         f.write(req.code)
     try:
-        proc = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=req.timeout)  # nosec B603
+        proc = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=timeout)  # nosec B603
         return {"stdout": proc.stdout, "stderr": proc.stderr, "returncode": proc.returncode}
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=504, detail="Execution timed out")
