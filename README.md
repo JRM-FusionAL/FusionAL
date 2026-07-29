@@ -7,7 +7,7 @@
 [![smithery badge](https://smithery.ai/badge/jrm-fusional/fusional)](https://smithery.ai/servers/jrm-fusional/fusional)
 
 > **Your team connected 10 MCP servers. Now what?**  
-> 🌐 [fusional.dev](https://fusional.dev) • 📧 [jonathanmelton.fusional@gmail.com](mailto:jonathanmelton.fusional@gmail.com) • 🗓️ [Book a Call](https://calendly.com/jonathanmelton004/30min)
+> 🌐 [fusional.dev](https://fusional.dev) • 📧 [jrm@fusional.com](mailto:jrm@fusional.com) • 🗓️ [Book a Call](https://calendly.com/jonathanmelton004/30min)
 
 MCP is powerful. Enterprise MCP deployment is a different problem entirely.
 
