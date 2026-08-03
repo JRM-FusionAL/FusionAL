@@ -22,7 +22,7 @@ dnspython==2.8.0
 docstring_parser==0.18.0
 fastapi==0.141.1
 feedparser==6.0.14
-feedparser-sgmllib==2.0.1
+feedparser-sgmllib==2.1.0
 filelock==3.32.2
 googleapis-common-protos==1.75.0
 greenlet==3.5.4
@@ -106,7 +106,7 @@ typing-inspection==0.4.2
 typing_extensions==4.16.0
 update_checker==1.0.0
 urllib3==2.7.0
-uvicorn==0.52.0
+uvicorn==0.52.1
 uvloop==0.22.1
 watchfiles==1.2.0
 websocket-client==1.9.0
