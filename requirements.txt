@@ -61,7 +61,7 @@ opentelemetry-proto==1.44.0
 opentelemetry-sdk==1.44.0
 opentelemetry-semantic-conventions==0.65b0
 opentelemetry-util-http==0.65b0
-packaging==26.2
+packaging==26.3
 pathspec==1.1.1
 pluggy==1.6.0
 praw==8.0.2
