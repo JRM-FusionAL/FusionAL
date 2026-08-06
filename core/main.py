@@ -92,11 +92,26 @@ from .ai_agent import generate_python_from_claude, generate_python_from_openai
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
 
+# --- MCP sub-app must exist before FastAPI() so its session-manager lifespan
+# gets wired into the parent app via _lifespan. Mounting alone does not propagate it.
+mcp.settings.streamable_http_path = "/"
+mcp_app = mcp.streamable_http_app()
+
+
+@asynccontextmanager
+async def _lifespan(app):
+    """Wrap the MCP session-manager lifespan, then register downstream proxy tools."""
+    async with mcp_app.router.lifespan_context(app):
+        await register_downstream_tools(REGISTRY)
+        yield
+
+
 # --- App ---
 app = FastAPI(
     title="FusionAL - MCP Execution Server",
     description="AI-powered MCP server builder and executor with Docker sandboxing",
     version="1.0.0",
+    lifespan=_lifespan,
 )
 
 if _SECURITY_ENABLED:
@@ -107,8 +122,6 @@ if _SECURITY_ENABLED:
 if _TRACING_IMPORTABLE:
     configure_tracing(app)
 
-mcp.settings.streamable_http_path = "/"
-mcp_app = mcp.streamable_http_app()
 app.mount("/mcp", mcp_app)
 from fastapi.staticfiles import StaticFiles
 _wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))

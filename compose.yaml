@@ -1,4 +1,22 @@
 services:
+  commander:
+    build:
+      context: ./commander-mcp-server
+      dockerfile: Dockerfile
+    container_name: fusional-commander
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:8118:8118
+    environment:
+      - TRANSPORT=http
+      - PORT=8118
+      - ALLOWED_ROOT=/data
+      - DEFAULT_SHELL=/bin/bash
+    volumes:
+      - ${HOME}/projects:/data:rw
+    networks:
+      - default
+      - mcp-kit
   fusional:
     image: fusional
     build:
@@ -16,7 +34,6 @@ services:
     networks:
       - default
       - mcp-kit
-
 networks:
   default: {}
   mcp-kit:

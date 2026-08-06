@@ -24,7 +24,9 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.tools.base import Tool
 from mcp.server.fastmcp.utilities.func_metadata import ArgModelBase, FuncMetadata
 from mcp.server.transport_security import TransportSecuritySettings
-from mcp.client.streamable_http import streamablehttp_client
+import httpx
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
 from mcp import ClientSession
 
 from .ai_agent import (
@@ -180,7 +182,7 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
         status = "success"
         error_str = ""
         try:
-            async with streamablehttp_client(mcp_url, timeout=30.0) as (read, write, _):
+            async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=30.0, follow_redirects=True)) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     result = await session.call_tool(tool_name, kwargs)
@@ -240,7 +242,7 @@ async def register_downstream_tools(registry: dict) -> None:
             last_exc: Exception | None = None
             for attempt in range(2):
                 try:
-                    async with streamablehttp_client(mcp_url, timeout=5.0) as (read, write, _):
+                    async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=5.0, follow_redirects=True)) as (read, write, _):
                         async with ClientSession(read, write) as session:
                             await session.initialize()
                             tools_result = await session.list_tools()
