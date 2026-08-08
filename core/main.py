@@ -20,8 +20,7 @@ import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
-from contextlib import asynccontextmanager
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
@@ -76,7 +75,7 @@ except ImportError:
     _AUDIT_ENABLED = False
 
 # --- MCP transport + aggregating proxy ---
-from .mcp_transport import mcp, register_downstream_tools, set_audit_hook
+from .mcp_transport import mcp, set_audit_hook  # noqa: E402
 
 # Wire the audit hook so proxied tool calls are recorded
 if _AUDIT_ENABLED:
@@ -88,7 +87,7 @@ try:
 except Exception:
     run_in_docker = None
 
-from .ai_agent import generate_python_from_claude, generate_python_from_openai
+from .ai_agent import generate_python_from_claude, generate_python_from_openai  # noqa: E402
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
 
@@ -123,7 +122,7 @@ if _TRACING_IMPORTABLE:
     configure_tracing(app)
 
 app.mount("/mcp", mcp_app)
-from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles  # noqa: E402
 _wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))
 if os.path.isdir(_wk_dir):
     app.mount("/.well-known", StaticFiles(directory=_wk_dir), name="well-known")
@@ -489,7 +488,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             "provider": provider_used,
             "logs": startup_logs,
         }
-    except Exception as exc:
+    except Exception:
         LOGGER.exception("Unexpected error in /generate endpoint")
         return {"status": "error", "error": "Internal server error"}
 

@@ -1,7 +1,7 @@
 aiosqlite==0.22.1
 annotated-doc==0.0.4
 annotated-types==0.7.0
-anthropic==0.116.0
+anthropic==0.118.0
 anyio==4.14.1
 asgiref==3.11.1
 ast_serialize==0.6.0
@@ -20,7 +20,7 @@ defusedxml==0.7.1
 distro==1.9.0
 dnspython==2.8.0
 docstring_parser==0.18.0
-fastapi==0.139.0
+fastapi==0.139.2
 feedparser==6.0.12
 filelock==3.29.7
 googleapis-common-protos==1.75.0
@@ -46,7 +46,7 @@ mdurl==0.1.2
 mypy==2.2.0
 mypy_extensions==1.1.0
 oauthlib==3.3.1
-openai==2.44.0
+openai==2.47.0
 opentelemetry-api==1.43.0
 opentelemetry-exporter-otlp-proto-common==1.43.0
 opentelemetry-exporter-otlp-proto-http==1.43.0
