@@ -262,6 +262,51 @@ The gateway resolves this module at startup by searching these candidate paths:
 
 If the module is not found, security is disabled and a warning is logged.
 
+### External MCP Access (`/mcp`)
+
+`/mcp` sits behind Cloudflare Access, with one bypass Application scoped to
+`gateway.fusional.dev/mcp` for clients that can't send CF Access headers
+(claude.ai custom connectors, Hermes). That bypass is closed by
+`MCPExternalApiKeyMiddleware` (`core/main.py`) — fails closed (503) if
+`MCP_EXTERNAL_API_KEY` is unset once `/mcp` is reachable outside CF Access.
+
+Two ways to authenticate against it:
+- **Header** — `X-API-Key: <MCP_EXTERNAL_API_KEY>` on `/mcp`. Used internally
+  (Hermes) where the client can set arbitrary headers.
+- **Capability URL** — `/mcp/k/<MCP_EXTERNAL_API_KEY>/`. claude.ai's
+  "Add custom connector" UI only has Name / URL / OAuth Client ID+Secret —
+  no raw header field, and putting the key in OAuth Client ID drives a real
+  OAuth authorization-code flow against a non-existent `/authorize`. The
+  capability URL is the only auth-delivery path that UI actually supports:
+  paste the URL, leave OAuth fields blank. The middleware strips the
+  `/k/<secret>` segment (constant-time compared via `hmac.compare_digest`)
+  before falling through to the `/mcp` mount. Tradeoff: the secret lands in
+  access logs like any capability-URL scheme — rotate `MCP_EXTERNAL_API_KEY`
+  if that's a concern. Logged as SI-105 in FusionAL-Recall.
+
+`.env` at repo root is canonical; `core/.env` is a symlink to it (both
+`load_dotenv()`-with-no-path calls in `ai_agent.py`/`notion_poller.py`
+resolve via cwd, and `scripts/notion_reporter.py` /
+`scripts/think_tank_trigger.py` hardcode `core/.env` — the symlink keeps
+both paths reading the same file instead of drifting).
+
+### commander-mcp-server (sibling MCP, filesystem + shell exec)
+
+Lives at `commander-mcp-server/` in this repo (untracked, own git repo) —
+gives an MCP client `fs_*` and `proc_*` tools (read/write/exec) scoped to
+`ALLOWED_ROOT`. Two deployments exist:
+- Docker (`fusional-commander` container) — publishes only to
+  `127.0.0.1:8118`, already localhost-only.
+- systemd (`commander-mcp.service`, port 8109, `ALLOWED_ROOT=/home/jrm_fusional`)
+  — found running with **no auth, bound to `0.0.0.0`**, reachable from LAN
+  and Tailscale. Fixed 2026-08-09: `COMMANDER_API_KEY` required on `/mcp`
+  (fails closed, same pattern as `MCP_EXTERNAL_API_KEY` above), default bind
+  changed to `127.0.0.1` (`HOST` env var to widen deliberately). Also fixed
+  a symlink TOCTOU gap in `security.ts`'s `resolveSafePath` — it only
+  real-path-checked paths that already existed, so a symlinked ancestor
+  directory could redirect a *new* file write outside `ALLOWED_ROOT`;
+  now walks up to the nearest existing ancestor and resolves that.
+
 ### Docker Sandbox (for `/execute`)
 
 When `use_docker=true`:

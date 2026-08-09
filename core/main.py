@@ -8,6 +8,7 @@ Security: API key auth + rate limiting via shared common/security.py
          (sourced from mcp-consulting-kit/showcase-servers/common/)
 """
 
+import hmac
 import os
 import sys
 import json
@@ -26,6 +27,8 @@ from typing import List, Optional
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from starlette.datastructures import Headers
+from starlette.responses import JSONResponse
 
 # --- Security module: cross-platform path resolution ---
 _this_file = Path(__file__).resolve()
@@ -106,6 +109,88 @@ async def _lifespan(app):
         yield
 
 
+_MCP_CAPABILITY_PATH_RE = re.compile(r"^(/mcp)/k/([^/]+)(/.*)?$")
+
+
+class MCPExternalApiKeyMiddleware:
+    """Gate /mcp with a dedicated X-API-Key, independent of the internal
+    API_KEY/API_KEYS used for REST endpoints.
+
+    Exists because remote MCP clients (e.g. claude.ai custom connectors) sit
+    behind a fixed header allowlist and can't send Cloudflare Access's
+    CF-Access-Client-Id/Secret headers — CF Access enforcement is bypassed
+    for this path at the edge, so this is the only gate an external caller
+    hits. Internal callers (Hermes, Commander) reach /mcp over the loopback
+    network and are unaffected.
+
+    Also accepts the same secret embedded in the path as /mcp/k/<secret>/...
+    ("capability URL"). claude.ai's custom-connector UI has no field for a
+    static request header at all — only Name, Remote MCP server URL, and
+    (under Advanced settings) OAuth Client ID/Secret, which drives a real
+    OAuth authorization-code+PKCE flow, not a static header. Putting the key
+    there makes claude.ai attempt OAuth against a server that isn't an OAuth
+    provider. A capability URL is the only delivery mechanism that fits
+    claude.ai's actual UI: paste the URL once, no auth fields touched.
+    Tradeoff: the secret lands in CF/uvicorn access logs, same as any
+    capability-URL scheme — rotate MCP_EXTERNAL_API_KEY if that's ever a
+    concern.
+
+    Pure ASGI (not BaseHTTPMiddleware) so the MCP streamable-HTTP/SSE
+    response body is never buffered — BaseHTTPMiddleware would break
+    long-lived streaming responses.
+    """
+
+    def __init__(self, app, mcp_prefix: str = "/mcp"):
+        self.app = app
+        self.mcp_prefix = mcp_prefix
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or not scope["path"].startswith(self.mcp_prefix):
+            await self.app(scope, receive, send)
+            return
+
+        required_key = os.getenv("MCP_EXTERNAL_API_KEY", "").strip()
+        if not required_key:
+            # Fail closed. A CF Access bypass Application now exists for this
+            # path (gateway.fusional.dev/mcp) specifically so external clients
+            # that can't send CF-Access-Client-Id/Secret can reach this gate —
+            # which means CF Access no longer protects /mcp at the edge. If
+            # this key is ever unset, the old "rely on network-layer
+            # protection" fallback would leave /mcp open to the internet
+            # unauthenticated. Deny instead; misconfiguration should be loud.
+            response = JSONResponse(
+                {"detail": "MCP_EXTERNAL_API_KEY not configured on server"},
+                status_code=503,
+            )
+            await response(scope, receive, send)
+            return
+
+        path_match = _MCP_CAPABILITY_PATH_RE.match(scope["path"])
+        if path_match:
+            candidate = path_match.group(2)
+            if not hmac.compare_digest(candidate, required_key):
+                response = JSONResponse({"detail": "Invalid MCP capability URL"}, status_code=401)
+                await response(scope, receive, send)
+                return
+            # Strip the /k/<secret> segment so downstream MCP routing sees a
+            # normal /mcp/ path — the mcp_app is mounted at /mcp and knows
+            # nothing about the capability-URL segment.
+            new_path = path_match.group(1) + (path_match.group(3) or "/")
+            scope["path"] = new_path
+            if scope.get("raw_path") is not None:
+                scope["raw_path"] = new_path.encode("utf-8")
+            await self.app(scope, receive, send)
+            return
+
+        provided = Headers(scope=scope).get("x-api-key", "")
+        if not hmac.compare_digest(provided, required_key):
+            response = JSONResponse({"detail": "Invalid or missing X-API-Key"}, status_code=401)
+            await response(scope, receive, send)
+            return
+
+        await self.app(scope, receive, send)
+
+
 # --- App ---
 app = FastAPI(
     title="FusionAL - MCP Execution Server",
@@ -122,6 +207,7 @@ if _SECURITY_ENABLED:
 if _TRACING_IMPORTABLE:
     configure_tracing(app)
 
+app.add_middleware(MCPExternalApiKeyMiddleware)
 app.mount("/mcp", mcp_app)
 from fastapi.staticfiles import StaticFiles
 _wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))
