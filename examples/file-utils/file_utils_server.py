@@ -14,10 +14,11 @@ Tools:
 """
 
 import logging
-import sys
 import os
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
+
 from mcp.server.fastmcp import FastMCP
 
 # Configure logging to stderr for diagnostics
@@ -53,7 +54,7 @@ async def count_lines(filepath: str = "README.md") -> str:
         return f"❌ Error: File is not valid UTF-8 text: {filepath}"
     except Exception as e:
         logger.error(f"Count lines failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -83,7 +84,7 @@ async def get_file_info(filepath: str = "README.md") -> str:
         return f"❌ Error: Permission denied accessing: {filepath}"
     except Exception as e:
         logger.error(f"Get file info failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -121,7 +122,7 @@ async def search_text(filepath: str = "README.md", pattern: str = "TODO") -> str
         return f"❌ Error: File is not valid UTF-8 text: {filepath}"
     except Exception as e:
         logger.error(f"Search text failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -162,7 +163,7 @@ async def list_files(directory: str = ".", extension: str = "*") -> str:
         return f"❌ Error: Permission denied accessing: {directory}"
     except Exception as e:
         logger.error(f"List files failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 if __name__ == "__main__":

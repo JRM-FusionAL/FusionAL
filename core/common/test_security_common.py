@@ -1,11 +1,10 @@
-from types import SimpleNamespace
 import json
+from types import SimpleNamespace
 
 import pytest
+import security
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
-
-import security
 
 
 def build_request(path: str = "/nl-query", ip: str = "127.0.0.1"):

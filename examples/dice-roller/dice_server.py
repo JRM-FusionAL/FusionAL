@@ -6,10 +6,10 @@ Provides comprehensive dice rolling functionality for tabletop games (D&D, Pathf
 Demonstrates proper MCP patterns: single-line docstrings, error handling, logging
 """
 
-import os
-import sys
 import logging
 import random
+import sys
+
 from mcp.server.fastmcp import FastMCP
 
 # Configure logging to stderr (required for MCP servers)
@@ -83,7 +83,7 @@ async def roll_dice(notation: str = "1d20") -> str:
         return result
     except Exception as e:
         logger.error(f"Error: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -115,7 +115,7 @@ async def roll_stats() -> str:
 **Total:** {total}"""
     except Exception as e:
         logger.error(f"Error: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -144,7 +144,7 @@ async def flip_coin(count: str = "1") -> str:
         return f"❌ Error: Invalid count: {count}"
     except Exception as e:
         logger.error(f"Error: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -184,7 +184,7 @@ async def roll_check(dc: str = "15", modifier: str = "0", skill: str = "Check") 
         return f"❌ Error: Invalid input - DC: {dc}, modifier: {modifier}"
     except Exception as e:
         logger.error(f"Error: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 # === SERVER STARTUP ===

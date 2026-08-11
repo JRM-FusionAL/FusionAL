@@ -9,20 +9,19 @@ Security: API key auth + rate limiting via shared common/security.py
 """
 
 import hmac
-import os
-import sys
 import json
 import logging
+import os
 import re
-import socket
 import shutil
+import socket
 import subprocess  # nosec B404
+import sys
 import tempfile
 import time
+from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
-from contextlib import asynccontextmanager
-from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
@@ -73,7 +72,7 @@ except ImportError:
     _TRACING_IMPORTABLE = False
 
 try:
-    from audit import get_audit_store, record_tool_call, records_to_json, records_to_csv
+    from audit import get_audit_store, record_tool_call, records_to_csv, records_to_json
     _AUDIT_ENABLED = True
 except ImportError:
     _AUDIT_ENABLED = False
@@ -92,6 +91,7 @@ except Exception:
     run_in_docker = None
 
 from .ai_agent import generate_python_from_claude, generate_python_from_openai
+
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
 
@@ -210,6 +210,7 @@ if _TRACING_IMPORTABLE:
 app.add_middleware(MCPExternalApiKeyMiddleware)
 app.mount("/mcp", mcp_app)
 from fastapi.staticfiles import StaticFiles
+
 _wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))
 if os.path.isdir(_wk_dir):
     app.mount("/.well-known", StaticFiles(directory=_wk_dir), name="well-known")
@@ -234,15 +235,15 @@ class ExecRequest(BaseModel):
     language: str = "python"
     code: str
     timeout: int = 5
-    use_docker: Optional[bool] = False
-    memory_mb: Optional[int] = 128
+    use_docker: bool | None = False
+    memory_mb: int | None = 128
 
 
 class RegisterRequest(BaseModel):
     name: str
-    description: Optional[str] = None
-    url: Optional[str] = None
-    metadata: Optional[dict] = None
+    description: str | None = None
+    url: str | None = None
+    metadata: dict | None = None
 
 
 class GenerateRequest(BaseModel):
@@ -575,7 +576,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             "provider": provider_used,
             "logs": startup_logs,
         }
-    except Exception as exc:
+    except Exception:
         LOGGER.exception("Unexpected error in /generate endpoint")
         return {"status": "error", "error": "Internal server error"}
 

@@ -12,9 +12,10 @@ Tools:
 - parse_weather: Parse and format weather data
 """
 
+import json
 import logging
 import sys
-import json
+
 from mcp.server.fastmcp import FastMCP
 
 # Configure logging to stderr for diagnostics
@@ -35,7 +36,7 @@ async def get_weather(location: str = "New York") -> str:
         # Note: This uses a free weather API. In production, use a real API key.
         import requests
 
-        url = f"https://api.open-meteo.com/v1/forecast"
+        url = "https://api.open-meteo.com/v1/forecast"
         params = {
             "latitude": 40.7128,
             "longitude": -74.006,
@@ -58,7 +59,7 @@ async def get_weather(location: str = "New York") -> str:
         return "❌ Error: requests library not installed. Install with: pip install requests"
     except Exception as e:
         logger.error(f"Weather fetch failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -71,7 +72,7 @@ async def get_forecast(location: str = "New York", days: str = "5") -> str:
 
         import requests
 
-        url = f"https://api.open-meteo.com/v1/forecast"
+        url = "https://api.open-meteo.com/v1/forecast"
         params = {
             "latitude": 40.7128,
             "longitude": -74.006,
@@ -102,7 +103,7 @@ async def get_forecast(location: str = "New York", days: str = "5") -> str:
         return "❌ Error: requests library not installed. Install with: pip install requests"
     except Exception as e:
         logger.error(f"Forecast fetch failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 @mcp.tool()
@@ -117,7 +118,7 @@ async def parse_weather(data_json: str = "{}") -> str:
         condition = data.get("condition", "Unknown")
         humidity = data.get("humidity", "N/A")
 
-        formatted = f"✅ Weather Summary:\n"
+        formatted = "✅ Weather Summary:\n"
         formatted += f"- Condition: {condition}\n"
         formatted += f"- Temperature: {temp}°C\n"
         formatted += f"- Humidity: {humidity}%\n"
@@ -128,7 +129,7 @@ async def parse_weather(data_json: str = "{}") -> str:
         return "❌ Error: Invalid JSON format"
     except Exception as e:
         logger.error(f"Parse failed: {e}")
-        return f"❌ Error: {str(e)}"
+        return f"❌ Error: {e!s}"
 
 
 if __name__ == "__main__":

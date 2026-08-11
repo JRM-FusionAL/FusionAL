@@ -246,7 +246,7 @@ class ErrorBudgetTracker:
 
 
 def configure_error_budget_tracking(
-    app: "FastAPI",
+    app: FastAPI,
     config: ErrorBudgetConfig | None = None,
 ) -> ErrorBudgetTracker:
     """Attach an ``ErrorBudgetTracker`` to *app* and register middleware.
@@ -260,8 +260,7 @@ def configure_error_budget_tracking(
     app.state.error_budget_tracker = tracker
 
     @app.middleware("http")
-    async def _error_budget_middleware(request: "Request", call_next: object):
-        from fastapi import Response  # local import to avoid circular deps
+    async def _error_budget_middleware(request: Request, call_next: object):
 
         response: Response = await call_next(request)  # type: ignore[misc]
         is_error = response.status_code >= 500

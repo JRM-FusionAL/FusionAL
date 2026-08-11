@@ -5,14 +5,15 @@ Generates MCP servers using Claude or OpenAI, orchestrates execution,
 and manages MCP project scaffolding with Docker integration.
 """
 
+import json
 import os
+import re
+import subprocess  # nosec B404
+import tempfile
+
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
-import subprocess  # nosec B404
-import tempfile
-import re
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
