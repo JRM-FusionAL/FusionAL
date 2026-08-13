@@ -12,7 +12,7 @@ beautifulsoup4==4.15.0
 blurhash==1.1.5
 certifi==2026.7.22
 cffi==2.1.1
-charset-normalizer==3.4.9
+charset-normalizer==3.5.0
 click==8.4.2
 cryptography==50.0.0
 decorator==5.3.1
@@ -64,7 +64,7 @@ opentelemetry-util-http==0.65b0
 packaging==26.3
 pathspec==1.1.1
 pluggy==1.6.0
-praw==8.0.2
+praw==8.0.3
 prawcore==4.0.0
 protobuf==7.35.1
 psycopg2-binary==2.9.12
@@ -102,7 +102,7 @@ tqdm==4.70.0
 truststore==0.10.4
 tweepy==4.17.0
 typer==0.27.1
-typing-inspection==0.4.3
+typing-inspection==0.4.4
 typing_extensions==4.16.0
 update_checker==1.0.0
 urllib3==2.7.0
