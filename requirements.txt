@@ -1,7 +1,7 @@
 aiosqlite==0.22.1
 annotated-doc==0.0.5
 annotated-types==0.8.0
-anthropic==0.121.0
+anthropic==0.122.0
 anyio==4.14.2
 asgiref==3.12.1
 ast_serialize==0.8.0
@@ -23,7 +23,7 @@ docstring_parser==0.18.0
 fastapi==0.141.1
 feedparser==6.0.14
 feedparser-sgmllib==2.1.0
-filelock==3.32.2
+filelock==3.32.3
 googleapis-common-protos==1.75.1
 greenlet==3.5.5
 h11==0.16.0
@@ -88,7 +88,7 @@ requests==2.34.2
 requests-oauthlib==2.0.0
 rich==15.0.0
 rpds-py==2026.6.3
-ruff==0.16.2
+ruff==0.16.3
 sgmllib3k==1.0.0
 shellingham==1.5.4
 six==1.17.0
@@ -106,7 +106,7 @@ typing-inspection==0.4.4
 typing_extensions==4.16.0
 update_checker==1.0.0
 urllib3==2.7.0
-uvicorn==0.52.1
+uvicorn==0.52.3
 uvloop==0.22.1
 watchfiles==1.2.0
 websocket-client==1.9.0
