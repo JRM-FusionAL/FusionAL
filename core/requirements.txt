@@ -6,7 +6,7 @@ openai==2.45.0
 python-dotenv==1.2.2
 requests==2.34.2
 anthropic==0.111.0
-redis==8.0.0
+redis==8.0.1
 mcp[cli]==1.28.1
 
 # Tracing (OpenTelemetry)
