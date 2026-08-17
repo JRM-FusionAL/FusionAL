@@ -11,5 +11,5 @@ mcp[cli]==1.28.1
 
 # Tracing (OpenTelemetry)
 opentelemetry-sdk>=1.42.1
-opentelemetry-instrumentation-fastapi>=0.63b1
+opentelemetry-instrumentation-fastapi>=0.65b0
 opentelemetry-exporter-otlp-proto-http>=1.43.0
