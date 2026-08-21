@@ -6,7 +6,7 @@ aiosignal==1.4.0
 aiosqlite==0.22.1
 annotated-doc==0.0.5
 annotated-types==0.8.0
-anthropic==0.125.0
+anthropic==1.0.0
 anyio==4.14.2
 asgiref==3.12.1
 ast_serialize==0.8.0
@@ -38,7 +38,7 @@ gh==0.0.4
 gitdb==4.0.12
 GitPython==3.1.59
 google-api-core==2.34.0
-google-api-python-client==2.198.0
+google-api-python-client==2.199.0
 google-auth==2.56.3
 google-auth-httplib2==0.4.1
 google-auth-oauthlib==1.4.0
@@ -101,7 +101,7 @@ prawcore==4.0.0
 prompt_toolkit==3.0.53
 propcache==0.5.2
 proto-plus==1.28.3
-protobuf==7.35.1
+protobuf==7.36.0
 psycopg2-binary==2.9.12
 pyasn1==0.6.4
 pyasn1_modules==0.4.2
@@ -130,7 +130,7 @@ requests-oauthlib==2.0.0
 rich==15.0.0
 rpds-py==2026.6.3
 ruamel.yaml==0.19.1
-ruff==0.16.3
+ruff==0.16.4
 sgmllib3k==1.0.0
 shellingham==1.5.4
 six==1.17.0
@@ -141,7 +141,7 @@ soupsieve==2.9.2
 SQLAlchemy==2.0.52
 sse-starlette==3.4.8
 starlette==1.6.0
-stevedore==5.9.0
+stevedore==5.9.1
 tornado==6.5.8
 tqdm==4.70.0
 truststore==0.10.4
