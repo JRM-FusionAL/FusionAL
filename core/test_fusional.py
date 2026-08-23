@@ -5,8 +5,9 @@ Simple tests to verify FusionAL is working correctly.
 Run this after starting the FastAPI server with: uvicorn main:app --reload --port 8009
 """
 
-import requests
 import json
+
+import requests
 
 SERVER_URL = "http://localhost:8009"
 REQUEST_TIMEOUT = 15

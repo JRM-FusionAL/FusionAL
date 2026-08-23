@@ -3,21 +3,18 @@
 import csv
 import io
 import json
-from datetime import datetime, timezone, timedelta
-
-import pytest
+from datetime import datetime, timezone
 
 from audit import (
     AuditRecord,
     AuditStore,
+    _as_utc,
+    _parse_utc,
     get_audit_store,
     record_tool_call,
-    records_to_json,
     records_to_csv,
-    _parse_utc,
-    _as_utc,
+    records_to_json,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helper

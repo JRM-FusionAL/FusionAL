@@ -98,6 +98,20 @@ print(json.dumps(outdated))
 
 OUTDATED_COUNT=$(echo "$OUTDATED_JSON" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
 
+# SI-111 guard: protected packages have deliberate exact pins.
+# mcp 2.x removes mcp.server.fastmcp (breaks gateway); pydantic-core must match pydantic.
+# Never auto-upgrade these — they only change via a reviewed manual bump.
+OUTDATED_JSON=$(echo "$OUTDATED_JSON" | python3 -c "
+import json, sys, re
+protected = re.compile(r'^(mcp|mcp-types|pydantic|pydantic-settings|pydantic-core)$')
+data = json.load(sys.stdin)
+kept = [d for d in data if not protected.match(d['name'].lower().replace('_','-'))]
+skipped = [d['name'] for d in data if protected.match(d['name'].lower().replace('_','-'))]
+if skipped:
+    print(f'PROTECTED (skipped): {skipped}', file=sys.stderr)
+print(json.dumps(kept))
+" 2>>"$LOG_FILE")
+
 if [ "$OUTDATED_COUNT" -eq 0 ]; then
     log "No outdated dependencies found."
     UPDATES_AVAILABLE=0
@@ -129,6 +143,36 @@ for item in data:
     # Update requirements.txt
     log "Updating requirements.txt"
     pip freeze > requirements.txt
+
+    # SI-111 guard: restore protected pins that pip freeze may have drifted.
+    # These are deliberate exact pins — auto-upgrades are never allowed.
+    python3 - <<'PYEOF'
+import re
+protected = {'mcp': '1.28.1', 'pydantic_core': '2.46.4'}
+lines = open('requirements.txt').read().splitlines()
+out = []
+seen = set()
+for line in lines:
+    m = re.match(r'^([A-Za-z0-9_.\-]+)==', line)
+    if m and m.group(1).lower() in {k.lower() for k in protected}:
+        name = next(k for k in protected if k.lower() == m.group(1).lower())
+        out.append(f'{name}=={protected[name]}')
+        seen.add(name.lower())
+    else:
+        out.append(line)
+for name, ver in protected.items():
+    if name.lower() not in seen:
+        out.append(f'{name}=={ver}')
+open('requirements.txt', 'w').write('\n'.join(out) + '\n')
+PYEOF
+log "Protected pins restored: mcp==1.28.1, pydantic_core==2.46.4"
+
+    # SI-111 validation gate: prove the upgraded venv actually works BEFORE
+    # committing/pushing/merging. If broken, revert and bail.
+    log "Validating updated environment..."
+    ./venv/bin/python -c "import mcp.server.fastmcp; import core.main" 2>>"$LOG_FILE" \
+        && log "Validation passed: mcp.server.fastmcp + core.main import cleanly." \
+        || { log "VALIDATION FAILED — upgraded venv is broken. Reverting requirements.txt, NOT committing."; git checkout -- requirements.txt 2>/dev/null; git checkout main -- . 2>/dev/null; exit 1; }
 
     # Commit changes
     git add requirements.txt

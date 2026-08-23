@@ -1,0 +1,35 @@
+# Add this service block to /data/projects/FusionAL/compose.yaml
+# Follows the same port-mapping pattern as your other services
+# (gateway 8089->8009, bi 8101, api 8102, content 8103, intel 8104,
+# github 8105, recall 8107). This one takes 8108.
+#
+# CHOOSE THE MOUNT CAREFULLY: whatever host path you put on the left of
+# the volumes line becomes the ENTIRE reachable filesystem for this
+# server's tools. Start narrow (e.g. just the knowledge-base folder or
+# a project dir) and widen only if you actually need to.
+
+services:
+  commander:
+    build:
+      context: ./commander-mcp-server
+      dockerfile: Dockerfile
+    container_name: fusional-commander
+    restart: unless-stopped
+    ports:
+      - "8108:8108"
+    environment:
+      - TRANSPORT=http
+      - PORT=8108
+      # Hard ceiling for every fs_*/proc_* tool. Container-side path —
+      # must match the right-hand side of the volume mount below.
+      - ALLOWED_ROOT=/data
+      - DEFAULT_SHELL=/bin/bash
+    volumes:
+      # Example: expose the knowledge base + FusionAL project dir only.
+      # Adjust the host-side (left) path to whatever you actually want
+      # this server able to touch.
+      - /data/projects:/data:rw
+    # If you're routing everything through the Cloudflare Tunnel like the
+    # other services, add a matching ingress rule for
+    # commander.fusional.dev -> http://commander:8108 in your tunnel config,
+    # the same way gateway.fusional.dev is wired up.

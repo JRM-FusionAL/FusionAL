@@ -17,7 +17,6 @@ import logging
 import os
 import threading
 from datetime import datetime, timezone
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -62,7 +61,7 @@ class AuditStore:
         self._lock = threading.Lock()
         self._records: list[AuditRecord] = []
         self._max = max_records
-        self._store_path: Optional[str] = os.getenv("AUDIT_STORE_PATH", "").strip() or None
+        self._store_path: str | None = os.getenv("AUDIT_STORE_PATH", "").strip() or None
 
     # ------------------------------------------------------------------
     # Write
@@ -82,8 +81,8 @@ class AuditStore:
 
     def query(
         self,
-        start: Optional[datetime] = None,
-        end: Optional[datetime] = None,
+        start: datetime | None = None,
+        end: datetime | None = None,
     ) -> list[AuditRecord]:
         """Return records whose timestamps fall within [*start*, *end*].
 
