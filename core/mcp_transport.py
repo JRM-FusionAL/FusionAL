@@ -181,6 +181,7 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
         t0 = time.monotonic()
         status = "success"
         error_str = ""
+        epistemic_meta: dict | None = None
         try:
             async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=30.0, follow_redirects=True)) as (read, write, _):
                 async with ClientSession(read, write) as session:
@@ -192,7 +193,19 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
                         error_str = " ".join(
                             getattr(c, "text", "") for c in result.content if hasattr(c, "text")
                         )[:500]
-                    return {"content": [c.model_dump() for c in result.content]}
+                    # Phase 1: tag every result with its epistemic envelope
+                    # (tier, sha256, downstream_use). Tagging only — no
+                    # enforcement yet. Falls back to the raw payload if the
+                    # epistemics module is unavailable.
+                    content_list = [c.model_dump() for c in result.content]
+                    payload: dict = {"content": content_list}
+                    try:
+                        from .epistemics import wrap_result
+                        payload = wrap_result(proxied_name, content_list)
+                        epistemic_meta = payload.get("epistemic")
+                    except Exception as exc:  # never break the proxy path
+                        logger.warning("epistemics.wrap_failed tool=%s error=%s", proxied_name, exc)
+                    return payload
         except Exception as exc:
             status = "error"
             error_str = str(exc)
@@ -201,7 +214,11 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
             duration_ms = (time.monotonic() - t0) * 1000
             if _record_tool_call is not None:
                 try:
-                    _record_tool_call(proxied_name, status, duration_ms, error=error_str)
+                    _record_tool_call(
+                        proxied_name, status, duration_ms, error=error_str,
+                        sha256=(epistemic_meta or {}).get("sha256", ""),
+                        epistemic_status=(epistemic_meta or {}).get("epistemic_status", ""),
+                    )
                 except Exception:
                     pass
 
