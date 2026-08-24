@@ -200,9 +200,33 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
                     content_list = [c.model_dump() for c in result.content]
                     payload: dict = {"content": content_list}
                     try:
-                        from .epistemics import wrap_result
-                        payload = wrap_result(proxied_name, content_list)
-                        epistemic_meta = payload.get("epistemic")
+                        from .epistemics import (
+                            ENFORCEMENT_ENABLED,
+                            STATUS_MAP,
+                            classify_tool,
+                            result_sha256,
+                            wrap_result,
+                        )
+                        if ENFORCEMENT_ENABLED:
+                            tier = classify_tool(proxied_name)
+                        else:
+                            tier = "READONLY"
+                        if ENFORCEMENT_ENABLED and tier != "READONLY":
+                            # Claim gate: hold the payload, disclose a notice.
+                            from .claim_gate import get_hold_store
+                            notice = get_hold_store().put(
+                                sha256=result_sha256(content_list),
+                                tool=proxied_name,
+                                tier=tier,
+                                status=STATUS_MAP[tier]["epistemic_status"],
+                                content=content_list,
+                                args=kwargs,
+                            )
+                            payload = notice
+                            epistemic_meta = notice["epistemic"]
+                        else:
+                            payload = wrap_result(proxied_name, content_list)
+                            epistemic_meta = payload.get("epistemic")
                     except Exception as exc:  # never break the proxy path
                         logger.warning("epistemics.wrap_failed tool=%s error=%s", proxied_name, exc)
                     return payload

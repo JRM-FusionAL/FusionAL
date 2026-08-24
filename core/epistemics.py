@@ -27,6 +27,8 @@ import os
 import re
 from typing import Any
 
+from .claim_gate import ENFORCEMENT_ENABLED  # noqa: F401  (re-exported)
+
 logger = logging.getLogger("fusional.epistemics")
 
 # Tier -> epistemic status + downstream permission.
