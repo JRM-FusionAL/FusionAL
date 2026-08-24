@@ -318,17 +318,23 @@ Registry entry structure:
 
 | Package | Version | Purpose |
 |---------|---------|--------|
-| `fastapi` | 0.143.0 | Web framework |
-| `uvicorn[standard]` | 0.45.0 | ASGI server |
-| `pydantic` | 2.15.0 | Request/response models |
-| `anthropic` | 0.96.0 | Claude API client |
-| `openai` | 2.32.0 | OpenAI fallback |
-| `mcp[cli]` | 1.27.1 | MCP server framework |
-| `redis` | 7.4.0 | Rate limit store |
-| `opentelemetry-*` | ≥1.40.0 | Distributed tracing |
+| `fastapi` | 0.139.0 | Web framework |
+| `uvicorn[standard]` | 0.51.0 | ASGI server |
+| `pydantic` | 2.13.4 | Request/response models |
+| `anthropic` | 0.116.0 | Claude API client |
+| `openai` | 2.44.0 | OpenAI fallback |
+| `mcp[cli]` | 1.28.1 | MCP server framework |
+| `redis` | 8.0.1 | Rate limit store |
+| `opentelemetry-*` | ≥1.43.0 | Distributed tracing |
 
-Always pin `setuptools ≥82.0.1`, `jaraco.context ≥6.1.2`, `wheel ≥0.46.3` to avoid
-known CVEs in transitive deps.
+Note: this table is a point-in-time snapshot. Dependabot and the daily dependency-update
+bot land patch/minor bumps continuously, so treat `core/requirements.txt` as the source
+of truth and this table as a rough guide, not a live mirror.
+
+Always pin `setuptools ≥83.0.0` (fixes CVE-2026-59890, a setuptools-native sdist
+MANIFEST.in exclusion bypass — the older ≥82.0.1 floor only covered the vendored
+jaraco.context/wheel CVEs, not this one), `jaraco.context ≥6.1.2`, `wheel ≥0.47.0` to
+avoid known CVEs in transitive deps.
 
 ---
 
