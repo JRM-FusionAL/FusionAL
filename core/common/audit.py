@@ -34,6 +34,8 @@ _CSV_COLUMNS = [
     "trace_id",
     "span_id",
     "error",
+    "sha256",
+    "epistemic_status",
 ]
 
 
@@ -48,6 +50,8 @@ class AuditRecord(BaseModel):
     trace_id: str = ""    # OpenTelemetry trace ID (empty when unavailable)
     span_id: str = ""     # OpenTelemetry span ID  (empty when unavailable)
     error: str = ""       # Error message; empty on success
+    sha256: str = ""              # Epistemic digest of the tool result
+    epistemic_status: str = ""    # OBSERVATION | PENDING_REVIEW | QUARANTINED
 
 
 class AuditStore:
@@ -144,6 +148,8 @@ def record_tool_call(
     trace_id: str = "",
     span_id: str = "",
     error: str = "",
+    sha256: str = "",
+    epistemic_status: str = "",
 ) -> None:
     """Append one tool-call audit record to the singleton store."""
     rec = AuditRecord(
@@ -155,6 +161,8 @@ def record_tool_call(
         trace_id=trace_id,
         span_id=span_id,
         error=error,
+        sha256=sha256,
+        epistemic_status=epistemic_status,
     )
     _store.append(rec)
     logger.debug(

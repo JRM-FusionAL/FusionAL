@@ -495,6 +495,50 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         return {"status": "error", "error": "Internal server error"}
 
 
+# ── Epistemic Claim Gate Endpoints ──────────────────────────────────────────
+
+
+@app.get("/epistemic/pending")
+async def epistemic_pending(_auth_dep=Depends(_auth)):
+    """List all held tool results awaiting human review."""
+    try:
+        from .claim_gate import get_hold_store
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Claim gate not available")
+    pending = get_hold_store().list_pending()
+    return {
+        "count": len(pending),
+        "holds": pending,
+        "enforcement_enabled": True,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+
+
+@app.post("/epistemic/promote")
+async def epistemic_promote(req: dict, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):
+    """Human sign-off: release a held result to OBSERVATION status.
+
+    Body: {"sha256": "<digest of the held result>", "released_by": "optional"}
+    The released payload is returned to the caller (human/ops tooling) —
+    NOT re-injected into any agent conversation.
+    """
+    try:
+        from .claim_gate import get_hold_store
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Claim gate not available")
+
+    sha = (req or {}).get("sha256", "").strip()
+    if not sha:
+        raise HTTPException(status_code=400, detail="Missing 'sha256' in request body")
+    try:
+        released = get_hold_store().release(sha, released_by=(req or {}).get("released_by", "human"))
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No hold for sha256={sha}")
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    return {"status": "released", **released}
+
+
 # ── Audit Export Endpoints ───────────────────────────────────────────────────
 
 
