@@ -20,7 +20,7 @@ cffi==2.1.1
 charset-normalizer==3.5.1
 click==8.4.2
 croniter==6.2.4
-cryptography==50.0.0
+cryptography==50.0.1
 decorator==5.3.1
 defusedxml==0.7.1
 dependency-injector==4.49.1
@@ -36,13 +36,13 @@ frozenlist==1.8.0
 fsspec==2026.7.0
 gh==0.0.4
 gitdb==4.0.12
-GitPython==3.1.59
+GitPython==3.1.60
 google-api-core==2.35.0
 google-api-python-client==2.199.0
 google-auth==2.57.0
 google-auth-httplib2==0.4.2
 google-auth-oauthlib==1.4.1
-googleapis-common-protos==1.75.1
+googleapis-common-protos==1.75.2
 greenlet==3.5.5
 h11==0.16.0
 hf-xet==1.6.0
@@ -100,7 +100,7 @@ praw==8.0.3
 prawcore==4.0.0
 prompt_toolkit==3.0.53
 propcache==0.5.2
-proto-plus==1.28.3
+proto-plus==1.28.4
 protobuf==7.36.0
 psycopg2-binary==2.9.12
 pyasn1==0.6.4
