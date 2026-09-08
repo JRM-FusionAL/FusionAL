@@ -22,7 +22,7 @@ try:
     print("Now check the test-joke-server directory for generated code!")
     print("="*60)
     
-except Exception as e:
+except Exception as e:  # noqa: BLE001 -- top-level smoke test; any failure should print and exit, not crash uncaught
     print(f"❌ Error: {e}")
     import traceback
     traceback.print_exc()
