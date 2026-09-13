@@ -93,7 +93,7 @@ def test_get_rate_limit_falls_back_to_production_preset(monkeypatch):
     monkeypatch.delenv("RATE_LIMIT_REQUESTS", raising=False)
     monkeypatch.delenv("RATE_LIMIT_WINDOW_SECONDS", raising=False)
     monkeypatch.setenv("RATE_LIMIT_PROFILE", "production")
-    limit, window = security.get_rate_limit()
+    limit, _window = security.get_rate_limit()
     assert limit == rlp.PRESETS["production"].requests_per_window
 
 

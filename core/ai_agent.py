@@ -27,7 +27,7 @@ HTTP_REQUEST_TIMEOUT_SECONDS = int(os.getenv("HTTP_REQUEST_TIMEOUT_SECONDS", "30
 
 
 
-def generate_python_from_claude(prompt: str, model: str = None) -> str:
+def generate_python_from_claude(prompt: str, model: str | None = None) -> str:
     """Generate Python code using Claude API."""
     if not ANTHROPIC_API_KEY:
         raise RuntimeError("ANTHROPIC_API_KEY not set in environment")
@@ -63,7 +63,7 @@ def generate_python_from_claude(prompt: str, model: str = None) -> str:
     return code
 
 
-def generate_python_from_openai(prompt: str, model: str = None) -> str:
+def generate_python_from_openai(prompt: str, model: str | None = None) -> str:
     """Generate Python code using OpenAI API."""
     if not OPENAI_API_KEY:
         raise RuntimeError("OPENAI_API_KEY not set in environment")
@@ -156,9 +156,9 @@ def _parse_files_from_ai_output(text: str):
 def generate_mcp_project(
     prompt: str,
     provider: str = "claude",
-    out_dir: str = None,
+    out_dir: str | None = None,
     build: bool = False,
-    image_tag: str = None
+    image_tag: str | None = None
 ):
     """
     Generate a complete MCP server project using AI.
