@@ -66,6 +66,15 @@ CI: 3 checks queued/in-progress (Analyze JS/Actions/Python). Awaiting pass befor
 Labels: 0 open issues without labels (nothing to tag).
 ---
 
+## Maintenance Run: 2026-08-29 02:10:00
+Outdated dependencies found: 10 packages (gitpython 3.1.60→3.1.61, importlib_metadata 9.0.0→9.0.1, openai 3.5.0→3.6.0, typer 0.27.1→0.27.2, wcwidth 0.8.2→0.8.3, plus protected skips: mcp==1.28.1, pydantic_core==2.46.4 preserved per SI-111).
+Created branch: dependency-update-20260829020531
+Updated requirements.txt and validated venv (mcp.server.fastmcp + core.main import clean).
+Merged PR #105 (dependency-update-20260828020541, squash, branch deleted) — CI passed (CodeQL Python/JS/Actions + CodeRabbit SUCCESS) on 2026-08-28 checks.
+Issues labeled with 'triage': none (0 open issues found).
+Branch dependency-update-20260829020531 rebased on origin/main after PR #105 merge; requires follow-up PR for remaining 5 package updates if not included.
+---
+
 ## Maintenance Run: 2026-09-06 02:13:49
 Outdated dependencies found: 5 packages (anyio 4.15.0→4.15.1, sse-starlette 3.4.10→3.4.11). Protected: mcp==1.28.1, pydantic_core==2.46.4 preserved per SI-111 guard.
 Created branch: dependency-update-20260906021437

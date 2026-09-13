@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # Configuration
-REPO_DIR="/home/jrm_fusional/Projects/FusionAL"
+REPO_DIR="/home/jrm-fusional/Projects/FusionAL"
 DRY_RUN=${DRY_RUN:-0}  # Set to 1 for dry run (no actual changes)
 LOG_FILE="$REPO_DIR/.hermes/maintenance.log"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
