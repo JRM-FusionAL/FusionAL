@@ -13,21 +13,24 @@ Usage:
     ctx = get_trace_context()       # {"trace_id": "...", "span_id": "..."}
 """
 
-import os
 import logging
+import os
 
 _TRACING_AVAILABLE = False
 _tracer_provider = None
 
 try:
     from opentelemetry import trace
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    from opentelemetry.sdk.resources import SERVICE_NAME as RESOURCE_SERVICE_NAME
+    from opentelemetry.sdk.resources import Resource
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-    from opentelemetry.sdk.resources import Resource, SERVICE_NAME as RESOURCE_SERVICE_NAME
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
     try:
-        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+            OTLPSpanExporter,
+        )
         _OTLP_AVAILABLE = True
     except ImportError:
         _OTLP_AVAILABLE = False

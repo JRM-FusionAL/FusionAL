@@ -46,3 +46,49 @@ Opened PR #47
 PR merged after CI passed.
 Labeled new issues with 'triage' (none found).
 ---\n
+
+## Maintenance Run: 2026-08-17 02:25:47
+Outdated dependencies found: 2
+Labeled new issues with 'triage'.
+---
+
+## Maintenance Run: 2026-08-27 02:07:02
+Outdated dependencies found: 9 packages (click 8.4.2→8.5.0, nemo-relay 0.7.3→0.8.0, openai 3.3.1→3.2.0, websockets 17.0.1→17.1, etc.)
+Created branch: dependency-update-20260827020811
+Updated requirements.txt
+Opened PR #104
+Merged PR #104 (squash merge, branch deleted)
+Issues labeled: none (no open unlabeled issues)
+Maintenance summary: 2026-08-28 02:04
+Dependencies: 10 outdated found (anthropic, honcho-ai, huggingface_hub, nemo-relay, openai, ruff + others). Protected: mcp==1.28.1, pydantic_core==2.46.4 preserved (SI-111 guard).
+Branch: dependency-update-20260828020541 pushed. PR #105 created: https://github.com/JRM-FusionAL/FusionAL/pull/105
+CI: 3 checks queued/in-progress (Analyze JS/Actions/Python). Awaiting pass before merge.
+Labels: 0 open issues without labels (nothing to tag).
+---
+
+## Maintenance Run: 2026-08-29 02:10:00
+Outdated dependencies found: 10 packages (gitpython 3.1.60→3.1.61, importlib_metadata 9.0.0→9.0.1, openai 3.5.0→3.6.0, typer 0.27.1→0.27.2, wcwidth 0.8.2→0.8.3, plus protected skips: mcp==1.28.1, pydantic_core==2.46.4 preserved per SI-111).
+Created branch: dependency-update-20260829020531
+Updated requirements.txt and validated venv (mcp.server.fastmcp + core.main import clean).
+Merged PR #105 (dependency-update-20260828020541, squash, branch deleted) — CI passed (CodeQL Python/JS/Actions + CodeRabbit SUCCESS) on 2026-08-28 checks.
+Issues labeled with 'triage': none (0 open issues found).
+Branch dependency-update-20260829020531 rebased on origin/main after PR #105 merge; requires follow-up PR for remaining 5 package updates if not included.
+---
+
+## Maintenance Run: 2026-09-06 02:13:49
+Outdated dependencies found: 5 packages (anyio 4.15.0→4.15.1, sse-starlette 3.4.10→3.4.11). Protected: mcp==1.28.1, pydantic_core==2.46.4 preserved per SI-111 guard.
+Created branch: dependency-update-20260906021437
+Opened PR #110: https://github.com/JRM-FusionAL/FusionAL/pull/110
+CI: FAILED on pre-existing Ruff lint errors (RUF013, BLE001, DTZ003, B008, SIM117) in core/main.py, core/mcp_transport.py, core/ai_agent.py — unrelated to dependency updates. CodeQL + Notify passed.
+Merged: skipped (CI failure is pre-existing lint debt, not caused by anyio/sse-starlette bump)
+Issues labeled: none (0 open unlabeled issues)
+---
+
+## Maintenance Run: 2026-09-06 02:13:49
+Outdated dependencies found: 5 packages (anyio 4.15.0→4.15.1, sse-starlette 3.4.10→3.4.11). Protected: mcp==1.28.1, pydantic_core==2.46.4 preserved per SI-111 guard.
+Created branch: dependency-update-20260906021437
+Opened PR #110: https://github.com/JRM-FusionAL/FusionAL/pull/110
+CI: FAILED on pre-existing Ruff lint errors (RUF013, BLE001, DTZ003, B008, SIM117) in core/main.py, core/mcp_transport.py, core/ai_agent.py — unrelated to dependency updates. CodeQL + Notify passed.
+Merged: skipped (CI failure is pre-existing lint debt, not caused by anyio/sse-starlette bump)
+Issues labeled: none (0 open unlabeled issues)
+---

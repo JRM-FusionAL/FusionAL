@@ -11,12 +11,11 @@ Securely executes Python code in isolated Docker containers with hardened securi
 - Non-root user execution (--user 1000:1000)
 """
 
-import tempfile
+import logging
 import os
 import shutil
 import subprocess  # nosec B404
-import logging
-from typing import Dict
+import tempfile
 
 LOGGER = logging.getLogger("fusional.runner_docker")
 
@@ -26,7 +25,7 @@ def _abs_path_for_docker(path: str) -> str:
     return os.path.abspath(path)
 
 
-def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> Dict:
+def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> dict:
     """
     Execute Python code inside a disposable, hardened Docker container.
 

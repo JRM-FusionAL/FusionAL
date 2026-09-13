@@ -17,7 +17,6 @@ import logging
 import os
 import threading
 from datetime import datetime, timezone
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -35,6 +34,8 @@ _CSV_COLUMNS = [
     "trace_id",
     "span_id",
     "error",
+    "sha256",
+    "epistemic_status",
 ]
 
 
@@ -49,6 +50,8 @@ class AuditRecord(BaseModel):
     trace_id: str = ""    # OpenTelemetry trace ID (empty when unavailable)
     span_id: str = ""     # OpenTelemetry span ID  (empty when unavailable)
     error: str = ""       # Error message; empty on success
+    sha256: str = ""              # Epistemic digest of the tool result
+    epistemic_status: str = ""    # OBSERVATION | PENDING_REVIEW | QUARANTINED
 
 
 class AuditStore:
@@ -62,7 +65,7 @@ class AuditStore:
         self._lock = threading.Lock()
         self._records: list[AuditRecord] = []
         self._max = max_records
-        self._store_path: Optional[str] = os.getenv("AUDIT_STORE_PATH", "").strip() or None
+        self._store_path: str | None = os.getenv("AUDIT_STORE_PATH", "").strip() or None
 
     # ------------------------------------------------------------------
     # Write
@@ -82,8 +85,8 @@ class AuditStore:
 
     def query(
         self,
-        start: Optional[datetime] = None,
-        end: Optional[datetime] = None,
+        start: datetime | None = None,
+        end: datetime | None = None,
     ) -> list[AuditRecord]:
         """Return records whose timestamps fall within [*start*, *end*].
 
@@ -145,6 +148,8 @@ def record_tool_call(
     trace_id: str = "",
     span_id: str = "",
     error: str = "",
+    sha256: str = "",
+    epistemic_status: str = "",
 ) -> None:
     """Append one tool-call audit record to the singleton store."""
     rec = AuditRecord(
@@ -156,6 +161,8 @@ def record_tool_call(
         trace_id=trace_id,
         span_id=span_id,
         error=error,
+        sha256=sha256,
+        epistemic_status=epistemic_status,
     )
     _store.append(rec)
     logger.debug(

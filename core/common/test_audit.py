@@ -3,21 +3,18 @@
 import csv
 import io
 import json
-from datetime import datetime, timezone, timedelta
-
-import pytest
+from datetime import datetime, timezone
 
 from audit import (
     AuditRecord,
     AuditStore,
+    _as_utc,
+    _parse_utc,
     get_audit_store,
     record_tool_call,
-    records_to_json,
     records_to_csv,
-    _parse_utc,
-    _as_utc,
+    records_to_json,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helper
@@ -280,7 +277,7 @@ class TestRecordsToCsv:
     def test_header_columns(self):
         result = records_to_csv([])
         header_line = result.splitlines()[0]
-        expected = "timestamp,tool,status,duration_ms,request_id,trace_id,span_id,error"
+        expected = "timestamp,tool,status,duration_ms,request_id,trace_id,span_id,error,sha256,epistemic_status"
         assert header_line == expected
 
     def test_single_record(self):

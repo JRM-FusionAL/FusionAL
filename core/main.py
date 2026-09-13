@@ -8,20 +8,19 @@ Security: API key auth + rate limiting via shared common/security.py
          (sourced from mcp-consulting-kit/showcase-servers/common/)
 """
 
-import os
-import sys
 import json
 import logging
+import os
 import re
-import socket
 import shutil
+import socket
 import subprocess  # nosec B404
+import sys
 import tempfile
 import time
+from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
-from contextlib import asynccontextmanager
-from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
@@ -70,7 +69,7 @@ except ImportError:
     _TRACING_IMPORTABLE = False
 
 try:
-    from audit import get_audit_store, record_tool_call, records_to_json, records_to_csv
+    from audit import get_audit_store, record_tool_call, records_to_csv, records_to_json
     _AUDIT_ENABLED = True
 except ImportError:
     _AUDIT_ENABLED = False
@@ -89,14 +88,30 @@ except Exception:
     run_in_docker = None
 
 from .ai_agent import generate_python_from_claude, generate_python_from_openai
+
 PORT = int(os.getenv("PORT", "8009"))
 LOGGER = logging.getLogger("fusional.main")
+
+# --- MCP sub-app must exist before FastAPI() so its session-manager lifespan
+# gets wired into the parent app via _lifespan. Mounting alone does not propagate it.
+mcp.settings.streamable_http_path = "/"
+mcp_app = mcp.streamable_http_app()
+
+
+@asynccontextmanager
+async def _lifespan(app):
+    """Wrap the MCP session-manager lifespan, then register downstream proxy tools."""
+    async with mcp_app.router.lifespan_context(app):
+        await register_downstream_tools(REGISTRY)
+        yield
+
 
 # --- App ---
 app = FastAPI(
     title="FusionAL - MCP Execution Server",
     description="AI-powered MCP server builder and executor with Docker sandboxing",
     version="1.0.0",
+    lifespan=_lifespan,
 )
 
 if _SECURITY_ENABLED:
@@ -107,10 +122,9 @@ if _SECURITY_ENABLED:
 if _TRACING_IMPORTABLE:
     configure_tracing(app)
 
-mcp.settings.streamable_http_path = "/"
-mcp_app = mcp.streamable_http_app()
 app.mount("/mcp", mcp_app)
 from fastapi.staticfiles import StaticFiles
+
 _wk_dir = os.environ.get("WELL_KNOWN_DIR", os.path.join(os.path.dirname(__file__), "..", "well-known"))
 if os.path.isdir(_wk_dir):
     app.mount("/.well-known", StaticFiles(directory=_wk_dir), name="well-known")
@@ -135,15 +149,15 @@ class ExecRequest(BaseModel):
     language: str = "python"
     code: str
     timeout: int = 5
-    use_docker: Optional[bool] = False
-    memory_mb: Optional[int] = 128
+    use_docker: bool | None = False
+    memory_mb: int | None = 128
 
 
 class RegisterRequest(BaseModel):
     name: str
-    description: Optional[str] = None
-    url: Optional[str] = None
-    metadata: Optional[dict] = None
+    description: str | None = None
+    url: str | None = None
+    metadata: dict | None = None
 
 
 class GenerateRequest(BaseModel):
@@ -212,9 +226,9 @@ _SHOWCASE_SERVERS = {
     "kb-server": {
         "description": "FusionAL knowledge base search",
         "url": "http://localhost:8106",
-        "internal_url": "http://host.docker.internal:8106",
-        "native_url": "http://127.0.0.1:8106",
-        "metadata": {"version": "0.1.0", "tools": ["search"], "port": 8106, "source": "fusional"},
+        "internal_url": "http://host.docker.internal:8108",
+        "native_url": "http://127.0.0.1:8108",
+        "metadata": {"version": "0.1.0", "tools": ["search"], "rest_port": 8106, "port": 8108, "source": "fusional"},
         "registered_at": "2026-05-31T00:00:00"
     },
 }
@@ -476,9 +490,53 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             "provider": provider_used,
             "logs": startup_logs,
         }
-    except Exception as exc:
+    except Exception:
         LOGGER.exception("Unexpected error in /generate endpoint")
         return {"status": "error", "error": "Internal server error"}
+
+
+# ── Epistemic Claim Gate Endpoints ──────────────────────────────────────────
+
+
+@app.get("/epistemic/pending")
+async def epistemic_pending(_auth_dep=Depends(_auth)):
+    """List all held tool results awaiting human review."""
+    try:
+        from .claim_gate import get_hold_store
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Claim gate not available")
+    pending = get_hold_store().list_pending()
+    return {
+        "count": len(pending),
+        "holds": pending,
+        "enforcement_enabled": True,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+
+
+@app.post("/epistemic/promote")
+async def epistemic_promote(req: dict, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):
+    """Human sign-off: release a held result to OBSERVATION status.
+
+    Body: {"sha256": "<digest of the held result>", "released_by": "optional"}
+    The released payload is returned to the caller (human/ops tooling) —
+    NOT re-injected into any agent conversation.
+    """
+    try:
+        from .claim_gate import get_hold_store
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Claim gate not available")
+
+    sha = (req or {}).get("sha256", "").strip()
+    if not sha:
+        raise HTTPException(status_code=400, detail="Missing 'sha256' in request body")
+    try:
+        released = get_hold_store().release(sha, released_by=(req or {}).get("released_by", "human"))
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No hold for sha256={sha}")
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    return {"status": "released", **released}
 
 
 # ── Audit Export Endpoints ───────────────────────────────────────────────────

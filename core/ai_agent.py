@@ -5,14 +5,15 @@ Generates MCP servers using Claude or OpenAI, orchestrates execution,
 and manages MCP project scaffolding with Docker integration.
 """
 
+import json
 import os
+import re
+import subprocess  # nosec B404
+import tempfile
+
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
-import json
-import subprocess  # nosec B404
-import tempfile
-import re
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -230,7 +231,7 @@ def generate_mcp_project(
             image_tag = f"fusional-mcp:{int(time.time())}"
         
         cmd = ["docker", "build", "-t", image_tag, out_dir]
-        proc = subprocess.run(cmd, capture_output=True, text=True)  # nosec B603
+        proc = subprocess.run(cmd, capture_output=True, text=True, check=False)  # nosec B603
         build_result = {
             "stdout": proc.stdout,
             "stderr": proc.stderr,

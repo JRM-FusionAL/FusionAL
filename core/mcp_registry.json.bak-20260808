@@ -1,0 +1,56 @@
+{
+  "prizz_deep-dive-desktop-extension-service": {
+    "description": "Docker container prizz_deep-dive-desktop-extension-service (image: prizz/deep-dive:1.0.95)",
+    "url": "docker://prizz_deep-dive-desktop-extension-service",
+    "metadata": {
+      "version": "unknown",
+      "tools": []
+    },
+    "registered_at": "2026-04-04T06:16:08.4016340Z"
+  },
+  "portainer_portainer-docker-extension-desktop-extension-service": {
+    "description": "Docker container portainer_portainer-docker-extension-desktop-extension-service (image: portainer/portainer-docker-extension:2.39.1)",
+    "url": "docker://portainer_portainer-docker-extension-desktop-extension-service",
+    "metadata": {
+      "version": "unknown",
+      "tools": []
+    },
+    "registered_at": "2026-04-04T06:16:08.4016340Z"
+  },
+  "dozzle": {
+    "description": "Docker container dozzle (image: amir20/dozzle:latest)",
+    "url": "docker://dozzle",
+    "metadata": {
+      "version": "unknown",
+      "tools": []
+    },
+    "registered_at": "2026-04-04T06:16:08.4016340Z"
+  },
+  "fusional-tunnel": {
+    "description": "Docker container fusional-tunnel (image: cloudflare/cloudflared:latest)",
+    "url": "docker://fusional-tunnel",
+    "metadata": {
+      "version": "unknown",
+      "tools": []
+    },
+    "registered_at": "2026-04-04T06:16:08.4016340Z"
+  },
+  "heuristic_moore": {
+    "description": "Docker container heuristic_moore (image: docker/lsp)",
+    "url": "docker://heuristic_moore",
+    "metadata": {
+      "version": "unknown",
+      "tools": []
+    },
+    "registered_at": "2026-04-04T06:16:08.3970654Z"
+  },
+  "docker_labs-vscode-installer-desktop-extension-service": {
+    "description": "Docker container docker_labs-vscode-installer-desktop-extension-service (image: docker/labs-vscode-installer:0.0.9)",
+    "url": "docker://docker_labs-vscode-installer-desktop-extension-service",
+    "metadata": {
+      "version": "unknown",
+      "tools": []
+    },
+    "registered_at": "2026-04-04T06:16:08.4016340Z"
+  }
+}

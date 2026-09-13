@@ -18,17 +18,19 @@ import logging
 import time
 from typing import Any
 
-from pydantic import ConfigDict, create_model
-
+import httpx
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.tools.base import Tool
 from mcp.server.fastmcp.utilities.func_metadata import ArgModelBase, FuncMetadata
 from mcp.server.transport_security import TransportSecuritySettings
-from mcp.client.streamable_http import streamablehttp_client
-from mcp import ClientSession
+from pydantic import ConfigDict
 
 from .ai_agent import (
     generate_and_execute as _generate_and_execute,
+)
+from .ai_agent import (
     generate_mcp_project as _gen_mcp_project,
 )
 
@@ -179,8 +181,9 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
         t0 = time.monotonic()
         status = "success"
         error_str = ""
+        epistemic_meta: dict | None = None
         try:
-            async with streamablehttp_client(mcp_url, timeout=30.0) as (read, write, _):
+            async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=30.0, follow_redirects=True)) as (read, write, _):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     result = await session.call_tool(tool_name, kwargs)
@@ -190,7 +193,43 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
                         error_str = " ".join(
                             getattr(c, "text", "") for c in result.content if hasattr(c, "text")
                         )[:500]
-                    return {"content": [c.model_dump() for c in result.content]}
+                    # Phase 1: tag every result with its epistemic envelope
+                    # (tier, sha256, downstream_use). Tagging only — no
+                    # enforcement yet. Falls back to the raw payload if the
+                    # epistemics module is unavailable.
+                    content_list = [c.model_dump() for c in result.content]
+                    payload: dict = {"content": content_list}
+                    try:
+                        from .epistemics import (
+                            ENFORCEMENT_ENABLED,
+                            STATUS_MAP,
+                            classify_tool,
+                            result_sha256,
+                            wrap_result,
+                        )
+                        if ENFORCEMENT_ENABLED:
+                            tier = classify_tool(proxied_name)
+                        else:
+                            tier = "READONLY"
+                        if ENFORCEMENT_ENABLED and tier != "READONLY":
+                            # Claim gate: hold the payload, disclose a notice.
+                            from .claim_gate import get_hold_store
+                            notice = get_hold_store().put(
+                                sha256=result_sha256(content_list),
+                                tool=proxied_name,
+                                tier=tier,
+                                status=STATUS_MAP[tier]["epistemic_status"],
+                                content=content_list,
+                                args=kwargs,
+                            )
+                            payload = notice
+                            epistemic_meta = notice["epistemic"]
+                        else:
+                            payload = wrap_result(proxied_name, content_list)
+                            epistemic_meta = payload.get("epistemic")
+                    except Exception as exc:  # never break the proxy path
+                        logger.warning("epistemics.wrap_failed tool=%s error=%s", proxied_name, exc)
+                    return payload
         except Exception as exc:
             status = "error"
             error_str = str(exc)
@@ -199,7 +238,11 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
             duration_ms = (time.monotonic() - t0) * 1000
             if _record_tool_call is not None:
                 try:
-                    _record_tool_call(proxied_name, status, duration_ms, error=error_str)
+                    _record_tool_call(
+                        proxied_name, status, duration_ms, error=error_str,
+                        sha256=(epistemic_meta or {}).get("sha256", ""),
+                        epistemic_status=(epistemic_meta or {}).get("epistemic_status", ""),
+                    )
                 except Exception:
                     pass
 
@@ -240,7 +283,7 @@ async def register_downstream_tools(registry: dict) -> None:
             last_exc: Exception | None = None
             for attempt in range(2):
                 try:
-                    async with streamablehttp_client(mcp_url, timeout=5.0) as (read, write, _):
+                    async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=5.0, follow_redirects=True)) as (read, write, _):
                         async with ClientSession(read, write) as session:
                             await session.initialize()
                             tools_result = await session.list_tools()

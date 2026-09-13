@@ -1,11 +1,10 @@
-from types import SimpleNamespace
 import json
+from types import SimpleNamespace
 
 import pytest
+import security
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
-
-import security
 
 
 def build_request(path: str = "/nl-query", ip: str = "127.0.0.1"):
@@ -242,8 +241,13 @@ def test_observability_redacts_sensitive_headers(monkeypatch, caplog):
 
     assert response.status_code == 200
     payload = json.loads(caplog.records[-1].message)
-    assert payload["headers"]["authorization"] != "Bearer super-secret-token"
-    assert payload["headers"]["x-api-key"] != "my-api-key-value"
+    # Header values are never logged (only names) — see commit 1c92b0b, a
+    # code-scanning fix for clear-text logging of sensitive information.
+    logged = json.dumps(payload)
+    assert "super-secret-token" not in logged
+    assert "my-api-key-value" not in logged
+    assert "authorization" in payload["header_names"]
+    assert "x-api-key" in payload["header_names"]
 
 
 def test_sanitize_request_id_accepts_valid_format():
