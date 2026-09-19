@@ -27,7 +27,7 @@ HTTP_REQUEST_TIMEOUT_SECONDS = int(os.getenv("HTTP_REQUEST_TIMEOUT_SECONDS", "30
 
 
 
-def generate_python_from_claude(prompt: str, model: str = None) -> str:
+def generate_python_from_claude(prompt: str, model: str | None = None) -> str:
     """Generate Python code using Claude API."""
     if not ANTHROPIC_API_KEY:
         raise RuntimeError("ANTHROPIC_API_KEY not set in environment")
@@ -63,7 +63,7 @@ def generate_python_from_claude(prompt: str, model: str = None) -> str:
     return code
 
 
-def generate_python_from_openai(prompt: str, model: str = None) -> str:
+def generate_python_from_openai(prompt: str, model: str | None = None) -> str:
     """Generate Python code using OpenAI API."""
     if not OPENAI_API_KEY:
         raise RuntimeError("OPENAI_API_KEY not set in environment")
@@ -80,10 +80,12 @@ def generate_python_from_openai(prompt: str, model: str = None) -> str:
     client = OpenAI(api_key=OPENAI_API_KEY)
     resp = client.chat.completions.create(
         model=model,
-        messages=messages,
+        messages=messages,  # type: ignore[arg-type]
         max_tokens=4096
     )
     code = resp.choices[0].message.content
+    if code is None:
+        raise RuntimeError("OpenAI response contained no content")
     return code
 
 
@@ -119,7 +121,7 @@ def generate_and_execute(
     # Timeout is explicitly set based on execution timeout budget.
     res = requests.post(  # nosec B113
         f"{SERVER_URL}/execute",
-        json=payload,
+        json=payload,  # type: ignore[arg-type]
         timeout=max(timeout + 5, 10),
     )
     res.raise_for_status()
@@ -134,7 +136,7 @@ def _parse_files_from_ai_output(text: str):
     """Parse multi-file output from AI using === FILE: path === markers."""
     files = {}
     current_path = None
-    buf = []
+    buf: list[str] = []
     
     for line in text.splitlines():
         m = re.match(r"^=== FILE: (.+) ===$", line.strip())
@@ -156,9 +158,9 @@ def _parse_files_from_ai_output(text: str):
 def generate_mcp_project(
     prompt: str,
     provider: str = "claude",
-    out_dir: str = None,
+    out_dir: str | None = None,
     build: bool = False,
-    image_tag: str = None
+    image_tag: str | None = None
 ):
     """
     Generate a complete MCP server project using AI.

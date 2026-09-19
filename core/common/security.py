@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 try:
     import redis  # pyright: ignore[reportMissingImports]
 except ImportError:  # pragma: no cover - exercised in environments without redis installed
-    redis = None
+    redis = None  # type: ignore[assignment]
 
 LOGGER_NAME = "mcp.observability"
 REQUEST_ID_HEADER = "X-Request-ID"
@@ -270,7 +270,7 @@ def verify_api_key(request: Request, x_api_key: str | None = Header(default=None
         raise HTTPException(status_code=500, detail="API_KEY is not configured")
 
     revoked_api_keys = set(_load_revoked_api_keys())
-    runtime_revoked = getattr(request.app.state, "revoked_api_keys", set())
+    runtime_revoked: set[str] = getattr(request.app.state, "revoked_api_keys", set())
     revoked_api_keys.update(runtime_revoked)
 
     if not x_api_key or x_api_key in revoked_api_keys or x_api_key not in active_api_keys:
@@ -290,7 +290,7 @@ def _enforce_rate_limit_with_redis(request: Request, limit: int, window: int) ->
         if count == 1:
             redis_client.expire(key, window)
         request.app.state.redis_degraded = False
-    except Exception:
+    except Exception:  # noqa: BLE001 -- redis client can raise many error types; any failure means fall back to in-memory
         request.app.state.redis_degraded = True
         _get_or_create_logger().warning(
             "rate_limit.redis_unavailable fallback=in_memory path=%s",

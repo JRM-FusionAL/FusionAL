@@ -13,7 +13,6 @@ Design notes:
   (Phase 1). Default is ON.
 """
 
-import json
 import logging
 import os
 import threading

@@ -8,6 +8,7 @@ Security: API key auth + rate limiting via shared common/security.py
          (sourced from mcp-consulting-kit/showcase-servers/common/)
 """
 
+import asyncio
 import json
 import logging
 import os
@@ -19,7 +20,7 @@ import sys
 import tempfile
 import time
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -84,7 +85,7 @@ if _AUDIT_ENABLED:
 # --- Docker runner ---
 try:
     from runner_docker import run_in_docker
-except Exception:
+except Exception:  # noqa: BLE001 -- optional dependency; any import failure disables the docker runner
     run_in_docker = None
 
 from .ai_agent import generate_python_from_claude, generate_python_from_openai
@@ -235,13 +236,12 @@ _SHOWCASE_SERVERS = {
 
 
 def _load_registry():
-    global REGISTRY
     REGISTRY.update(_SHOWCASE_SERVERS)
     try:
         if os.path.exists(REGISTRY_FILE):
             with open(REGISTRY_FILE, "r", encoding="utf-8") as f:
                 REGISTRY.update(json.load(f))
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 -- registry file may be missing/corrupt; fall back to showcase defaults
         LOGGER.warning("Failed loading registry file %s: %s", REGISTRY_FILE, exc)
 
 
@@ -249,7 +249,7 @@ def _save_registry():
     try:
         with open(REGISTRY_FILE, "w", encoding="utf-8") as f:
             json.dump(REGISTRY, f, indent=2)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 -- best-effort persistence; any I/O failure is logged, not fatal
         LOGGER.warning("Failed saving registry file %s: %s", REGISTRY_FILE, exc)
 
 
@@ -343,11 +343,11 @@ if __name__ == "__main__":
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "FusionAL MCP Server", "security_enabled": _SECURITY_ENABLED, "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "ok", "service": "FusionAL MCP Server", "security_enabled": _SECURITY_ENABLED, "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @app.post("/execute")
-async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):
+async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     if req.language != "python":
         raise HTTPException(status_code=400, detail="Only 'python' language supported")
 
@@ -360,15 +360,17 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
             raise HTTPException(status_code=504, detail="Execution timed out")
         except subprocess.CalledProcessError as e:
             return {"stdout": e.stdout, "stderr": e.stderr, "returncode": e.returncode}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 -- user-submitted code can raise anything; surface it as a 500
             raise HTTPException(status_code=500, detail=str(e))
 
     tmpdir = tempfile.mkdtemp(prefix="fusional-")
     script_path = os.path.join(tmpdir, "script.py")
-    with open(script_path, "w", encoding="utf-8") as f:
+    with open(script_path, "w", encoding="utf-8") as f:  # noqa: ASYNC230 -- short-lived local temp-file write, not worth a thread hop
         f.write(req.code)
     try:
-        proc = subprocess.run([sys.executable, script_path], capture_output=True, text=True, timeout=req.timeout)  # nosec B603
+        proc = subprocess.run(  # noqa: ASYNC221 -- sandboxed execution is expected to block until the subprocess exits or times out
+            [sys.executable, script_path], capture_output=True, text=True, timeout=req.timeout, check=False,  # nosec B603
+        )
         return {"stdout": proc.stdout, "stderr": proc.stderr, "returncode": proc.returncode}
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=504, detail="Execution timed out")
@@ -377,21 +379,21 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
 
 
 @app.post("/register")
-async def register(req: RegisterRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):
+async def register(req: RegisterRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     if req.name in REGISTRY:
         raise HTTPException(status_code=400, detail=f"Server '{req.name}' already registered")
-    REGISTRY[req.name] = {"description": req.description, "url": req.url, "metadata": req.metadata or {}, "registered_at": datetime.utcnow().isoformat()}
+    REGISTRY[req.name] = {"description": req.description, "url": req.url, "metadata": req.metadata or {}, "registered_at": datetime.now(timezone.utc).isoformat()}
     _save_registry()
-    return {"status": "registered", "name": req.name, "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "registered", "name": req.name, "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @app.get("/catalog")
 async def catalog():
-    return {"total": len(REGISTRY), "servers": REGISTRY, "timestamp": datetime.utcnow().isoformat()}
+    return {"total": len(REGISTRY), "servers": REGISTRY, "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @app.post("/generate")
-async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):
+async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     try:
         server_name = _slugify_server_name(req.prompt)
         if server_name in REGISTRY:
@@ -414,14 +416,14 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             try:
                 generated_code = generate_python_from_claude(generation_prompt)
                 provider_used = "anthropic"
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 -- any provider failure should fall through to the next provider
                 provider_errors.append(f"anthropic: {exc}")
 
         if generated_code is None and os.getenv("OPENAI_API_KEY"):
             try:
                 generated_code = generate_python_from_openai(generation_prompt)
                 provider_used = "openai"
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 -- any provider failure should fall through to the local template
                 provider_errors.append(f"openai: {exc}")
 
         if generated_code is None:
@@ -442,14 +444,14 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
 
         tmpdir = tempfile.mkdtemp(prefix="generated-server-")
         script_path = os.path.join(tmpdir, "generated_server.py")
-        with open(script_path, "w", encoding="utf-8") as f:
+        with open(script_path, "w", encoding="utf-8") as f:  # noqa: ASYNC230 -- short-lived local temp-file write, not worth a thread hop
             f.write(generated_code)
 
         env = os.environ.copy()
         env["PORT"] = str(port)
         env["FUSIONAL_GENERATED_SERVER"] = server_name
 
-        proc = subprocess.Popen(  # nosec B603
+        proc = subprocess.Popen(  # nosec B603  # noqa: ASYNC220 -- launching the generated server is a one-shot fire-and-forget, not per-request
             [sys.executable, script_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -458,7 +460,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             cwd=tmpdir,
         )
 
-        time.sleep(2)
+        await asyncio.sleep(2)
         startup_logs = ""
         if proc.poll() is not None:
             out, err = proc.communicate(timeout=2)
@@ -478,7 +480,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
                 "source": "generated",
                 "script_path": script_path,
             },
-            "registered_at": datetime.utcnow().isoformat(),
+            "registered_at": datetime.now(timezone.utc).isoformat(),
         }
         _save_registry()
 
@@ -499,7 +501,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
 
 
 @app.get("/epistemic/pending")
-async def epistemic_pending(_auth_dep=Depends(_auth)):
+async def epistemic_pending(_auth_dep=Depends(_auth)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     """List all held tool results awaiting human review."""
     try:
         from .claim_gate import get_hold_store
@@ -510,12 +512,12 @@ async def epistemic_pending(_auth_dep=Depends(_auth)):
         "count": len(pending),
         "holds": pending,
         "enforcement_enabled": True,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
 @app.post("/epistemic/promote")
-async def epistemic_promote(req: dict, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):
+async def epistemic_promote(req: dict, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     """Human sign-off: release a held result to OBSERVATION status.
 
     Body: {"sha256": "<digest of the held result>", "released_by": "optional"}
@@ -546,7 +548,7 @@ async def epistemic_promote(req: dict, _auth_dep=Depends(_auth), _rate_dep=Depen
 async def audit_export_json(
     start: str | None = None,
     end: str | None = None,
-    _auth_dep=Depends(_auth),
+    _auth_dep=Depends(_auth),  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
 ):
     """Export tool-call audit records as JSON.
 
@@ -574,7 +576,7 @@ async def audit_export_json(
 async def audit_export_csv(
     start: str | None = None,
     end: str | None = None,
-    _auth_dep=Depends(_auth),
+    _auth_dep=Depends(_auth),  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
 ):
     """Export tool-call audit records as CSV.
 

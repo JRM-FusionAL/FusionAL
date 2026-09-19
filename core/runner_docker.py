@@ -80,7 +80,7 @@ def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> dict:
             "script.py",
         ]
 
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)  # nosec B603
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=False)  # nosec B603
         return {
             "stdout": proc.stdout,
             "stderr": proc.stderr,
@@ -89,5 +89,5 @@ def run_in_docker(code: str, timeout: int = 5, memory_mb: int = 128) -> dict:
     finally:
         try:
             shutil.rmtree(tmpdir)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 -- best-effort cleanup; never let it mask the actual run result
             LOGGER.debug("Failed cleaning temp directory %s: %s", tmpdir, exc)
