@@ -290,7 +290,7 @@ def _enforce_rate_limit_with_redis(request: Request, limit: int, window: int) ->
         if count == 1:
             redis_client.expire(key, window)
         request.app.state.redis_degraded = False
-    except Exception:
+    except Exception:  # noqa: BLE001 -- redis client can raise many error types; any failure means fall back to in-memory
         request.app.state.redis_degraded = True
         _get_or_create_logger().warning(
             "rate_limit.redis_unavailable fallback=in_memory path=%s",

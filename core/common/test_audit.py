@@ -21,12 +21,12 @@ from audit import (
 # ---------------------------------------------------------------------------
 
 def _make_record(**kwargs) -> AuditRecord:
-    defaults = dict(
-        timestamp=datetime.now(timezone.utc).isoformat(),
-        tool="execute_code",
-        status="success",
-        duration_ms=42.0,
-    )
+    defaults = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "tool": "execute_code",
+        "status": "success",
+        "duration_ms": 42.0,
+    }
     defaults.update(kwargs)
     return AuditRecord(**defaults)
 
@@ -180,7 +180,7 @@ class TestAuditStore:
             for _ in range(100):
                 try:
                     store.append(_make_record())
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 -- capture any error from concurrent writers for the test to assert on
                     errors.append(exc)
 
         threads = [threading.Thread(target=_writer) for _ in range(10)]
@@ -319,7 +319,7 @@ class TestDatetimeHelpers:
         assert dt.tzinfo == timezone.utc
 
     def test_as_utc_naive_becomes_utc(self):
-        naive = datetime(2026, 1, 1, 12, 0, 0)
+        naive = datetime(2026, 1, 1, 12, 0, 0)  # noqa: DTZ001 -- deliberately naive input to test _as_utc's tz-normalization
         aware = _as_utc(naive)
         assert aware.tzinfo == timezone.utc
 
