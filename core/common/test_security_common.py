@@ -27,8 +27,8 @@ def build_request(path: str = "/nl-query", ip: str = "127.0.0.1"):
 class FakeRedisClient:
     def __init__(self, should_fail: bool = False):
         self.should_fail = should_fail
-        self.counts = {}
-        self.ttls = {}
+        self.counts: dict[str, int] = {}
+        self.ttls: dict[str, int] = {}
 
     def incr(self, key: str) -> int:
         if self.should_fail:

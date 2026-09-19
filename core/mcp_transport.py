@@ -140,6 +140,7 @@ def _make_passthrough_tool(
         fn_metadata=meta,
         is_async=True,
         context_kwarg=None,
+        annotations=None,
     )
 
 
@@ -221,7 +222,7 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
                             sha256=result_sha256(content_list),
                             tool=proxied_name,
                             tier=tier,
-                            status=STATUS_MAP[tier]["epistemic_status"],
+                            status=str(STATUS_MAP[tier]["epistemic_status"]),
                             content=content_list,
                             args=kwargs,
                         )

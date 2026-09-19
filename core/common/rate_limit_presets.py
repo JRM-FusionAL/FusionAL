@@ -262,7 +262,7 @@ def configure_error_budget_tracking(
     @app.middleware("http")
     async def _error_budget_middleware(request: Request, call_next: object):
 
-        response: Response = await call_next(request)  # type: ignore[misc]
+        response: Response = await call_next(request)  # type: ignore[misc,operator]
         is_error = response.status_code >= 500
         tracker.record(is_error=is_error)
         return response

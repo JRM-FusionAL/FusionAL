@@ -80,10 +80,12 @@ def generate_python_from_openai(prompt: str, model: str | None = None) -> str:
     client = OpenAI(api_key=OPENAI_API_KEY)
     resp = client.chat.completions.create(
         model=model,
-        messages=messages,
+        messages=messages,  # type: ignore[arg-type]
         max_tokens=4096
     )
     code = resp.choices[0].message.content
+    if code is None:
+        raise RuntimeError("OpenAI response contained no content")
     return code
 
 
@@ -119,7 +121,7 @@ def generate_and_execute(
     # Timeout is explicitly set based on execution timeout budget.
     res = requests.post(  # nosec B113
         f"{SERVER_URL}/execute",
-        json=payload,
+        json=payload,  # type: ignore[arg-type]
         timeout=max(timeout + 5, 10),
     )
     res.raise_for_status()
@@ -134,7 +136,7 @@ def _parse_files_from_ai_output(text: str):
     """Parse multi-file output from AI using === FILE: path === markers."""
     files = {}
     current_path = None
-    buf = []
+    buf: list[str] = []
     
     for line in text.splitlines():
         m = re.match(r"^=== FILE: (.+) ===$", line.strip())
