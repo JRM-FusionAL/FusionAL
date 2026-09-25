@@ -15,6 +15,7 @@ Proxied tools (registered at startup from REGISTRY):
 
 import asyncio
 import logging
+import os
 import time
 from typing import Any
 
@@ -35,6 +36,21 @@ from .ai_agent import (
 )
 
 logger = logging.getLogger("fusional.proxy")
+
+_PROTECTED_SHOWCASE = {
+    "api-integration-hub", "business-intelligence-mcp",
+    "content-automation-mcp", "github-mcp-safe", "intelligence-mcp",
+}
+
+
+def _downstream_client(server_name: str, timeout: float) -> httpx.AsyncClient:
+    headers = {}
+    if server_name in _PROTECTED_SHOWCASE:
+        key = os.getenv("SHOWCASE_MCP_API_KEY", "").strip()
+        if not key:
+            raise RuntimeError("SHOWCASE_MCP_API_KEY is required for showcase proxy tools")
+        headers["X-API-Key"] = key
+    return httpx.AsyncClient(timeout=timeout, follow_redirects=True, headers=headers)
 
 mcp = FastMCP(
     "fusional",
@@ -176,7 +192,7 @@ def _proxy_tool_name(namespace: str, tool_name: str) -> str:
     return f"{namespace}_{safe_tool}"[:64]
 
 
-def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
+def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str, server_name: str):
     """Return an async function that proxies calls to a downstream MCP tool."""
 
     async def proxy(**kwargs: Any) -> dict:
@@ -186,7 +202,7 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
         epistemic_meta: dict | None = None
         try:
             async with (
-                streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=30.0, follow_redirects=True)) as (read, write, _),
+                streamable_http_client(mcp_url, http_client=_downstream_client(server_name, 30.0)) as (read, write, _),
                 ClientSession(read, write) as session,
             ):
                 await session.initialize()
@@ -288,7 +304,7 @@ async def register_downstream_tools(registry: dict) -> None:
             for attempt in range(2):
                 try:
                     async with (
-                        streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=5.0, follow_redirects=True)) as (read, write, _),
+                        streamable_http_client(mcp_url, http_client=_downstream_client(server_name, 5.0)) as (read, write, _),
                         ClientSession(read, write) as session,
                     ):
                         await session.initialize()
@@ -308,7 +324,7 @@ async def register_downstream_tools(registry: dict) -> None:
                 if proxied_name in existing_names:
                     continue
 
-                proxy_fn = _make_proxy_fn(mcp_url, tool.name, proxied_name)
+                proxy_fn = _make_proxy_fn(mcp_url, tool.name, proxied_name, server_name)
                 tool_obj = _make_passthrough_tool(
                     name=proxied_name,
                     description=f"[{server_name}] {tool.description or tool.name}"[:512],

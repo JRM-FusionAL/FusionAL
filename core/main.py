@@ -13,18 +13,18 @@ import json
 import logging
 import os
 import re
-import shutil
 import socket
 import subprocess  # nosec B404
 import sys
-import tempfile
 import time
+import urllib.error
+import urllib.request
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 # --- Security module: cross-platform path resolution ---
@@ -63,6 +63,9 @@ try:
 except ImportError:
     _SECURITY_ENABLED = False
 
+if not _SECURITY_ENABLED:
+    raise RuntimeError("FusionAL security module is required; refusing to start without authentication")
+
 try:
     from tracing import configure_tracing
     _TRACING_IMPORTABLE = True
@@ -84,7 +87,7 @@ if _AUDIT_ENABLED:
 
 # --- Docker runner ---
 try:
-    from runner_docker import run_in_docker
+    from .runner_docker import run_in_docker
 except Exception:  # noqa: BLE001 -- optional dependency; any import failure disables the docker runner
     run_in_docker = None
 
@@ -123,6 +126,22 @@ if _SECURITY_ENABLED:
 if _TRACING_IMPORTABLE:
     configure_tracing(app)
 
+
+@app.middleware("http")
+async def authenticate_mcp(request: Request, call_next):
+    """REST dependencies do not run for a mounted FastMCP application."""
+    if request.url.path == "/mcp" or request.url.path.startswith("/mcp/"):
+        key = request.headers.get("X-API-Key")
+        if not key:
+            scheme, _, bearer = request.headers.get("Authorization", "").partition(" ")
+            if scheme.lower() == "bearer":
+                key = bearer.strip()
+        try:
+            verify_api_key(request, key)
+        except HTTPException as exc:
+            return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+    return await call_next(request)
+
 app.mount("/mcp", mcp_app)
 from fastapi.staticfiles import StaticFiles
 
@@ -150,7 +169,7 @@ class ExecRequest(BaseModel):
     language: str = "python"
     code: str
     timeout: int = 5
-    use_docker: bool | None = False
+    use_docker: bool | None = True
     memory_mb: int | None = 128
 
 
@@ -302,6 +321,7 @@ Auto-generated local MCP server fallback for {server_name}.
 
 import os
 from datetime import datetime
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from mcp.server.fastmcp import FastMCP
@@ -320,7 +340,16 @@ def echo(text: str) -> dict:
     return {{"echo": text, "server": "{server_name}"}}
 
 
-app = FastAPI(title="{server_name}")
+_mcp_app = mcp.streamable_http_app()
+
+
+@asynccontextmanager
+async def lifespan(app):
+    async with _mcp_app.router.lifespan_context(app):
+        yield
+
+
+app = FastAPI(title="{server_name}", lifespan=lifespan)
 
 
 @app.get("/health")
@@ -328,7 +357,7 @@ async def health() -> dict:
     return {{"status": "ok", "server": "{server_name}", "timestamp": datetime.utcnow().isoformat()}}
 
 
-app.mount("/mcp", mcp.streamable_http_app())
+app.mount("/mcp", _mcp_app)
 
 
 if __name__ == "__main__":
@@ -351,31 +380,18 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
     if req.language != "python":
         raise HTTPException(status_code=400, detail="Only 'python' language supported")
 
-    if req.use_docker:
-        if run_in_docker is None:
-            raise HTTPException(status_code=500, detail="Docker runner not available on server")
-        try:
-            return run_in_docker(req.code, timeout=req.timeout, memory_mb=req.memory_mb)
-        except subprocess.TimeoutExpired:
-            raise HTTPException(status_code=504, detail="Execution timed out")
-        except subprocess.CalledProcessError as e:
-            return {"stdout": e.stdout, "stderr": e.stderr, "returncode": e.returncode}
-        except Exception as e:  # noqa: BLE001 -- user-submitted code can raise anything; surface it as a 500
-            raise HTTPException(status_code=500, detail=str(e))
-
-    tmpdir = tempfile.mkdtemp(prefix="fusional-")
-    script_path = os.path.join(tmpdir, "script.py")
-    with open(script_path, "w", encoding="utf-8") as f:  # noqa: ASYNC230 -- short-lived local temp-file write, not worth a thread hop
-        f.write(req.code)
+    if not req.use_docker:
+        raise HTTPException(status_code=400, detail="Host execution is disabled")
+    if run_in_docker is None:
+        raise HTTPException(status_code=500, detail="Docker runner not available on server")
     try:
-        proc = subprocess.run(  # noqa: ASYNC221 -- sandboxed execution is expected to block until the subprocess exits or times out
-            [sys.executable, script_path], capture_output=True, text=True, timeout=req.timeout, check=False,  # nosec B603
-        )
-        return {"stdout": proc.stdout, "stderr": proc.stderr, "returncode": proc.returncode}
+        return run_in_docker(req.code, timeout=req.timeout, memory_mb=req.memory_mb)
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=504, detail="Execution timed out")
-    finally:
-        shutil.rmtree(tmpdir, ignore_errors=True)
+    except subprocess.CalledProcessError as e:
+        return {"stdout": e.stdout, "stderr": e.stderr, "returncode": e.returncode}
+    except Exception as e:  # noqa: BLE001 -- report sandbox failures through the API
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/register")
@@ -394,6 +410,8 @@ async def catalog():
 
 @app.post("/generate")
 async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
+    if not req.sandbox:
+        raise HTTPException(status_code=400, detail="Host execution of generated code is disabled")
     try:
         server_name = _slugify_server_name(req.prompt)
         if server_name in REGISTRY:
@@ -442,32 +460,46 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         tools = _extract_tools_from_code(generated_code)
         port = _find_available_port(8200, 8299)
 
-        tmpdir = tempfile.mkdtemp(prefix="generated-server-")
-        script_path = os.path.join(tmpdir, "generated_server.py")
-        with open(script_path, "w", encoding="utf-8") as f:  # noqa: ASYNC230 -- short-lived local temp-file write, not worth a thread hop
+        script_dir = Path.home() / ".local/share/fusional/generated" / server_name
+        script_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+        script_path = str(script_dir / "generated_server.py")
+        with open(script_path, "w", encoding="utf-8") as f:
             f.write(generated_code)
 
-        env = os.environ.copy()
-        env["PORT"] = str(port)
-        env["FUSIONAL_GENERATED_SERVER"] = server_name
-
-        proc = subprocess.Popen(  # nosec B603  # noqa: ASYNC220 -- launching the generated server is a one-shot fire-and-forget, not per-request
-            [sys.executable, script_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            env=env,
-            cwd=tmpdir,
-        )
-
-        await asyncio.sleep(2)
-        startup_logs = ""
-        if proc.poll() is not None:
-            out, err = proc.communicate(timeout=2)
-            startup_logs = (out or "") + ("\\n" + err if err else "")
-            raise RuntimeError(f"Generated server exited early with code {proc.returncode}. {startup_logs}")
-
-        startup_logs = f"Generated server started with PID {proc.pid} on port {port}"
+        container_name = f"fusional-generated-{server_name}"[:63]
+        command = [
+            "docker", "run", "-d", "--restart", "unless-stopped",
+            "--name", container_name, "--read-only",
+            "--tmpfs", "/tmp:rw,noexec,nosuid,nodev,size=64m",
+            "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+            "--pids-limit", "64", "--memory", "512m", "--cpus", "1",
+            "--user", "1000:1000",
+            "--network", "bridge", "-p", f"127.0.0.1:{port}:{port}",
+            "-v", f"{script_path}:/work/generated_server.py:ro",
+            "-e", f"PORT={port}", "-e", "PYTHONDONTWRITEBYTECODE=1",
+            os.getenv("FUSIONAL_GENERATED_IMAGE", "fusional:latest"),
+            "python", "/work/generated_server.py",
+        ]
+        started = subprocess.run(command, capture_output=True, text=True, timeout=30)
+        if started.returncode:
+            raise RuntimeError(f"Sandbox did not start: {started.stderr[:500]}")
+        container_id = started.stdout.strip()
+        healthy = False
+        try:
+            for _ in range(20):
+                try:
+                    with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1) as response:
+                        healthy = response.status == 200
+                    if healthy:
+                        break
+                except (urllib.error.URLError, TimeoutError):
+                    time.sleep(0.5)
+            if not healthy:
+                raise RuntimeError("Generated server failed its health check")
+        except Exception:
+            subprocess.run(["docker", "rm", "-f", container_name], capture_output=True, timeout=15)
+            raise
+        startup_logs = f"Generated server started in Docker container {container_id[:12]} on port {port}"
 
         REGISTRY[server_name] = {
             "description": req.prompt,
@@ -475,8 +507,8 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             "metadata": {
                 "tools": tools,
                 "port": port,
-                "pid": proc.pid,
-                "sandbox": req.sandbox,
+                "container_id": container_id,
+                "sandbox": True,
                 "source": "generated",
                 "script_path": script_path,
             },
