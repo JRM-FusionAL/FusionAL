@@ -275,6 +275,9 @@ def _save_registry():
 _load_registry()
 
 
+_SAFE_SERVER_NAME = re.compile(r"[a-z0-9][a-z0-9-]{0,99}")
+
+
 def _slugify_server_name(prompt: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", prompt.lower()).strip("-")
     if not slug:
@@ -466,6 +469,12 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         with open(script_path, "w", encoding="utf-8") as f:
             f.write(generated_code)
 
+        # server_name is derived from user input. _slugify_server_name already
+        # reduces it to [a-z0-9-], but assert the invariant at the point of use:
+        # it becomes a docker --name value and part of a -v mount spec, where a
+        # leading "-" or a ":"/"," would change the meaning of the argv.
+        if not _SAFE_SERVER_NAME.fullmatch(server_name):
+            raise HTTPException(status_code=400, detail="Invalid generated server name")
         container_name = f"fusional-generated-{server_name}"[:63]
         command = [
             "docker", "run", "-d", "--restart", "unless-stopped",
