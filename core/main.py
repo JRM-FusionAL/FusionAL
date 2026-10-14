@@ -17,8 +17,7 @@ import socket
 import subprocess  # nosec B404
 import sys
 import time
-import urllib.error
-import urllib.request
+import aiohttp
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -163,7 +162,7 @@ if _SECURITY_ENABLED:
     _rate = enforce_rate_limit
 
 
-# ── Models ────────────────────────────────────────────────────────────────
+# ── Models ───────────────────────────────────────────────────────────��[...]
 
 class ExecRequest(BaseModel):
     language: str = "python"
@@ -185,7 +184,7 @@ class GenerateRequest(BaseModel):
     sandbox: bool = True
 
 
-# ── Registry ────────────────────────────────────────────────────────────────
+# ── Registry ───────────────────────────────────────────────────────────[...]
 
 REGISTRY: dict = {}
 REGISTRY_FILE = os.path.join(os.getcwd(), "mcp_registry.json")
@@ -315,9 +314,9 @@ def _extract_tools_from_code(code: str) -> list[str]:
 def _generate_local_server_code(server_name: str, user_request: str) -> str:
     safe_name = re.sub(r"[^a-zA-Z0-9_]", "_", server_name)[:48] or "generated_mcp"
     escaped_request = user_request.replace('"', '\\"')
-    template = f'''\"\"\"
+    template = f'''"""
 Auto-generated local MCP server fallback for {server_name}.
-\"\"\"
+"""
 
 import os
 from datetime import datetime
@@ -367,7 +366,7 @@ if __name__ == "__main__":
     return template
 
 
-# ── Endpoints ──────────────────────────────────────────────────────────────
+# ── Endpoints ───────────────────────────────────────────��──────────────��[...]
 
 
 @app.get("/health")
@@ -461,10 +460,16 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         port = _find_available_port(8200, 8299)
 
         script_dir = Path.home() / ".local/share/fusional/generated" / server_name
-        script_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         script_path = str(script_dir / "generated_server.py")
-        with open(script_path, "w", encoding="utf-8") as f:
-            f.write(generated_code)
+
+        # Write the generated script off the event loop to avoid blocking
+        def _write_script(path: str, content: str) -> None:
+            p = Path(path)
+            p.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(content)
+
+        await asyncio.to_thread(_write_script, script_path, generated_code)
 
         container_name = f"fusional-generated-{server_name}"[:63]
         command = [
@@ -480,24 +485,42 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             os.getenv("FUSIONAL_GENERATED_IMAGE", "fusional:latest"),
             "python", "/work/generated_server.py",
         ]
-        started = subprocess.run(command, capture_output=True, text=True, timeout=30)
-        if started.returncode:
-            raise RuntimeError(f"Sandbox did not start: {started.stderr[:500]}")
-        container_id = started.stdout.strip()
+
+        # Start the container using asyncio subprocess API to avoid blocking the event loop
+        proc = await asyncio.create_subprocess_exec(*command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        try:
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=30)
+        except asyncio.TimeoutError:
+            proc.kill()
+            await proc.wait()
+            raise RuntimeError("Sandbox start command timed out")
+
+        if proc.returncode != 0:
+            stderr_text = stderr.decode(errors="ignore") if isinstance(stderr, (bytes, bytearray)) else str(stderr)
+            raise RuntimeError(f"Sandbox did not start: {stderr_text[:500]}")
+        container_id = stdout.decode().strip()
+
         healthy = False
         try:
-            for _ in range(20):
-                try:
-                    with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=1) as response:
-                        healthy = response.status == 200
-                    if healthy:
-                        break
-                except (urllib.error.URLError, TimeoutError):
-                    time.sleep(0.5)
+            async with aiohttp.ClientSession() as session:
+                for _ in range(20):
+                    try:
+                        async with session.get(f"http://127.0.0.1:{port}/health", timeout=1) as response:
+                            if response.status == 200:
+                                healthy = True
+                                break
+                    except (aiohttp.ClientError, asyncio.TimeoutError):
+                        await asyncio.sleep(0.5)
             if not healthy:
                 raise RuntimeError("Generated server failed its health check")
         except Exception:
-            subprocess.run(["docker", "rm", "-f", container_name], capture_output=True, timeout=15)
+            # Attempt async cleanup of the container
+            rm_proc = await asyncio.create_subprocess_exec("docker", "rm", "-f", container_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+            try:
+                await asyncio.wait_for(rm_proc.communicate(), timeout=15)
+            except asyncio.TimeoutError:
+                rm_proc.kill()
+                await rm_proc.wait()
             raise
         startup_logs = f"Generated server started in Docker container {container_id[:12]} on port {port}"
 
