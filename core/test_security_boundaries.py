@@ -56,3 +56,13 @@ def test_showcase_proxy_sends_its_interservice_key(monkeypatch):
         assert client.headers["X-API-Key"] == "showcase-test-key"
     finally:
         asyncio.run(client.aclose())
+
+
+def test_generated_server_names_are_argv_safe():
+    from core.main import _SAFE_SERVER_NAME, _slugify_server_name
+
+    hostile = ["--privileged", "a:b,c", "x; rm -rf /", "../../etc", "", "----"]
+    for prompt in hostile + ["Weather tools for Kentucky", "PDF → summary"]:
+        assert _SAFE_SERVER_NAME.fullmatch(_slugify_server_name(prompt))
+    for raw in ["-x-mcp", "a:b-mcp", "a,b-mcp", "a b-mcp", "A-mcp"]:
+        assert not _SAFE_SERVER_NAME.fullmatch(raw)
