@@ -80,7 +80,7 @@ mypy==2.3.1
 mypy_extensions==1.1.0
 nemo-relay==0.8.4
 numpy==2.5.2
-oauthlib==3.3.1
+oauthlib==4.0.0
 onnxruntime==1.29.0
 openai==3.8.0
 opentelemetry-api==1.45.2
