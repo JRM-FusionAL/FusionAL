@@ -75,7 +75,7 @@ microsoft-teams-apps==2.0.16
 microsoft-teams-cards==2.0.16
 microsoft-teams-common==2.0.16
 msal==1.38.0
-multidict==6.7.1
+multidict==6.9.1
 mypy==2.3.1
 mypy_extensions==1.1.0
 nemo-relay==0.8.4
