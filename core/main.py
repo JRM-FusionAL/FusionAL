@@ -17,11 +17,12 @@ import socket
 import subprocess  # nosec B404
 import sys
 import time
-import aiohttp
+from collections.abc import Callable
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
+import aiohttp
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
@@ -85,8 +86,11 @@ if _AUDIT_ENABLED:
     set_audit_hook(record_tool_call)
 
 # --- Docker runner ---
+run_in_docker: Callable[..., dict] | None
 try:
-    from .runner_docker import run_in_docker
+    from .runner_docker import run_in_docker as _run_in_docker
+
+    run_in_docker = _run_in_docker
 except Exception:  # noqa: BLE001 -- optional dependency; any import failure disables the docker runner
     run_in_docker = None
 
@@ -371,7 +375,7 @@ if __name__ == "__main__":
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "FusionAL MCP Server", "security_enabled": _SECURITY_ENABLED, "timestamp": datetime.now(timezone.utc).isoformat()}
+    return {"status": "ok", "service": "FusionAL MCP Server", "security_enabled": _SECURITY_ENABLED, "timestamp": datetime.now(UTC).isoformat()}
 
 
 @app.post("/execute")
@@ -384,7 +388,8 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
     if run_in_docker is None:
         raise HTTPException(status_code=500, detail="Docker runner not available on server")
     try:
-        return run_in_docker(req.code, timeout=req.timeout, memory_mb=req.memory_mb)
+        memory_mb = req.memory_mb if req.memory_mb is not None else 128
+        return run_in_docker(req.code, timeout=req.timeout, memory_mb=memory_mb)
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=504, detail="Execution timed out")
     except subprocess.CalledProcessError as e:
@@ -397,14 +402,14 @@ async def execute(req: ExecRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(
 async def register(req: RegisterRequest, _auth_dep=Depends(_auth), _rate_dep=Depends(_rate)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     if req.name in REGISTRY:
         raise HTTPException(status_code=400, detail=f"Server '{req.name}' already registered")
-    REGISTRY[req.name] = {"description": req.description, "url": req.url, "metadata": req.metadata or {}, "registered_at": datetime.now(timezone.utc).isoformat()}
+    REGISTRY[req.name] = {"description": req.description, "url": req.url, "metadata": req.metadata or {}, "registered_at": datetime.now(UTC).isoformat()}
     _save_registry()
-    return {"status": "registered", "name": req.name, "timestamp": datetime.now(timezone.utc).isoformat()}
+    return {"status": "registered", "name": req.name, "timestamp": datetime.now(UTC).isoformat()}
 
 
 @app.get("/catalog")
 async def catalog():
-    return {"total": len(REGISTRY), "servers": REGISTRY, "timestamp": datetime.now(timezone.utc).isoformat()}
+    return {"total": len(REGISTRY), "servers": REGISTRY, "timestamp": datetime.now(UTC).isoformat()}
 
 
 @app.post("/generate")
@@ -490,7 +495,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
         proc = await asyncio.create_subprocess_exec(*command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         try:
             stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=30)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             proc.kill()
             await proc.wait()
             raise RuntimeError("Sandbox start command timed out")
@@ -505,11 +510,11 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             async with aiohttp.ClientSession() as session:
                 for _ in range(20):
                     try:
-                        async with session.get(f"http://127.0.0.1:{port}/health", timeout=1) as response:
+                        async with session.get(f"http://127.0.0.1:{port}/health", timeout=aiohttp.ClientTimeout(total=1)) as response:
                             if response.status == 200:
                                 healthy = True
                                 break
-                    except (aiohttp.ClientError, asyncio.TimeoutError):
+                    except (TimeoutError, aiohttp.ClientError):
                         await asyncio.sleep(0.5)
             if not healthy:
                 raise RuntimeError("Generated server failed its health check")
@@ -518,7 +523,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             rm_proc = await asyncio.create_subprocess_exec("docker", "rm", "-f", container_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
             try:
                 await asyncio.wait_for(rm_proc.communicate(), timeout=15)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 rm_proc.kill()
                 await rm_proc.wait()
             raise
@@ -535,7 +540,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
                 "source": "generated",
                 "script_path": script_path,
             },
-            "registered_at": datetime.now(timezone.utc).isoformat(),
+            "registered_at": datetime.now(UTC).isoformat(),
         }
         _save_registry()
 
@@ -567,7 +572,7 @@ async def epistemic_pending(_auth_dep=Depends(_auth)):  # noqa: B008 -- FastAPI 
         "count": len(pending),
         "holds": pending,
         "enforcement_enabled": True,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 

@@ -16,7 +16,7 @@ import json
 import logging
 import os
 import threading
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel
 
@@ -153,7 +153,7 @@ def record_tool_call(
 ) -> None:
     """Append one tool-call audit record to the singleton store."""
     rec = AuditRecord(
-        timestamp=datetime.now(timezone.utc).isoformat(),
+        timestamp=datetime.now(UTC).isoformat(),
         tool=tool,
         status=status,
         duration_ms=round(duration_ms, 2),
@@ -202,9 +202,9 @@ def records_to_csv(records: list[AuditRecord]) -> str:
 def _parse_utc(ts: str) -> datetime:
     """Parse an ISO 8601 timestamp string into a UTC-aware datetime."""
     dt = datetime.fromisoformat(ts)
-    return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+    return dt if dt.tzinfo is not None else dt.replace(tzinfo=UTC)
 
 
 def _as_utc(dt: datetime) -> datetime:
     """Return *dt* with UTC timezone info, treating naive datetimes as UTC."""
-    return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+    return dt if dt.tzinfo is not None else dt.replace(tzinfo=UTC)
