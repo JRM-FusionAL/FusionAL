@@ -510,7 +510,7 @@ async def generate(req: GenerateRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
             async with aiohttp.ClientSession() as session:
                 for _ in range(20):
                     try:
-                        async with session.get(f"http://127.0.0.1:{port}/health", timeout=1) as response:
+                        async with session.get(f"http://127.0.0.1:{port}/health", timeout=aiohttp.ClientTimeout(total=1)) as response:
                             if response.status == 200:
                                 healthy = True
                                 break
