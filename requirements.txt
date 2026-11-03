@@ -80,7 +80,7 @@ mypy==2.4.1
 mypy_extensions==1.1.0
 nemo-relay==0.11.0
 numpy==2.5.4
-oauthlib==3.3.1
+oauthlib==4.0.1
 onnxruntime==1.31.1
 openai==3.41.0
 opentelemetry-api==1.45.2
@@ -145,7 +145,6 @@ stevedore==5.9.1
 tornado==6.6
 tqdm==4.70.1
 truststore==0.10.5
-tweepy==4.17.0
 typer==0.27.3
 typing-inspection==0.4.4
 typing_extensions==4.16.0
