@@ -22,7 +22,7 @@ def test_health():
         print("✅ Health check passed!")
         print(json.dumps(resp.json(), indent=2))
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 -- standalone smoke-test script; any failure should print and return False
         print(f"❌ Health check failed: {e}")
         return False
 
@@ -49,7 +49,7 @@ def test_execute_simple():
         print(f"Output: {result['stdout']}")
         print(f"Return code: {result['returncode']}")
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 -- standalone smoke-test script; any failure should print and return False
         print(f"❌ Simple execution failed: {e}")
         return False
 
@@ -77,7 +77,7 @@ def test_execute_docker():
         print(f"Output: {result['stdout']}")
         print(f"Return code: {result['returncode']}")
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 -- standalone smoke-test script; any failure should print and return False
         print(f"❌ Docker execution failed: {e}")
         print("   Make sure Docker Desktop is running!")
         return False
@@ -99,7 +99,7 @@ def test_catalog():
         else:
             print("  No servers registered yet")
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 -- standalone smoke-test script; any failure should print and return False
         print(f"❌ Catalog check failed: {e}")
         return False
 
@@ -129,7 +129,7 @@ def test_register():
             return True
         print(f"❌ Server registration failed: {e}")
         return False
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 -- standalone smoke-test script; any failure should print and return False
         print(f"❌ Server registration failed: {e}")
         return False
 

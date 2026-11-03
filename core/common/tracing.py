@@ -66,7 +66,7 @@ def configure_tracing(app, service_name: str | None = None) -> None:
         logger.info("tracing.disabled reason='TRACING_ENABLED=false'")
         return
 
-    resolved_name = service_name or os.getenv("SERVICE_NAME", getattr(app, "title", "mcp-server"))
+    resolved_name = str(service_name or os.getenv("SERVICE_NAME", getattr(app, "title", "mcp-server")))
     resource = Resource.create({RESOURCE_SERVICE_NAME: resolved_name})
     provider = TracerProvider(resource=resource)
 

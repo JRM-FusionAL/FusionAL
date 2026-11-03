@@ -15,6 +15,7 @@ Proxied tools (registered at startup from REGISTRY):
 
 import asyncio
 import logging
+import os
 import time
 from typing import Any
 
@@ -35,6 +36,21 @@ from .ai_agent import (
 )
 
 logger = logging.getLogger("fusional.proxy")
+
+_PROTECTED_SHOWCASE = {
+    "api-integration-hub", "business-intelligence-mcp",
+    "content-automation-mcp", "github-mcp-safe", "intelligence-mcp",
+}
+
+
+def _downstream_client(server_name: str, timeout: float) -> httpx.AsyncClient:
+    headers = {}
+    if server_name in _PROTECTED_SHOWCASE:
+        key = os.getenv("SHOWCASE_MCP_API_KEY", "").strip()
+        if not key:
+            raise RuntimeError("SHOWCASE_MCP_API_KEY is required for showcase proxy tools")
+        headers["X-API-Key"] = key
+    return httpx.AsyncClient(timeout=timeout, follow_redirects=True, headers=headers)
 
 mcp = FastMCP(
     "fusional",
@@ -77,6 +93,7 @@ def execute_code(code: str, timeout: int = 5) -> dict:
             capture_output=True,
             text=True,
             timeout=timeout,
+            check=False,
         )
         return {"stdout": proc.stdout, "stderr": proc.stderr, "returncode": proc.returncode}
     except subprocess.TimeoutExpired:
@@ -139,6 +156,7 @@ def _make_passthrough_tool(
         fn_metadata=meta,
         is_async=True,
         context_kwarg=None,
+        annotations=None,
     )
 
 
@@ -174,7 +192,7 @@ def _proxy_tool_name(namespace: str, tool_name: str) -> str:
     return f"{namespace}_{safe_tool}"[:64]
 
 
-def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
+def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str, server_name: str):
     """Return an async function that proxies calls to a downstream MCP tool."""
 
     async def proxy(**kwargs: Any) -> dict:
@@ -183,53 +201,55 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
         error_str = ""
         epistemic_meta: dict | None = None
         try:
-            async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=30.0, follow_redirects=True)) as (read, write, _):
-                async with ClientSession(read, write) as session:
-                    await session.initialize()
-                    result = await session.call_tool(tool_name, kwargs)
-                    # call_tool returns isError=True on tool-level failures; it does not raise.
-                    if getattr(result, "isError", False):
-                        status = "error"
-                        error_str = " ".join(
-                            getattr(c, "text", "") for c in result.content if hasattr(c, "text")
-                        )[:500]
-                    # Phase 1: tag every result with its epistemic envelope
-                    # (tier, sha256, downstream_use). Tagging only — no
-                    # enforcement yet. Falls back to the raw payload if the
-                    # epistemics module is unavailable.
-                    content_list = [c.model_dump() for c in result.content]
-                    payload: dict = {"content": content_list}
-                    try:
-                        from .epistemics import (
-                            ENFORCEMENT_ENABLED,
-                            STATUS_MAP,
-                            classify_tool,
-                            result_sha256,
-                            wrap_result,
+            async with (
+                streamable_http_client(mcp_url, http_client=_downstream_client(server_name, 30.0)) as (read, write, _),
+                ClientSession(read, write) as session,
+            ):
+                await session.initialize()
+                result = await session.call_tool(tool_name, kwargs)
+                # call_tool returns isError=True on tool-level failures; it does not raise.
+                if getattr(result, "isError", False):
+                    status = "error"
+                    error_str = " ".join(
+                        getattr(c, "text", "") for c in result.content if hasattr(c, "text")
+                    )[:500]
+                # Phase 1: tag every result with its epistemic envelope
+                # (tier, sha256, downstream_use). Tagging only — no
+                # enforcement yet. Falls back to the raw payload if the
+                # epistemics module is unavailable.
+                content_list = [c.model_dump() for c in result.content]
+                payload: dict = {"content": content_list}
+                try:
+                    from .epistemics import (
+                        ENFORCEMENT_ENABLED,
+                        STATUS_MAP,
+                        classify_tool,
+                        result_sha256,
+                        wrap_result,
+                    )
+                    if ENFORCEMENT_ENABLED:
+                        tier = classify_tool(proxied_name)
+                    else:
+                        tier = "READONLY"
+                    if ENFORCEMENT_ENABLED and tier != "READONLY":
+                        # Claim gate: hold the payload, disclose a notice.
+                        from .claim_gate import get_hold_store
+                        notice = get_hold_store().put(
+                            sha256=result_sha256(content_list),
+                            tool=proxied_name,
+                            tier=tier,
+                            status=str(STATUS_MAP[tier]["epistemic_status"]),
+                            content=content_list,
+                            args=kwargs,
                         )
-                        if ENFORCEMENT_ENABLED:
-                            tier = classify_tool(proxied_name)
-                        else:
-                            tier = "READONLY"
-                        if ENFORCEMENT_ENABLED and tier != "READONLY":
-                            # Claim gate: hold the payload, disclose a notice.
-                            from .claim_gate import get_hold_store
-                            notice = get_hold_store().put(
-                                sha256=result_sha256(content_list),
-                                tool=proxied_name,
-                                tier=tier,
-                                status=STATUS_MAP[tier]["epistemic_status"],
-                                content=content_list,
-                                args=kwargs,
-                            )
-                            payload = notice
-                            epistemic_meta = notice["epistemic"]
-                        else:
-                            payload = wrap_result(proxied_name, content_list)
-                            epistemic_meta = payload.get("epistemic")
-                    except Exception as exc:  # never break the proxy path
-                        logger.warning("epistemics.wrap_failed tool=%s error=%s", proxied_name, exc)
-                    return payload
+                        payload = notice
+                        epistemic_meta = notice["epistemic"]
+                    else:
+                        payload = wrap_result(proxied_name, content_list)
+                        epistemic_meta = payload.get("epistemic")
+                except Exception as exc:  # noqa: BLE001 -- never break the proxy path on an epistemics-wrapping failure
+                    logger.warning("epistemics.wrap_failed tool=%s error=%s", proxied_name, exc)
+                return payload
         except Exception as exc:
             status = "error"
             error_str = str(exc)
@@ -243,8 +263,8 @@ def _make_proxy_fn(mcp_url: str, tool_name: str, proxied_name: str):
                         sha256=(epistemic_meta or {}).get("sha256", ""),
                         epistemic_status=(epistemic_meta or {}).get("epistemic_status", ""),
                     )
-                except Exception:
-                    pass
+                except Exception as exc:  # noqa: BLE001 -- audit logging must never break the proxied call itself
+                    logger.debug("audit.record_failed tool=%s error=%s", proxied_name, exc)
 
     proxy.__name__ = tool_name
     return proxy
@@ -283,12 +303,14 @@ async def register_downstream_tools(registry: dict) -> None:
             last_exc: Exception | None = None
             for attempt in range(2):
                 try:
-                    async with streamable_http_client(mcp_url, http_client=httpx.AsyncClient(timeout=5.0, follow_redirects=True)) as (read, write, _):
-                        async with ClientSession(read, write) as session:
-                            await session.initialize()
-                            tools_result = await session.list_tools()
+                    async with (
+                        streamable_http_client(mcp_url, http_client=_downstream_client(server_name, 5.0)) as (read, write, _),
+                        ClientSession(read, write) as session,
+                    ):
+                        await session.initialize()
+                        tools_result = await session.list_tools()
                     break
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 -- retried once, then re-raised below via last_exc if still unset
                     last_exc = exc
                     if attempt == 0:
                         await asyncio.sleep(3)
@@ -302,7 +324,7 @@ async def register_downstream_tools(registry: dict) -> None:
                 if proxied_name in existing_names:
                     continue
 
-                proxy_fn = _make_proxy_fn(mcp_url, tool.name, proxied_name)
+                proxy_fn = _make_proxy_fn(mcp_url, tool.name, proxied_name, server_name)
                 tool_obj = _make_passthrough_tool(
                     name=proxied_name,
                     description=f"[{server_name}] {tool.description or tool.name}"[:512],
@@ -318,7 +340,7 @@ async def register_downstream_tools(registry: dict) -> None:
                 server_name, namespace, registered,
             )
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 -- one downstream server failing to register must not abort the others
             logger.warning(
                 "proxy.skip server=%s url=%s error=%s",
                 server_name, mcp_url, exc,

@@ -13,12 +13,11 @@ Design notes:
   (Phase 1). Default is ON.
 """
 
-import json
 import logging
 import os
 import threading
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 logger = logging.getLogger("fusional.epistemics.hold")
 
@@ -28,7 +27,7 @@ ENFORCEMENT_ENABLED = _ENFORCEMENT_RAW not in ("off", "false", "0", "no")
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class HoldStore:
