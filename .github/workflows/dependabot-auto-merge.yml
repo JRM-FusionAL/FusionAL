@@ -20,7 +20,7 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Ensure ready-for-human label exists
-        run: gh label create ready-for-human --color ededed --description "Requires human implementation or review" --force
+        run: gh label create ready-for-human --repo "$GITHUB_REPOSITORY" --color ededed --description "Requires human implementation or review" --force
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -28,7 +28,7 @@ jobs:
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
           steps.metadata.outputs.update-type == 'version-update:semver-minor'
-        run: gh pr merge --auto --squash "$PR_URL"
+        run: gh pr merge --repo "$GITHUB_REPOSITORY" --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,7 +37,7 @@ jobs:
         if: |
           steps.metadata.outputs.update-type != 'version-update:semver-patch' &&
           steps.metadata.outputs.update-type != 'version-update:semver-minor'
-        run: gh pr edit "$PR_URL" --add-label ready-for-human
+        run: gh pr edit --repo "$GITHUB_REPOSITORY" "$PR_URL" --add-label ready-for-human
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

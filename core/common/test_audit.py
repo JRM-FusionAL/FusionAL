@@ -3,7 +3,7 @@
 import csv
 import io
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from audit import (
     AuditRecord,
@@ -22,7 +22,7 @@ from audit import (
 
 def _make_record(**kwargs) -> AuditRecord:
     defaults = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "tool": "execute_code",
         "status": "success",
         "duration_ms": 42.0,
@@ -88,36 +88,36 @@ class TestAuditStore:
 
     def test_query_with_start_filter(self):
         store = AuditStore()
-        past = datetime(2025, 1, 1, tzinfo=timezone.utc)
-        future = datetime(2027, 1, 1, tzinfo=timezone.utc)
+        past = datetime(2025, 1, 1, tzinfo=UTC)
+        future = datetime(2027, 1, 1, tzinfo=UTC)
         store.append(_make_record(timestamp=past.isoformat()))
         store.append(_make_record(timestamp=future.isoformat()))
-        results = store.query(start=datetime(2026, 1, 1, tzinfo=timezone.utc))
+        results = store.query(start=datetime(2026, 1, 1, tzinfo=UTC))
         assert len(results) == 1
         assert _parse_utc(results[0].timestamp) == future
 
     def test_query_with_end_filter(self):
         store = AuditStore()
-        past = datetime(2025, 1, 1, tzinfo=timezone.utc)
-        future = datetime(2027, 1, 1, tzinfo=timezone.utc)
+        past = datetime(2025, 1, 1, tzinfo=UTC)
+        future = datetime(2027, 1, 1, tzinfo=UTC)
         store.append(_make_record(timestamp=past.isoformat()))
         store.append(_make_record(timestamp=future.isoformat()))
-        results = store.query(end=datetime(2026, 1, 1, tzinfo=timezone.utc))
+        results = store.query(end=datetime(2026, 1, 1, tzinfo=UTC))
         assert len(results) == 1
         assert _parse_utc(results[0].timestamp) == past
 
     def test_query_with_start_and_end_filter(self):
         store = AuditStore()
         timestamps = [
-            datetime(2025, 1, 1, tzinfo=timezone.utc),
-            datetime(2026, 1, 1, tzinfo=timezone.utc),
-            datetime(2027, 1, 1, tzinfo=timezone.utc),
+            datetime(2025, 1, 1, tzinfo=UTC),
+            datetime(2026, 1, 1, tzinfo=UTC),
+            datetime(2027, 1, 1, tzinfo=UTC),
         ]
         for ts in timestamps:
             store.append(_make_record(timestamp=ts.isoformat()))
         results = store.query(
-            start=datetime(2025, 6, 1, tzinfo=timezone.utc),
-            end=datetime(2026, 6, 1, tzinfo=timezone.utc),
+            start=datetime(2025, 6, 1, tzinfo=UTC),
+            end=datetime(2026, 6, 1, tzinfo=UTC),
         )
         assert len(results) == 1
         assert _parse_utc(results[0].timestamp) == timestamps[1]
@@ -129,23 +129,23 @@ class TestAuditStore:
     def test_query_empty_store_with_range_returns_empty_list(self):
         store = AuditStore()
         results = store.query(
-            start=datetime(2026, 1, 1, tzinfo=timezone.utc),
-            end=datetime(2026, 12, 31, tzinfo=timezone.utc),
+            start=datetime(2026, 1, 1, tzinfo=UTC),
+            end=datetime(2026, 12, 31, tzinfo=UTC),
         )
         assert results == []
 
     def test_query_with_no_matching_range_returns_empty_list(self):
         store = AuditStore()
-        store.append(_make_record(timestamp=datetime(2025, 1, 1, tzinfo=timezone.utc).isoformat()))
+        store.append(_make_record(timestamp=datetime(2025, 1, 1, tzinfo=UTC).isoformat()))
         results = store.query(
-            start=datetime(2030, 1, 1, tzinfo=timezone.utc),
-            end=datetime(2030, 12, 31, tzinfo=timezone.utc),
+            start=datetime(2030, 1, 1, tzinfo=UTC),
+            end=datetime(2030, 12, 31, tzinfo=UTC),
         )
         assert results == []
 
     def test_inclusive_bounds(self):
         store = AuditStore()
-        ts = datetime(2026, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+        ts = datetime(2026, 6, 15, 12, 0, 0, tzinfo=UTC)
         store.append(_make_record(timestamp=ts.isoformat()))
         # Exact match on start bound
         assert len(store.query(start=ts)) == 1
@@ -316,15 +316,15 @@ class TestDatetimeHelpers:
     def test_parse_utc_naive_becomes_utc(self):
         ts = "2026-06-01T12:00:00"
         dt = _parse_utc(ts)
-        assert dt.tzinfo == timezone.utc
+        assert dt.tzinfo == UTC
 
     def test_as_utc_naive_becomes_utc(self):
-        naive = datetime(2026, 1, 1, 12, 0, 0)  # noqa: DTZ001 -- deliberately naive input to test _as_utc's tz-normalization
+        naive = datetime(2026, 1, 1, 12, 0, 0)
         aware = _as_utc(naive)
-        assert aware.tzinfo == timezone.utc
+        assert aware.tzinfo == UTC
 
     def test_as_utc_aware_unchanged(self):
-        aware = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        aware = datetime(2026, 1, 1, 12, 0, 0, tzinfo=UTC)
         assert _as_utc(aware) is aware
 
 
