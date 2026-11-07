@@ -122,7 +122,7 @@ FusionAL/
 
 ### 3.1 FastAPI Application — `core/main.py`
 
-The central application orchestrates all services. It is a **FastAPI** app running via **uvicorn** on port 8009 (configurable via `PORT`).
+The central application orchestrates all services. It is a **FastAPI** app running via **uvicorn** on port 8009 (configurable via `PORT`). Compose publishes it on host port 8089 (`compose.yaml`).
 
 #### REST API Endpoints
 

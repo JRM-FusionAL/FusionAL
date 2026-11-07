@@ -109,7 +109,7 @@ fusional/
 │   ├── middleware/            # FastAPI middleware
 │   ├── models/                # Pydantic request/response models
 │   ├── services/
-│   │   └── key_manager.py     # API key rotation service
+│   │   └── key_manager.py     # API key rotation service (file deleted in 9e46deb; absent from origin/main on 2026-11-07)
 │   ├── requirements.txt       # Pinned Python deps
 │   ├── Dockerfile             # Production image
 │   ├── quick_test.py          # Quick smoke test

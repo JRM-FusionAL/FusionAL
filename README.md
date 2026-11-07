@@ -66,6 +66,10 @@ Verify it's running:
 curl http://localhost:8009/health
 ```
 
+Port 8009 is the default for a direct run (`PORT`). The Docker Compose file
+publishes host port 8089 to container port 8009, so use `http://localhost:8089`
+for a Compose deployment (see `docs/docker-gateway.md`).
+
 ### Step 3: Configure Claude Desktop
 
 Find your config file:
