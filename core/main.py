@@ -411,7 +411,7 @@ async def register(req: RegisterRequest, _auth_dep=Depends(_auth), _rate_dep=Dep
 
 
 @app.get("/catalog")
-async def catalog():
+async def catalog(_auth_dep=Depends(_auth)):  # noqa: B008 -- FastAPI Depends() in defaults is the idiomatic DI pattern
     return {"total": len(REGISTRY), "servers": REGISTRY, "timestamp": datetime.now(UTC).isoformat()}
 
 

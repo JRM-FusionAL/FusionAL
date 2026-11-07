@@ -58,6 +58,16 @@ def test_showcase_proxy_sends_its_interservice_key(monkeypatch):
         asyncio.run(client.aclose())
 
 
+def test_catalog_requires_api_key(monkeypatch):
+    monkeypatch.setenv("API_KEY", "gateway-test-key")
+    client = TestClient(app)
+    assert client.get("/catalog").status_code == 401
+    assert client.get("/catalog", headers={"X-API-Key": "wrong"}).status_code == 401
+    response = client.get("/catalog", headers={"X-API-Key": "gateway-test-key"})
+    assert response.status_code == 200
+    assert "servers" in response.json()
+
+
 def test_generated_server_names_are_argv_safe():
     from core.main import _SAFE_SERVER_NAME, _slugify_server_name
 
