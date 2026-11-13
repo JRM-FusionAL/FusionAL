@@ -7,7 +7,7 @@
 [![smithery badge](https://smithery.ai/badge/jrm-fusional/fusional)](https://smithery.ai/servers/jrm-fusional/fusional)
 
 > **Your team connected 10 MCP servers. Now what?**  
-> 🌐 [fusional.dev](https://fusional.dev) • 📧 [jrm@fusional.com](mailto:jrm@fusional.com) • 🗓️ [Book a Call](https://calendly.com/jonathanmelton004/30min)
+> 🌐 [fusional.dev](https://fusional.dev) • 📧 [jrm@fusional.dev](mailto:jrm@fusional.dev) • 🗓️ [Book a Call](https://calendly.com/jonathanmelton004/30min)
 
 MCP is powerful. Enterprise MCP deployment is a different problem entirely.
 
@@ -285,15 +285,18 @@ if __name__ == "__main__":
 
 ## 🚀 Done-for-You Consulting
 
-Don't want to self-manage? FusionAL offers done-for-you MCP deployments:
+Don't want to self-manage? FusionAL sets up and reviews AI workflows for you:
 
-| Tier | Scope | Price |
-|------|-------|-------|
-| **Starter Install** | Single environment, core servers, Windows hardening | $2,500–$3,500 |
-| **Core Install** | Full stack, custom servers, governance layer, team onboarding | $5,000–$9,000 |
-| **Retainer** | Ongoing ops, incident response, new server builds | $1,500–$4,000/mo |
+| Offer | Price | For |
+|------|-------|-----|
+| **Starter Workflow** | $750 fixed | One AI-assisted workflow for a small owner-run business, up to 2 existing apps |
+| **Standard Workflow** | $1,500 fixed | One workflow for a multi-crew service business, up to 3 apps incl. field-service platform |
+| **Care** | $300/mo | Small fixes on a FusionAL-built workflow, up to 2 hrs/month |
+| **MCP Access Audit** | $2,500 | Read-only review of one live agent/MCP workflow, 5 business days |
+| **AI Use Policy Review** | $3,500 | Staff AI-use policy and settings checklist, 5 business days |
+| **Agent Ops Retainer** | $2,000/mo | Monthly permission-drift review, up to 8 hrs |
 
-[Book a free 15-min MCP security audit →](https://calendly.com/jonathanmelton004/30min)
+Scope is agreed on a call before payment. Details: [fusional.dev](https://fusional.dev) · [jrm@fusional.dev](mailto:jrm@fusional.dev) · [Book a 30-min call](https://calendly.com/jonathanmelton004/30min)
 
 ---
 
