@@ -25,7 +25,7 @@ decorator==5.3.1
 defusedxml==0.7.1
 dependency-injector==4.49.1
 distro==1.9.0
-dnspython==2.9.1
+dnspython==2.9.2
 docstring_parser==0.18.0
 fastapi==0.162.0
 feedparser==6.0.14
