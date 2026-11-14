@@ -9,7 +9,7 @@ requests==2.34.2
 anthropic==0.125.0
 redis==8.1.0
 mcp[cli]==1.30.0
-python-multipart>=0.0.32
+python-multipart>=0.0.33
 
 # Tracing (OpenTelemetry)
 opentelemetry-sdk>=1.42.1
