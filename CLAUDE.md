@@ -318,13 +318,13 @@ Registry entry structure:
 
 | Package | Version | Purpose |
 |---------|---------|--------|
-| `fastapi` | 0.143.0 | Web framework |
-| `uvicorn[standard]` | 0.45.0 | ASGI server |
-| `pydantic` | 2.15.0 | Request/response models |
-| `anthropic` | 0.96.0 | Claude API client |
-| `openai` | 2.32.0 | OpenAI fallback |
-| `mcp[cli]` | 1.27.1 | MCP server framework |
-| `redis` | 7.4.0 | Rate limit store |
+| `fastapi` | 0.165.0 | Web framework |
+| `uvicorn[standard]` | 0.54.0 | ASGI server |
+| `pydantic` | 2.14.4 | Request/response models |
+| `anthropic` | 2.13.0 | Claude API client |
+| `openai` | 3.58.0 | OpenAI fallback |
+| `mcp[cli]` | 1.30.0 | MCP server framework (stays <2.0 until the `mcp.server.fastmcp` → `mcp.server.mcpserver` migration) |
+| `redis` | 8.2.0 | Rate limit store |
 | `opentelemetry-*` | ≥1.40.0 | Distributed tracing |
 
 Always pin `setuptools ≥82.0.1`, `jaraco.context ≥6.1.2`, `wheel ≥0.46.3` to avoid
