@@ -321,12 +321,12 @@ The root `requirements.txt` is a frozen full dev environment and is not installe
 
 | Package | Version | Purpose |
 |---------|---------|--------|
-| `fastapi` | 0.162.0 | Web framework |
+| `fastapi` | 0.165.0 | Web framework |
 | `starlette` | ≥1.6.0 | ASGI toolkit (FastAPI dependency) |
 | `uvicorn[standard]` | 0.54.0 | ASGI server |
 | `pydantic` / `pydantic-core` | 2.14.4 / 2.50.5 | Request/response models (keep the pair in lockstep) |
-| `anthropic` | 0.125.0 | Claude SDK (core itself calls the Messages API via `requests`) |
-| `openai` | 2.54.0 | OpenAI fallback (`core/ai_agent.py`) |
+| `anthropic` | 2.14.0 | Claude SDK (core itself calls the Messages API via `requests`) |
+| `openai` | 3.59.0 | OpenAI fallback (`core/ai_agent.py`) |
 | `mcp[cli]` | 1.30.0 | MCP server framework — keep `<2.0` (`mcp.server.fastmcp` is used) |
 | `redis` | 8.2.0 | Rate limit store |
 | `aiohttp` | 3.14.5 | Async downstream health checks |
