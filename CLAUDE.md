@@ -316,18 +316,23 @@ Registry entry structure:
 
 ## Key Dependencies (core/requirements.txt)
 
+`core/requirements.txt` is the source of truth (used by CI and the root `Dockerfile`).
+The root `requirements.txt` is a frozen full dev environment and is not installed by CI or Docker.
+
 | Package | Version | Purpose |
 |---------|---------|--------|
-| `fastapi` | 0.143.0 | Web framework |
-| `uvicorn[standard]` | 0.45.0 | ASGI server |
-| `pydantic` | 2.15.0 | Request/response models |
-| `anthropic` | 0.96.0 | Claude API client |
-| `openai` | 2.32.0 | OpenAI fallback |
-| `mcp[cli]` | 1.27.1 | MCP server framework |
-| `redis` | 7.4.0 | Rate limit store |
-| `opentelemetry-*` | ≥1.40.0 | Distributed tracing |
+| `fastapi` | 0.162.0 | Web framework |
+| `starlette` | ≥1.6.0 | ASGI toolkit (FastAPI dependency) |
+| `uvicorn[standard]` | 0.54.0 | ASGI server |
+| `pydantic` / `pydantic-core` | 2.14.4 / 2.50.5 | Request/response models (keep the pair in lockstep) |
+| `anthropic` | 0.125.0 | Claude SDK (core itself calls the Messages API via `requests`) |
+| `openai` | 2.54.0 | OpenAI fallback (`core/ai_agent.py`) |
+| `mcp[cli]` | 1.30.0 | MCP server framework — keep `<2.0` (`mcp.server.fastmcp` is used) |
+| `redis` | 8.2.0 | Rate limit store |
+| `aiohttp` | 3.14.5 | Async downstream health checks |
+| `opentelemetry-*` | ≥1.42.1 (instrumentation ≥0.65b0) | Distributed tracing |
 
-Always pin `setuptools ≥82.0.1`, `jaraco.context ≥6.1.2`, `wheel ≥0.46.3` to avoid
+Always pin `setuptools ≥84.1.0` (GHSA-xmj3-9gf7-h52w), `jaraco.context ≥6.1.2`, `wheel ≥0.48.0` to avoid
 known CVEs in transitive deps.
 
 ---

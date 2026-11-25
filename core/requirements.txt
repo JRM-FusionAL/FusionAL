@@ -1,13 +1,13 @@
 fastapi==0.162.0
 starlette>=1.6.0
 uvicorn[standard]==0.54.0
-pydantic==2.14.3
-pydantic-core==2.50.4
+pydantic==2.14.4
+pydantic-core==2.50.5
 openai==2.54.0
 python-dotenv==1.2.4
 requests==2.34.2
 anthropic==0.125.0
-redis==8.1.0
+redis==8.2.0
 mcp[cli]==1.30.0
 python-multipart>=0.0.32
 
@@ -17,9 +17,9 @@ opentelemetry-instrumentation-fastapi>=0.65b0
 opentelemetry-exporter-otlp-proto-http>=1.43.0
 
 # Pinned to avoid known CVEs in transitive deps (see CLAUDE.md)
-setuptools>=83.0.0
+setuptools>=84.1.0
 jaraco.context>=6.1.2
-wheel>=0.47.0
+wheel>=0.48.0
 
 # Required by core.main for async downstream health checks.
 aiohttp==3.14.5
