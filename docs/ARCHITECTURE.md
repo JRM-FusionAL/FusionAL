@@ -213,7 +213,7 @@ The proxy retries downstream connections once after a 3-second delay to handle s
 Generates MCP servers using AI (Claude or OpenAI). Supports three operations:
 
 #### `generate_python_from_claude(prompt)`
-- Calls Anthropic Messages API (`claude-3-5-sonnet-20241022` by default)
+- Calls Anthropic Messages API (`claude-sonnet-5-5` by default)
 - Returns raw generated Python code
 
 #### `generate_python_from_openai(prompt)`
@@ -513,7 +513,7 @@ Host :8089  →  Container :8009  →  Proxy to mcp-kit servers (via Docker DNS)
 |----------|---------|-------------|
 | `PORT` | `8009` | FastAPI server port |
 | `ANTHROPIC_API_KEY` | — | Claude API key for AI generation |
-| `ANTHROPIC_MODEL` | `claude-3-5-sonnet-20241022` | Claude model name |
+| `ANTHROPIC_MODEL` | `claude-sonnet-5-5` | Claude model name |
 | `OPENAI_API_KEY` | — | OpenAI API key for AI generation |
 | `OPENAI_MODEL` | `gpt-4-turbo` | OpenAI model name |
 | `API_KEY` / `API_KEYS` | — | API key(s) for gateway auth (comma-separated) |

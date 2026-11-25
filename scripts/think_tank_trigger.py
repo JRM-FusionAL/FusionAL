@@ -47,8 +47,10 @@ PRESET_THINKING_BUDGET = {
 DEFAULT_PRESET = ReasoningPreset.MID
 OBSERVER_PRESET = ReasoningPreset.HIGH  # Observer always HIGH
 
-WORKER_MODEL   = "claude-sonnet-4-20250514"
+WORKER_MODEL   = "claude-sonnet-5-5"
 OBSERVER_MODEL = "claude-opus-4-5"
+# Models that still take a fixed thinking budget; newer ones use adaptive thinking.
+BUDGET_THINKING_MODELS = {"claude-opus-4-5"}
 
 
 # ─────────────────────────────────────────────
@@ -177,7 +179,11 @@ async def _call_claude(
         messages=[{"role": "user", "content": user_content}],
     )
     if use_thinking:
-        kwargs["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+        if model in BUDGET_THINKING_MODELS:
+            kwargs["thinking"] = {"type": "enabled", "budget_tokens": thinking_budget}
+        else:
+            # Current models reject budget_tokens; adaptive thinking replaces it.
+            kwargs["thinking"] = {"type": "adaptive"}
 
     resp = client.messages.create(**kwargs)
     tokens = resp.usage.input_tokens + resp.usage.output_tokens

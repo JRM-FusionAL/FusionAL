@@ -213,7 +213,7 @@ All vars documented in `.env.example`. Key ones:
 |----------|---------|-------------|
 | `ANTHROPIC_API_KEY` | — | Enables Claude-powered code generation |
 | `OPENAI_API_KEY` | — | Fallback if Anthropic unavailable |
-| `ANTHROPIC_MODEL` | `claude-3-5-sonnet-20241022` | Model for code generation |
+| `ANTHROPIC_MODEL` | `claude-sonnet-5-5` | Model for code generation |
 | `OPENAI_MODEL` | `gpt-4-turbo` | OpenAI model fallback |
 | `API_KEY` | — | Required for protected endpoints |
 | `API_KEYS` | — | Comma-sep list for zero-downtime key rotation |

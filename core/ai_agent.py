@@ -21,7 +21,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8009")
 
 # Model selection — override via env vars to swap models without code changes
-ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")
 HTTP_REQUEST_TIMEOUT_SECONDS = int(os.getenv("HTTP_REQUEST_TIMEOUT_SECONDS", "30"))
 
@@ -42,7 +42,7 @@ def generate_python_from_claude(prompt: str, model: str | None = None) -> str:
     
     body = {
         "model": model,
-        "max_tokens": 4096,
+        "max_tokens": 16000,
         "messages": [
             {
                 "role": "user",
@@ -59,7 +59,15 @@ def generate_python_from_claude(prompt: str, model: str | None = None) -> str:
     )
     resp.raise_for_status()
     data = resp.json()
-    code = data["content"][0]["text"]
+    # Current models think by default, so the first block may be a thinking
+    # block; return the text blocks only.
+    code = "".join(
+        block.get("text", "")
+        for block in data.get("content", [])
+        if block.get("type") == "text"
+    )
+    if not code:
+        raise RuntimeError(f"Claude returned no text (stop_reason={data.get('stop_reason')})")
     return code
 
 
