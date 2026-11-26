@@ -31,7 +31,7 @@ class TTAgent:
     name: str
     role: str
     system_prompt: str
-    model: str = "claude-sonnet-4-20250514"
+    model: str = "claude-sonnet-5-5"
 
 AGENTS = [
     TTAgent(
